@@ -23,128 +23,142 @@ import CreateInventoryPage from "@/pages/inventory/CreateInventoryPage";
 import CreateInvoicePage from "@/pages/invoice/CreateInvoicePage";
 import AllInvoicePage from "@/pages/invoice/AllInvoicePage";
 import RootErrorBoundary from "@/components/erorrBoundary/RootErrorBoundary";
+import AllInventoryPage from "@/pages/inventory/AllInventory";
 
 const routes: RouteObject[] = [
-  {
-    element: <GuestLayout />,
-    loader: guestLayoutLoader,
-    path: "/auth",
-    children: [
-      {
-        path: "",
-        loader: () => {
-          return redirect("login");
-        },
-      },
-      {
-        path: "login",
-        element: <LoginPage />,
-        loader: loginLoader,
-      },
-      {
-        path: "register",
-        element: <RegisterPage />,
-        loader: registerLoader,
-      },
-      {
-        path: "forgot-password",
-        element: <ForgotPasswordPage />,
-        loader: forgotPasswordLoader,
-      },
-    ],
-  },
-  {
-    element: <AuthenticatedLayout />,
-    loader: authenticatedLoader,
-    children: [
-      {
-        loader: () => {
-          return redirect("/dashboard");
-        },
-        path: "/",
-      },
-      {
-        path: "/dashboard",
-        lazy: async () => {
-          const module = await import("@/pages/DashboardPage");
-          const DashboardPage = module.default;
-          return {
-            element: <DashboardPage />,
-          };
-        },
-      },
-      {
-        path: "/product",
+    {
+        element: <GuestLayout />,
+        loader: guestLayoutLoader,
+        path: "/auth",
         children: [
-          {
-            path: "add",
-            element: <AddProductPage />,
-          },
-          {
-            path: "all",
-            element: <AllProductPage />,
-          },
-          {
-            path: "brands",
-            element: <BrandPage />,
-          },
-          {
-            path: "categories",
-            element: <CategoryPage />,
-          },
-          {
-            path: "attributes",
-            element: <AttributePage />,
-          },
-          {
-            path: "colors",
-            element: <ColorPage />,
-          },
+            {
+                path: "",
+                loader: () => {
+                    return redirect("login");
+                },
+            },
+            {
+                path: "login",
+                element: <LoginPage />,
+                loader: loginLoader,
+            },
+            {
+                path: "register",
+                element: <RegisterPage />,
+                loader: registerLoader,
+            },
+            {
+                path: "forgot-password",
+                element: <ForgotPasswordPage />,
+                loader: forgotPasswordLoader,
+            },
         ],
-      },
-      {
-        path: "invoice",
+    },
+    {
+        element: <AuthenticatedLayout />,
+        loader: authenticatedLoader,
         children: [
-          {
-            path: "all",
-            element: <AllInvoicePage />,
-          },
-          {
-            path: "add",
-            element: <CreateInvoicePage />,
-          },
+            {
+                loader: () => {
+                    return redirect("/dashboard");
+                },
+                path: "/",
+            },
+            {
+                path: "/dashboard",
+                lazy: async () => {
+                    const module = await import("@/pages/DashboardPage");
+                    const DashboardPage = module.default;
+                    return {
+                        element: <DashboardPage />,
+                    };
+                },
+            },
+            {
+                path: "/product",
+                children: [
+                    {
+                        path: "add",
+                        element: <AddProductPage />,
+                    },
+                    {
+                        path: "all",
+                        element: <AllProductPage />,
+                    },
+                    {
+                        path: "brands",
+                        element: <BrandPage />,
+                    },
+                    {
+                        path: "categories",
+                        element: <CategoryPage />,
+                    },
+                    {
+                        path: "attributes",
+                        element: <AttributePage />,
+                    },
+                    {
+                        path: "colors",
+                        element: <ColorPage />,
+                    },
+                ],
+            },
+            {
+                path: "invoice",
+                children: [
+                    {
+                        path: "all",
+                        element: <AllInvoicePage />,
+                    },
+                    {
+                        path: "add",
+                        element: <CreateInvoicePage />,
+                    },
+                ],
+            },
+            {
+                path: "inventory",
+                children: [
+                    {
+                        path: "all",
+                        element: <AllInventoryPage />,
+                    },
+                    {
+                        path: "add",
+                        element: <CreateInventoryPage />,
+                    },
+                ],
+            },
+            {
+                path: "order",
+                children: [
+                    {
+                        path: "all",
+                        element: <OrderPage />,
+                    },
+                    {
+                        path: "add",
+                        element: <CreateOrderPage />,
+                    },
+                ],
+            },
+            {
+                path: "service",
+                children: [
+                    {
+                        path: "all",
+                        element: <CreateServicePage />,
+                    },
+                ],
+            },
         ],
-      },
-      {
-        path: "order",
-        children: [
-          {
-            path: "all",
-            element: <OrderPage />,
-          },
-          {
-            path: "add",
-            element: <CreateOrderPage />,
-          },
-        ],
-      },
-      {
-        path: "service",
-        children: [
-          {
-            path: "all",
-            element: <CreateServicePage />,
-          },
-        ],
-      },
-    ],
-  },
+    },
 
-  {
-    path: "*",
-    element: <NotFoundPage />,
-    // errorElement: <NotFoundPage />,
-  },
+    {
+        path: "*",
+        element: <NotFoundPage />,
+        // errorElement: <NotFoundPage />,
+    },
 ];
 
 export default routes;

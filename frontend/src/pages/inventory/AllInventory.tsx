@@ -7,27 +7,35 @@ import { notifications } from "@mantine/notifications";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { z } from "zod";
-import CreateInvoicePage, { CreateInvoiceForm } from "./CreateInvoicePage";
 
-const url = "api/v1/invoice";
-const AllInvoicePage = () => {
-    const { data: invoices } = useQuery({
+type InventoryItemType = {
+    id: string;
+    product_name: string;
+    product_count: string;
+};
+
+const url = "api/v1/inventory";
+const INVENTORY_COLUMNS = ["ID", "Product name", "Product_count", "Actions"];
+const AllInventoryPage = () => {
+    const { data: inventoryData } = useQuery<InventoryItemType[]>({
         queryFn: () => {
             return axiosClient.v1.api.get(url).then((res) => res.data.data);
         },
-        queryKey: ["get/invoice"],
+        queryKey: ["get/inventoryData"],
     });
 
-    const isArr = Array.isArray(invoices);
+    const isArr = Array.isArray(inventoryData);
     const tRows = isArr
-        ? invoices.map((invoice) => {
+        ? inventoryData.map((inventoryItem) => {
               return (
-                  <tr key={invoice.id}>
-                      <td>{invoice.invoice_id}</td>
-                      <td>{invoice.seller_id}</td>
-                      <td>{invoice.cost}</td>
-                      <td>{invoice.due}</td>
-                      <td>Actions</td>
+                  <tr key={inventoryItem.id}>
+                      <td>{inventoryItem.product_name}</td>
+                      <td>{inventoryItem.product_count}</td>
+                      <td>
+                          <Button.Group>
+                              <Button>details</Button>
+                          </Button.Group>
+                      </td>
                   </tr>
               );
           })
@@ -43,7 +51,7 @@ const AllInvoicePage = () => {
                 };
             },
             title: "Please confirm your action",
-            children: <CreateInvoiceForm />,
+            children: <div>aksjdakjsd</div>,
             //   labels: { confirm: "Confirm", cancel: "Cancel" },
             //   onCancel: () => console.log("Cancel"),
             //   onConfirm: () => console.log("Confirmed"),
@@ -56,11 +64,9 @@ const AllInvoicePage = () => {
             <Table>
                 <thead>
                     <tr>
-                        <th>Invoice_id</th>
-                        <th>Seller_id</th>
-                        <th>Cost</th>
-                        <th>Due</th>
-                        <th>Actions</th>
+                        {INVENTORY_COLUMNS.map((thContent) => {
+                            return <th key={thContent}>{thContent}</th>;
+                        })}
                     </tr>
                 </thead>
                 <tbody>{tRows}</tbody>
@@ -69,5 +75,4 @@ const AllInvoicePage = () => {
     );
 };
 
-
-export default AllInvoicePage;
+export default AllInventoryPage;

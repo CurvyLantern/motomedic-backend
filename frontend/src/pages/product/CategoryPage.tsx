@@ -86,20 +86,20 @@ const CategoryPage = () => {
     }
     // console.log(JSON.stringify(formData.entries()), "from onCreate");
     try {
-      /* 
+      /*
       {
           headers: {
             // "content-type": "multipart/form-data",
           },
         }
       */
-      const res = await axiosClient
-        .post(url, resBody, {
-          headers: {
-            "content-type": "multipart/form-data",
-          },
-        })
-        .then((res) => res.data);
+      const res = await axiosClient.v1.api
+          .post(url, resBody, {
+              headers: {
+                  "content-type": "multipart/form-data",
+              },
+          })
+          .then((res) => res.data);
       console.log(res, "from on create");
     } catch (error) {
       console.error(error);
