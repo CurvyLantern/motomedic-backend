@@ -9,33 +9,20 @@ class Product extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'productName',
+        'name',
         'slug',
-        'categoryId',
-        'brandId',
+        'category_id',
+        'brand_id',
+        'sku',
         'model',
-        'color',
-        'tags',
-        'productType',
+        'color_id',
         'material',
-        'size',
-        'year',
-        'compitibility',
-        'condition',
-        'manufacturer',
         'weight',
+        'price',
         'quantity',
         'price',
-        'discount',
-        'primaryImg',
-        'thumbImg',
-        'shortDescriptions',
-        'longDescriptions',
-        'installationMethod',
-        'note',
+        'description',
         'warranty',
-        'rating',
-        'availability',
         'status',
     ];
 
@@ -46,12 +33,12 @@ class Product extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class, 'id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function brand()
     {
-        return $this->belongsTo(Brand::class, 'id');
+        return $this->belongsTo(Brand::class, 'brand_id');
     }
 
     public function images()

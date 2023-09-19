@@ -14,14 +14,19 @@ return new class extends Migration
         // Schema::disableForeignKeyConstraints();
 
         Schema::create('categories', function (Blueprint $table) {
-            $table->id()->autoIncrement();
+            $table->id();
+            $table->timestamps();
+
+
             $table->string('name', 125);
             $table->string('slug');
             $table->longText('description')->nullable();
             $table->string('image')->nullable();
-            $table->bigInteger('parent_category_id')->nullable();
-            $table->timestamps();
+
+            $table->unsignedBigInteger('parent_category_id')->nullable();
+            $table->foreign('parent_category_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
         });
+
         // Schema::enableForeignKeyConstraints();
     }
 

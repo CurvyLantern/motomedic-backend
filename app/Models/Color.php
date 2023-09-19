@@ -12,4 +12,9 @@ class Color extends Model
         'name',
         'hexcode',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'color_id');
+    }
 }
