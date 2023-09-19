@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
+
+
             $table->string('name', 125);
             $table->string('slug');
             $table->string('image')->nullable();
             $table->longText('description')->nullable();
-            $table->timestamps();
         });
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

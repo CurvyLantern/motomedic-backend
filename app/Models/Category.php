@@ -20,22 +20,18 @@ class Category extends Model
 
     public function children()
     {
-        return $this->hasMany(self::class, 'parent_category_id');
+        return $this->hasMany(Category::class, 'parent_category_id');
     }
     public function parent()
     {
-        return $this->belongsTo(self::class, 'parent_category_id');
+        return $this->belongsTo(Category::class, 'parent_category_id');
     }
 
     public function products()
     {
-        return $this->hasMany(Product::class, 'categoryId');
+        return $this->hasMany(Product::class, 'category_id');
     }
 
-    public function parentCategoryId()
-    {
-        return $this->belongsTo(Category::class, 'id');
-    }
 
     public function setNameAttribute($value)
     {
