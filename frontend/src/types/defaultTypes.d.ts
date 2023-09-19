@@ -38,7 +38,8 @@ type ProductFieldInputType =
     | "checkbox"
     | "textarea"
     | "yearPicker"
-    | "colorInput";
+    | "colorInput"
+    | "null";
 type ProductFieldDataType =
     | File
     | null

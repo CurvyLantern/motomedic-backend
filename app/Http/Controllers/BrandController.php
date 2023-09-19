@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Http\Requests\StoreBrandRequest;
 use App\Http\Requests\UpdateBrandRequest;
-
-
+use App\Http\Resources\BrandResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -48,7 +47,7 @@ class BrandController extends Controller
             'brands' => $brands,
 
         ];
-
+        return BrandResource::collection($brands);
         return send_response('Brand data successfully loaded !!', $context);
     }
 
@@ -58,7 +57,7 @@ class BrandController extends Controller
     public function store(StoreBrandRequest $request)
     {
         //
-        $validator = $request->validate();
+        $validated = $request->validated();
 
 
         // if ($validator->fails()) {
@@ -67,15 +66,14 @@ class BrandController extends Controller
 
         try {
             //create brand and save it to database
-            if ($request->hasFile('img')) {
-                $imagePath = $request->file('img')->store('brand', 'public');
-            }
+            // if ($request->hasFile('img')) {
+            //     $imagePath = $request->file('img')->store('brand', 'public');
+            // }
 
-            $brand = Brand::create([
-                "brandName" => $request->brandName,
-                'slug' =>  Str::slug($request->brandName, '-'),
+            $brand = Brand::create(["brand_name" => $request->brandName,
+                // 'slug' =>  Str::slug($request->brandName, '-'),
                 "description" => $request->description,
-                "img" => $imagePath,
+                // "brand_image" => $imagePath,
                 "parentbrandId" => $request->parentbrandId,
             ]);
             $context = [

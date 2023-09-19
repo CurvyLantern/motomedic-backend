@@ -9,8 +9,17 @@ class AttributeValue extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'value',
+        'name',
         'attribute_id',
-        'product_id',
     ];
+
+    public function attribute()
+    {
+        return $this->belongsTo(Attribute::class, 'attribute_id');
+    }
+
+    public function product()
+    {
+        return $this->belongsToMany(Product::class, 'product_attributes');
+    }
 }

@@ -1,3 +1,5 @@
+
+
 <?php
 
 namespace App\Models;
@@ -9,9 +11,10 @@ class Brand extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'brandName',
+        'name',
         'slug',
-        'img',
+        'image',
         'description',
+        'status'
     ];
 }

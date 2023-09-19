@@ -35,10 +35,10 @@ const productInputFields: ProductFieldType = {
         type: "select",
         name: "category_id",
         data: [
-            { value: "1", label: "hero honda 1" },
-            { value: "2", label: "hero honda 2" },
-            { value: "3", label: "hero honda 3" },
-            { value: "4", label: "hero honda 4" },
+            // { value: "1", label: "hero honda 1" },
+            // { value: "2", label: "hero honda 2" },
+            // { value: "3", label: "hero honda 3" },
+            // { value: "4", label: "hero honda 4" },
         ],
     },
     sku: {
@@ -112,12 +112,12 @@ const productInputFields: ProductFieldType = {
         validate: z.custom((file) => file instanceof File),
     },
     warranty: {
-        name: 'warranty',
-        label: 'Product Warranty',
-        data: '',
-        type: 'text',
-        validate: z.string()
-    }
+        name: "warranty",
+        label: "Product Warranty",
+        data: "",
+        type: "text",
+        validate: z.string(),
+    },
 };
 const _productFields = {
     basicInfo: [

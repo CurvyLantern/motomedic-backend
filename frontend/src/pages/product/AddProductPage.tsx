@@ -1,13 +1,12 @@
-import { AllProductFields } from "@/components/products/fields/AllProductFields";
-import { Stack } from "@mantine/core";
+import CreateProductForm from "@/components/products/CreateProductForm";
 
 const AddProductPage = () => {
-    return (
-        <Stack>
-            <h1>Create A Single Product</h1>
-            <AllProductFields />
-        </Stack>
-    );
+    // <Stack>
+    {
+        /* <h1>Create A Single Product</h1> */
+    }
+    // </Stack>
+    return <CreateProductForm />;
 };
 
 export default AddProductPage;

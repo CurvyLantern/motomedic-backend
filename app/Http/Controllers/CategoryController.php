@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\CateogryResource;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
 
@@ -31,13 +32,17 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $category = Category::orderBy('id', 'asc')->get();
+        // $category = Category::orderBy('id', 'asc')->get();
 
-        $context = [
-            'categories' =>  $category,
-        ];
+        // $context = [
+        //     'categories' =>  $category,
+        // ];
 
-        return send_response('Category data successfully loaded !!', $context);
+        $parentCategories = Category::with('children')->whereNull('parent_category_id')->get();
+
+        return CateogryResource::collection($parentCategories);
+
+        // return send_response('Category data successfully loaded !!', $context);
     }
 
     /**
@@ -46,7 +51,20 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         try {
-            $validator = $request->validate();
+            $validated = $request->validated();
+            $category = Category::create([
+                'name' => $validated['name'],
+                'parent_category_id' => $validated['parent_category_id'] ?? null,
+            ]);
+            $hasSubcategories = $request->has('sub_categories');
+            if ($hasSubcategories) {
+                foreach ($request['sub_categories'] as $subCategoryData) {
+                    $category->children()->create([
+                        'name' => $subCategoryData['name']
+                    ]);
+                }
+            }
+            return response()->json(['message' => 'Category created successfully']);
 
 
             // if ($validator->fails()) {

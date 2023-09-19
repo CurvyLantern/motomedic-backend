@@ -39,6 +39,11 @@ class Product extends Model
         'status',
     ];
 
+    public function inventory()
+    {
+        return $this->hasOne(Inventory::class, 'sku', 'sku');
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'id');
@@ -49,15 +54,17 @@ class Product extends Model
         return $this->belongsTo(Brand::class, 'id');
     }
 
-    public function media_images()
+    public function images()
     {
-        return $this->hasMany(MediaImage::class, 'hostId', 'id');
+        return $this->belongsToMany(Media::class, 'product_images');
     }
 
     public function attributes()
     {
-        return $this->hasMany(Attributes::class, 'productId');
+        return $this->belongsToMany(AttributeValue::class, 'product_attributes');
     }
+
+
 
     // public function product_attributes()
     // {

@@ -21,11 +21,12 @@ import {
 } from "@mantine/core";
 import { YearPicker } from "@mantine/dates";
 import { UseFormReturnType } from "@mantine/form";
+import { useState } from "react";
 
 type InputType = {
     field: {
         name: string;
-        label: string;
+        label?: string;
         type: ProductFieldInputType;
         data?: any;
         validate?: any;
@@ -47,6 +48,7 @@ export const fieldTypes: { [k in ProductFieldInputType]: k } = {
     text: "text",
     textarea: "textarea",
     yearPicker: "yearPicker",
+    null: "null",
 };
 const BaseInputs = ({ field, form }: InputType) => {
     let inputComponent: JSX.Element | null = null;
@@ -74,14 +76,7 @@ const BaseInputs = ({ field, form }: InputType) => {
             );
             break;
         case "select":
-            inputComponent = (
-                <Select
-                    {...form.getInputProps(field.name)}
-                    label={field.label}
-                    placeholder={field.label}
-                    data={field.data ? field.data : []}
-                />
-            );
+            inputComponent = <CustomSelect field={field} form={form} />;
             break;
         case "richText":
             inputComponent = <DescriptionEditor />;
@@ -104,7 +99,6 @@ const BaseInputs = ({ field, form }: InputType) => {
             inputComponent = (
                 <FileInput
                     variant="filled"
-                    color="red"
                     {...form.getInputProps(field.name)}
                     accept="image/png,image/jpeg"
                     placeholder="Pick file"
@@ -161,8 +155,11 @@ const BaseInputs = ({ field, form }: InputType) => {
 };
 const FileUploadButton = ({ field, form }: InputType) => {
     // const [barcodeFile, setBarCodeFile] = useState<File | null>(null);
-    // @ts-expect-error i do not know how to type this
-    const file = form.getTransformedValues()[field.name];
+    const accessor = field.name.split(".");
+    const file = accessor.reduce((acc, item) => {
+        acc = acc ? acc[item] : form.values[item];
+        return acc;
+    }, null as null) as unknown as File;
     return (
         <Group spacing={"md"}>
             {/* onChange={setBarCodeFile} */}
@@ -178,6 +175,21 @@ const FileUploadButton = ({ field, form }: InputType) => {
                 </Text>
             )}
         </Group>
+    );
+};
+const CustomSelect = ({ field, form }: InputType) => {
+    if (field.name === "category_id") {
+        console.log(field.name, "from name custom select ");
+        const dataTemp = form.values[field.name];
+        console.log({ dataTemp });
+    }
+    return (
+        <Select
+            {...form.getInputProps(field.name)}
+            label={field.label}
+            placeholder={field.label}
+            data={field.data ? field.data : []}
+        />
     );
 };
 const CustomYearPicker = ({ field, form }: InputType) => {
