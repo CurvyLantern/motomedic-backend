@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
+        // Schema::disableForeignKeyConstraints();
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -41,14 +41,18 @@ return new class extends Migration
 
             $table->timestamps();
         });
-        Schema::enableForeignKeyConstraints();
+        // Schema::enableForeignKeyConstraints();
 
         Schema::create('product_attributes', function (Blueprint $table) {
             $table->id();
+            $table->timestamps();
+
+
             $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('attribute_id');
-            $table->id();
-            $table->id();
+            $table->foreign('product_id')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');
+
+            $table->unsignedBigInteger('attribute_value_id');
+            $table->foreign('attribute_value_id')->references('id')->on('attribute_values')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
@@ -58,5 +62,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('products');
+        Schema::dropIfExists('product_attributes');
     }
 };
