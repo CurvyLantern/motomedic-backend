@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->string('brandName');
+            $table->string('name', 125);
             $table->string('slug');
-            $table->string('img')->nullable();
+            $table->string('image')->nullable();
             $table->longText('description')->nullable();
             $table->timestamps();
         });

@@ -22,9 +22,10 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "categoryName" => "required",
-            "description" => "required",
-            "img" => "required",
+            "name" => "required",
+            "parent_category_id" => 'nullable'
+            // "description" => "required",
+            // "img" => "required",
         ];
     }
 }

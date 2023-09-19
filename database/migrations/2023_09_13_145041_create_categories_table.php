@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
+        // Schema::disableForeignKeyConstraints();
 
         Schema::create('categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('categoryName');
+            $table->id()->autoIncrement();
+            $table->string('name', 125);
             $table->string('slug');
             $table->longText('description')->nullable();
-            $table->string('img')->nullable();
-            $table->bigInteger('parentCategoryId')->nullable();
+            $table->string('image')->nullable();
+            $table->bigInteger('parent_category_id')->nullable();
             $table->timestamps();
         });
-        Schema::enableForeignKeyConstraints();
+        // Schema::enableForeignKeyConstraints();
     }
 
     /**
