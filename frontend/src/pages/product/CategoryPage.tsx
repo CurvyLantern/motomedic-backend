@@ -1,5 +1,6 @@
 import BaseInputs, { fieldTypes } from "@/components/inputs/BaseInputs";
 import BasicSection from "@/components/sections/BasicSection";
+import useCustomForm from "@/hooks/useCustomForm";
 import axiosClient from "@/lib/axios";
 import { useCategoryQuery } from "@/queries/categoryQuery";
 import dataToFormdata from "@/utils/dataToFormdata";
@@ -16,7 +17,7 @@ import {
 import { useForm, zodResolver } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
 import { tr } from "date-fns/locale";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { TbPlus } from "react-icons/tb";
 import { z } from "zod";
 const fields = [
@@ -30,7 +31,7 @@ const fields = [
         type: fieldTypes.fileInput,
     },
 ] as const;
-type FormValue = {
+export type FormValue = {
     name: string;
     image: File | null;
     sub_categories: Array<Omit<FormValue, "sub_categories">>;
@@ -100,7 +101,8 @@ const ViewCategories = () => {
 };
 
 const CreateCategoryForm = () => {
-    const form = useForm<FormValue>({
+    const categoryForm = useRef<HTMLFormElement>(null);
+    const form = useCustomForm<FormValue>({
         initialValues: {
             image: null,
             name: "",
@@ -128,11 +130,17 @@ const CreateCategoryForm = () => {
     const onCreate = async () => {
         const url = "categories";
         const values = form.getTransformedValues();
-        console.log(values);
-        const formData = new FormData();
-        dataToFormdata(formData, values);
-        for (const pair of formData.entries()) {
-            console.log(pair[0] + ", " + pair[1]);
+        // console.log(values);
+        const formData2 = new FormData();
+        dataToFormdata(formData2, values);
+        const formData = new FormData(categoryForm.current ?? undefined);
+
+        for (const [k, v] of formData.entries()) {
+            console.log("1 ", k + ", " + JSON.stringify(v));
+        }
+
+        for (const [k, v] of formData2.entries()) {
+            console.log("2 ", k + ", " + JSON.stringify(v));
         }
         try {
             /*
@@ -142,14 +150,14 @@ const CreateCategoryForm = () => {
               },
             }
           */
-            const res = await axiosClient.v1.api
-                .post(url, formData, {
-                    // headers: {
-                    //     "content-type": "multipart/form-data",
-                    // },
-                })
-                .then((res) => res.data);
-            console.log(res, "from on create");
+            // const res = await axiosClient.v1.api
+            //     .post(url, formData, {
+            //         // headers: {
+            //         //     "content-type": "multipart/form-data",
+            //         // },
+            //     })
+            //     .then((res) => res.data);
+            // console.log(res, "from on create");
         } catch (error) {
             console.error(error);
         }
@@ -205,6 +213,7 @@ const CreateCategoryForm = () => {
     return (
         <BasicSection title="Create Category">
             <form
+                ref={categoryForm}
                 onSubmit={form.onSubmit((values) => {
                     onCreate();
                     // console.log(values, "form value");
