@@ -61,40 +61,48 @@ export const isAuthenticated = async () => {
 //       if (error.response.status !== 422) throw error;
 //     });
 // };
-export const register = async (credentials: {
-  email: string;
-  password: string;
-  name: string;
-  password_confirmation: string;
-}) => {
-  await fetchCSRF();
-
-  return await axiosClient.v1.web
-    .post("auth/register", credentials)
-    .then((res) => {
-      return res;
-    });
-};
-export const login = async (credentials: {
-  email: string;
-  password: string;
-  remember: boolean;
-}) => {
-  try {
+export const register = async (
+    credentials:
+        | {
+              email: string;
+              password: string;
+              name: string;
+              password_confirmation: string;
+          }
+        | FormData
+) => {
     await fetchCSRF();
 
     return await axiosClient.v1.web
-      .post("auth/login", credentials)
-      .then((res) => {
-        return res.status;
-      });
-  } catch (error) {
-    const axiosError = error as AxiosError;
-    if (axiosError.status === 401) {
-      throw new Error("not authorized");
+        .post("auth/register", credentials)
+        .then((res) => {
+            return res;
+        });
+};
+export const login = async (
+    credentials:
+        | {
+              email: string;
+              password: string;
+              remember: boolean;
+          }
+        | FormData
+) => {
+    try {
+        await fetchCSRF();
+
+        return await axiosClient.v1.web
+            .post("auth/login", credentials)
+            .then((res) => {
+                return res.status;
+            });
+    } catch (error) {
+        const axiosError = error as AxiosError;
+        if (axiosError.status === 401) {
+            throw new Error("not authorized");
+        }
+        throw error;
     }
-    throw error;
-  }
 };
 export const logout = async () => {
   try {

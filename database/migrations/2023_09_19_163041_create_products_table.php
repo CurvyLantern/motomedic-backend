@@ -11,6 +11,53 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // category table migration
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+
+
+            $table->string('name', 125);
+            $table->string('slug');
+            $table->longText('description')->nullable();
+            $table->string('image')->nullable();
+
+            $table->unsignedBigInteger('parent_category_id')->nullable();
+            $table->foreign('parent_category_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
+        });
+
+        // brand table migration
+        Schema::create('brands', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+
+
+            $table->string('name', 125);
+            $table->string('slug');
+            $table->string('image')->nullable();
+            $table->longText('description')->nullable();
+        });
+
+        // attribute table migration
+        Schema::create('attributes', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+            $table->string('slug')->unique();
+            $table->integer('priority')->default(0);
+            $table->timestamps();
+        });
+
+        // attribute_values table migration
+        Schema::create('attribute_values', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+
+            $table->unsignedBigInteger('attribute_id');
+            $table->foreign('attribute_id')->references('id')->on('attributes')->onUpdate('cascade')->onDelete('cascade');
+            $table->timestamps();
+        });
+
+
         // Schema::disableForeignKeyConstraints();
         Schema::create('products', function (Blueprint $table) {
             $table->id();
@@ -54,6 +101,27 @@ return new class extends Migration
             $table->unsignedBigInteger('attribute_value_id');
             $table->foreign('attribute_value_id')->references('id')->on('attribute_values')->onUpdate('cascade')->onDelete('cascade');
         });
+
+        // product variation table
+        Schema::create(
+            'product_variations',
+            function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('attribute_value_id')->nullable();
+                $table->unsignedBigInteger('product_id')->nullable();
+                $table->unsignedBigInteger('attribute_id')->nullable();
+                $table->unsignedBigInteger('color_id')->nullable();
+                $table->text('image')->nullable();
+                $table->float('price')->nullable();
+
+                $table->foreign('attribute_value_id')->references('id')->on('attribute_values')->onUpdate('cascade')->onDelete('cascade');
+                $table->foreign('product_id')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');
+                $table->foreign('attribute_id')->references('id')->on('product_attributes')->onUpdate('cascade')->onDelete('cascade');
+                $table->foreign('color_id')->references('id')->on('colors')->onUpdate('cascade')->onDelete('cascade');
+
+                $table->timestamps();
+            }
+        );
     }
 
     /**
@@ -61,7 +129,13 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('categories');
+        Schema::dropIfExists('brands');
+        Schema::dropIfExists('attributes');
+        Schema::dropIfExists('attributes_values');
+
         Schema::dropIfExists('products');
         Schema::dropIfExists('product_attributes');
+        Schema::dropIfExists('product_variations');
     }
 };

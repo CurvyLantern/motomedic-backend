@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        Schema::create('user_details', function (Blueprint $table) {
-            $table->id();
-            $table->date('birthdate')->nullable();
-            $table->string('img')->nullable();
-            $table->string('city');
-            $table->integer('postCode');
-            $table->text('street');
-            $table->text('SpecialInstructions');
-            $table->string('country')->default('bangladesh');
-            $table->timestamps();
-        });
-        Schema::enableForeignKeyConstraints();
+        // Schema::disableForeignKeyConstraints();
+        // Schema::create('user_details', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->date('birthdate')->nullable();
+        //     $table->string('img')->nullable();
+        //     $table->string('city');
+        //     $table->integer('postCode');
+        //     $table->text('street');
+        //     $table->text('SpecialInstructions');
+        //     $table->string('country')->default('bangladesh');
+        //     $table->timestamps();
+        // });
+        // Schema::enableForeignKeyConstraints();
     }
 
     /**

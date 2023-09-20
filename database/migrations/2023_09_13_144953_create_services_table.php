@@ -11,25 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
 
-        Schema::create('services', function (Blueprint $table) {
-            $table->id();
-            $table->string('serviceName');
-            $table->string('slug');
-            $table->text('description')->nullable();
-            $table->string('img')->nullable();
-            $table->float('price');
-            $table->integer('durationHours');
-            $table->boolean('status')->default(true);
-            $table->boolean('featured')->default(true);
-            $table->bigInteger('serviceCreator')->nullable();
-            //$table->bigInteger('category');
-            //$table->foreign('category')->references('id')->on('service_categories');
-            $table->text('note')->nullable();
-            $table->timestamps();
-        });
-        Schema::enableForeignKeyConstraints();
+        // Schema::create('services', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('serviceName');
+        //     $table->string('slug');
+        //     $table->text('description')->nullable();
+        //     $table->string('img')->nullable();
+        //     $table->float('price');
+        //     $table->integer('durationHours');
+        //     $table->boolean('status')->default(true);
+        //     $table->boolean('featured')->default(true);
+        //     $table->unsignedBigInteger('serviceCreator')->nullable();
+        //     //$table->bigInteger('category');
+        //     //$table->foreign('category')->references('id')->on('service_categories');
+        //     $table->text('note')->nullable();
+        //     $table->timestamps();
+        // });
     }
 
     /**

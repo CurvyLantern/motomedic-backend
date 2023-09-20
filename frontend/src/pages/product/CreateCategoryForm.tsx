@@ -9,7 +9,6 @@ import { FormValue, fields } from "./CategoryPage";
 export const CreateCategoryForm = () => {
     const form = useForm<FormValue>({
         initialValues: fields.reduce((acc, item) => {
-            // @ts-expect-error dont want to define type for this
             acc[item.name] = item.data;
             return acc;
         }, {} as FormValue),
