@@ -148,8 +148,10 @@ class CategoryController extends Controller
             $category = Category::find($id);
             if ($category) {
                 $category->delete();
+                return response()->noContent();
+            } else {
+                return response()->isNotFound();
             }
-            return send_response('Category Deleted successfully', []);
         } catch (Exception $e) {
             return send_error($e->getMessage(), $e->getCode());
         }

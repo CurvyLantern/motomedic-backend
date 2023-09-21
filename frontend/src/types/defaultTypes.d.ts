@@ -9,6 +9,18 @@ type User = {
     name: string;
     email: string;
 };
+
+type Category = {
+    id: string | number;
+    name: string;
+    image?: string;
+    parent_category_id?: string | number;
+};
+type CategoryWithSubCateogry = Category & {
+    sub_categories: Array<Category>;
+};
+
+
 type Product = {
     warranty: string;
     sku: string;

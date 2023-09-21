@@ -2,9 +2,14 @@ import BaseInputs, { fieldTypes } from "@/components/inputs/BaseInputs";
 import BasicSection from "@/components/sections/BasicSection";
 import useCustomForm from "@/hooks/useCustomForm";
 import axiosClient from "@/lib/axios";
-import { useCategoryQuery } from "@/queries/categoryQuery";
+import {
+    deleteCategory,
+    editCategory,
+    useCategoryQuery,
+} from "@/queries/categoryQuery";
 import dataToFormdata from "@/utils/dataToFormdata";
 import {
+    Text,
     Stack,
     Tabs,
     Button,
@@ -13,11 +18,12 @@ import {
     SimpleGrid,
     Table,
     Grid,
+    Collapse,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
-import { tr } from "date-fns/locale";
-import { useRef, useState } from "react";
+import { ca, tr } from "date-fns/locale";
+import { useMemo, useRef, useState } from "react";
 import { TbPlus } from "react-icons/tb";
 import { z } from "zod";
 const fields = [
@@ -59,38 +65,85 @@ const CategoryPage = () => {
 const ViewCategories = () => {
     const { categories } = useCategoryQuery();
     console.log(categories, "categories from db ");
-    const isArr = Array.isArray(categories);
-    const tCategoryRows = isArr
-        ? categories.map((category) => {
-              return (
-                  <tr key={category.id}>
-                      <td>{category.name}</td>
-                      <td>{category.description}</td>
-                      <td>{category.image}</td>
-                      <td>{category.parentCategory}</td>
-                      <td>
-                          <SimpleGrid cols={2}>
-                              <Button compact size="xs">
-                                  Edit
-                              </Button>
-                              <Button compact size="xs">
-                                  Delete
-                              </Button>
-                          </SimpleGrid>
-                      </td>
-                  </tr>
-              );
-          })
-        : null;
+
+    const [isDeletingId, setIsDeletingId] = useState<string | number>();
+    const [activeCollapseId, setActiveCollapseId] = useState<string | number>();
+    const tCategoryRows =
+        categories && categories.length > 0 ? (
+            categories.map((category) => {
+                const deleting = isDeletingId === category.id;
+                return (
+                    <>
+                        <tr
+                            key={category.id}
+                            onClick={() => {
+                                setActiveCollapseId((p) =>
+                                    p === category.id ? undefined : category.id
+                                );
+                            }}
+                        >
+                            <td>{category.name}</td>
+                            <td>{category.image}</td>
+                            <td>
+                                <SimpleGrid cols={2}>
+                                    <Button
+                                        disabled={deleting}
+                                        onClick={() => {
+                                            editCategory(category);
+                                        }}
+                                        compact
+                                        size="xs"
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Button
+                                        loading={deleting}
+                                        onClick={() => {
+                                            setIsDeletingId(category.id);
+                                            deleteCategory(category).finally(
+                                                () => {
+                                                    setIsDeletingId(undefined);
+                                                }
+                                            );
+                                        }}
+                                        compact
+                                        size="xs"
+                                    >
+                                        Delete
+                                    </Button>
+                                </SimpleGrid>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colSpan={3}>
+                                <Collapse in={activeCollapseId === category.id}>
+                                    {category.sub_categories.map((subCat) => {
+                                        return (
+                                            <Text key={subCat.id}>
+                                                {subCat.name}
+                                            </Text>
+                                        );
+                                    })}
+                                </Collapse>
+                            </td>
+                        </tr>
+                    </>
+                );
+            })
+        ) : (
+            <tr>
+                <td style={{ textAlign: "center" }} colSpan={3}>
+                    No categories to show
+                </td>
+            </tr>
+        );
     return (
         <BasicSection title="Categories">
             <Table>
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Description</th>
                         <th>Image</th>
-                        <th>Parent Category</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -100,8 +153,22 @@ const ViewCategories = () => {
     );
 };
 
+const validationSchema = () => {
+    const obj = {
+        name: z.string().min(1, "Name cannot be empty"),
+        image: z.any().refine((file) => {
+            return file instanceof File || !file;
+        }),
+    };
+    return zodResolver(
+        z.object({
+            ...obj,
+            sub_categories: z.array(z.object(obj)),
+        })
+    );
+};
 const CreateCategoryForm = () => {
-    const categoryForm = useRef<HTMLFormElement>(null);
+    const [loading, setLoading] = useState(false);
     const form = useCustomForm<FormValue>({
         initialValues: {
             image: null,
@@ -109,57 +176,28 @@ const CreateCategoryForm = () => {
             sub_categories: [{ image: null, name: "" }],
         },
 
-        validate: zodResolver(
-            z.object({
-                name: z.string().min(1),
-                image: z.any().refine((file) => {
-                    return file instanceof File || !file;
-                }),
-                sub_categories: z.array(
-                    z.object({
-                        name: z.string().min(1, "name cannot be empty"),
-                        image: z.any().refine((file) => {
-                            return file instanceof File || !file;
-                        }),
-                    })
-                ),
-            })
-        ),
+        validate: validationSchema(),
         //   parentCategoryId: () => null,
     });
-    const onCreate = async () => {
+    const onCreate = async (values: typeof form.values) => {
+        setLoading(true);
+
         const url = "categories";
-        const values = form.getTransformedValues();
-        // console.log(values);
-        const formData2 = new FormData();
-        dataToFormdata(formData2, values);
-        const formData = new FormData(categoryForm.current ?? undefined);
+        const formData = dataToFormdata({ data: values });
 
-        for (const [k, v] of formData.entries()) {
-            console.log("1 ", k + ", " + JSON.stringify(v));
-        }
+        // for (const [k, v] of formData.entries()) {
+        //     console.log("1 ", k + ", " + JSON.stringify(v));
+        // }
 
-        for (const [k, v] of formData2.entries()) {
-            console.log("2 ", k + ", " + JSON.stringify(v));
-        }
         try {
-            /*
-          {
-              headers: {
-                // "content-type": "multipart/form-data",
-              },
-            }
-          */
-            // const res = await axiosClient.v1.api
-            //     .post(url, formData, {
-            //         // headers: {
-            //         //     "content-type": "multipart/form-data",
-            //         // },
-            //     })
-            //     .then((res) => res.data);
-            // console.log(res, "from on create");
+            const res = await axiosClient.v1.api
+                .post(url, formData)
+                .then((res) => res.data);
+            console.log(res, "from on create");
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     };
     const onAddSubCateogry = () => {
@@ -212,13 +250,7 @@ const CreateCategoryForm = () => {
     );
     return (
         <BasicSection title="Create Category">
-            <form
-                ref={categoryForm}
-                onSubmit={form.onSubmit((values) => {
-                    onCreate();
-                    // console.log(values, "form value");
-                })}
-            >
+            <form onSubmit={form.onSubmit(onCreate)}>
                 <Grid>
                     {fields.map((field, fieldIdx) => {
                         return (
@@ -232,12 +264,18 @@ const CreateCategoryForm = () => {
                         );
                     })}
                     <Grid.Col span={"content"}>
-                        <Button type="button" onClick={onAddSubCateogry}>
+                        <Button
+                            disabled={loading}
+                            type="button"
+                            onClick={onAddSubCateogry}
+                        >
                             <TbPlus />
                         </Button>
                     </Grid.Col>
                     <Grid.Col span={"content"}>
-                        <Button type="submit">Submit</Button>
+                        <Button loading={loading} type="submit">
+                            Submit
+                        </Button>
                     </Grid.Col>
 
                     <Grid.Col span={12}>

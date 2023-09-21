@@ -48,7 +48,9 @@ class Product extends Model
 
     public function attributes()
     {
-        return $this->belongsToMany(AttributeValue::class, 'product_attributes');
+        return $this->belongsToMany(Attribute::class, 'product_attributes')
+            ->using(ProductAttribute::class)
+            ->withPivot('attribute_value_id');
     }
 
 
@@ -57,8 +59,15 @@ class Product extends Model
     // {
     //     return $this->hasMany(ProductAttribute::class, 'productId');
     // }
-    public function attribute_values()
+    public function attributeValues()
     {
-        return $this->hasMany(AttributeValue::class, 'product_id', 'id');
+        return $this->belongsToMany(AttributeValue::class, 'product_attributes')
+            ->using(ProductAttribute::class)
+            ->withPivot('attribute_id');
+    }
+
+    public function variations()
+    {
+        return $this->hasMany(ProductVariation::class);
     }
 }
