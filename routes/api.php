@@ -36,10 +36,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
             return new UserResource($user);
         });
 
-        Route::apiResources([
-            'categories' => CategoryController::class,
-            'brands' => BrandController::class
-        ]);
+        Route::apiResource('brands', BrandController::class);
+        Route::apiResource('categories', CategoryController::class);
+        // Route::apiResources([
+        //     'categories' => CategoryController::class,
+        //     'brands' => BrandController::class
+        // ]);
     });
 });
 // new api v1

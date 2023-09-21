@@ -10,7 +10,7 @@ const useCustomForm: CustomForm = (props) => {
             name: string;
         };
         // console.log(path, "path");
-        // values.name = path.toString();
+        values.name = path.toString();
         return values;
     };
     return form;

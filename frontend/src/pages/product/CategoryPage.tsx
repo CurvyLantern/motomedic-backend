@@ -7,6 +7,7 @@ import {
     editCategory,
     useCategoryQuery,
 } from "@/queries/categoryQuery";
+import { CategoryWithSubCateogry } from "@/types/defaultTypes";
 import dataToFormdata from "@/utils/dataToFormdata";
 import {
     Text,
@@ -19,12 +20,16 @@ import {
     Table,
     Grid,
     Collapse,
+    Divider,
+    ActionIcon,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
+import { modals } from "@mantine/modals";
 import { useQuery } from "@tanstack/react-query";
 import { ca, tr } from "date-fns/locale";
+import React from "react";
 import { useMemo, useRef, useState } from "react";
-import { TbPlus } from "react-icons/tb";
+import { TbPlus, TbX } from "react-icons/tb";
 import { z } from "zod";
 const fields = [
     {
@@ -67,67 +72,108 @@ const ViewCategories = () => {
     console.log(categories, "categories from db ");
 
     const [isDeletingId, setIsDeletingId] = useState<string | number>();
-    const [activeCollapseId, setActiveCollapseId] = useState<string | number>();
+
+    const viewCategory = (category: CategoryWithSubCateogry) => {
+        modals.open({
+            modalId: "viewCategory",
+            centered: true,
+            withCloseButton: false,
+            children: (
+                <BasicSection
+                    title={`All Category data of ${category.id}`}
+                    headerLeftElement={
+                        <ActionIcon
+                            onClick={() => {
+                                modals.close("viewCategory");
+                            }}
+                        >
+                            <TbX />
+                        </ActionIcon>
+                    }
+                >
+                    <Grid>
+                        <Grid.Col span={4}>Id :</Grid.Col>
+
+                        <Grid.Col span={8}>{category.id}</Grid.Col>
+                        <Grid.Col span={4}>Name :</Grid.Col>
+
+                        <Grid.Col span={8}>{category.name}</Grid.Col>
+                        <Grid.Col span={12}>
+                            <Divider
+                                my="xs"
+                                label="Sub Categories"
+                                labelPosition="center"
+                            />
+                        </Grid.Col>
+                        <Table>
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {category.sub_categories.map((subCategory) => (
+                                    <tr key={subCategory.id}>
+                                        <td>{subCategory.id}</td>
+                                        <td>{subCategory.name}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </Grid>
+                </BasicSection>
+            ),
+        });
+    };
     const tCategoryRows =
         categories && categories.length > 0 ? (
             categories.map((category) => {
                 const deleting = isDeletingId === category.id;
                 return (
-                    <>
-                        <tr
-                            key={category.id}
-                            onClick={() => {
-                                setActiveCollapseId((p) =>
-                                    p === category.id ? undefined : category.id
-                                );
-                            }}
-                        >
-                            <td>{category.name}</td>
-                            <td>{category.image}</td>
-                            <td>
-                                <SimpleGrid cols={2}>
-                                    <Button
-                                        disabled={deleting}
-                                        onClick={() => {
-                                            editCategory(category);
-                                        }}
-                                        compact
-                                        size="xs"
-                                    >
-                                        Edit
-                                    </Button>
-                                    <Button
-                                        loading={deleting}
-                                        onClick={() => {
-                                            setIsDeletingId(category.id);
-                                            deleteCategory(category).finally(
-                                                () => {
-                                                    setIsDeletingId(undefined);
-                                                }
-                                            );
-                                        }}
-                                        compact
-                                        size="xs"
-                                    >
-                                        Delete
-                                    </Button>
-                                </SimpleGrid>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colSpan={3}>
-                                <Collapse in={activeCollapseId === category.id}>
-                                    {category.sub_categories.map((subCat) => {
-                                        return (
-                                            <Text key={subCat.id}>
-                                                {subCat.name}
-                                            </Text>
-                                        );
-                                    })}
-                                </Collapse>
-                            </td>
-                        </tr>
-                    </>
+                    <tr key={category.id}>
+                        <td>{category.id}</td>
+                        <td>{category.name}</td>
+                        <td>{category.image}</td>
+                        <td>
+                            <SimpleGrid cols={3}>
+                                <Button
+                                    disabled={deleting}
+                                    onClick={() => {
+                                        viewCategory(category);
+                                    }}
+                                    compact
+                                    size="xs"
+                                >
+                                    View
+                                </Button>
+                                <Button
+                                    disabled={deleting}
+                                    onClick={() => {
+                                        editCategory(category);
+                                    }}
+                                    compact
+                                    size="xs"
+                                >
+                                    Edit
+                                </Button>
+                                <Button
+                                    variant="danger"
+                                    loading={deleting}
+                                    onClick={() => {
+                                        setIsDeletingId(category.id);
+                                        deleteCategory(category).finally(() => {
+                                            setIsDeletingId(undefined);
+                                        });
+                                    }}
+                                    compact
+                                    size="xs"
+                                >
+                                    Delete
+                                </Button>
+                            </SimpleGrid>
+                        </td>
+                    </tr>
                 );
             })
         ) : (
@@ -142,6 +188,7 @@ const ViewCategories = () => {
             <Table>
                 <thead>
                     <tr>
+                        <th>Id</th>
                         <th>Name</th>
                         <th>Image</th>
                         <th>Actions</th>

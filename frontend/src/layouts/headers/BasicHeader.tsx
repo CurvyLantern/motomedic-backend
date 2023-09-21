@@ -230,7 +230,6 @@ const useDemoStyles = createStyles((theme) => ({
 }));
 const AuthenticatedProfile = () => {
   const { user } = useAuth();
-  console.log(user, "authenticated profile");
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const { classes, cx, theme } = useDemoStyles();
   return (

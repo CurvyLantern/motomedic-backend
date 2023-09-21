@@ -55,20 +55,21 @@ const CreateProductForm = () => {
                         const isSelect = field.type === fieldTypes.select;
                         if (isSelect) {
                             field.data = selectInitialData[field.name];
+                            console.log(field, "field");
                         }
                         return (
                             <BaseInputs
                                 form={form}
                                 // @ts-expect-error i dont know why
-                                field={field}
-                                key={fieldIdx}
+                                field={{ ...field }}
+                                key={field.name}
                             />
                         );
                     }
                 );
                 return acc;
             }, {} as TypedObject<typeof productFields, JSX.Element[]>),
-        [form]
+        [form, selectInitialData]
     );
 
     const onFormSubmit = (values: unknown) => {

@@ -5,8 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 
 const url = "categories";
 export const useCategoryQuery = () => {
-    console.log(" from cat query ");
-
     const { data } = useQuery<
         | { data: Array<CategoryWithSubCateogry> }
         | Array<CategoryWithSubCateogry>

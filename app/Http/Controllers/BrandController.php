@@ -42,13 +42,11 @@ class BrandController extends Controller
     public function index()
     {
         $brands = Brand::orderBy('id', 'asc')->get();
-
-        $context = [
-            'brands' => $brands,
-
-        ];
-        return BrandResource::collection($brands);
-        return send_response('Brand data successfully loaded !!', $context);
+        if ($brands) {
+            return BrandResource::collection($brands);
+        } else {
+            return send_response('Brand data not found !!', []);
+        }
     }
 
     /**
@@ -70,12 +68,7 @@ class BrandController extends Controller
             //     $imagePath = $request->file('img')->store('brand', 'public');
             // }
 
-            $brand = Brand::create(["brand_name" => $request->brandName,
-                // 'slug' =>  Str::slug($request->brandName, '-'),
-                "description" => $request->description,
-                // "brand_image" => $imagePath,
-                "parentbrandId" => $request->parentbrandId,
-            ]);
+            $brand = Brand::create($validated);
             $context = [
                 'brand' => $brand,
             ];
