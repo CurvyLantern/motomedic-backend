@@ -56,19 +56,22 @@ class BrandController extends Controller
     {
         //
         $validated = $request->validated();
-
-
-        // if ($validator->fails()) {
-        //     return send_error('Data validation Failed !!', $validator->errors(), 422);
-        // }
-
         try {
             //create brand and save it to database
             // if ($request->hasFile('img')) {
             //     $imagePath = $request->file('img')->store('brand', 'public');
             // }
 
+
+
+
+
+//            var_dump($test);
+
             $brand = Brand::create($validated);
+
+
+
             $context = [
                 'brand' => $brand,
             ];

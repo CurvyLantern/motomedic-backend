@@ -24,7 +24,7 @@ class StoreCustomerRequest extends FormRequest
         return [
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
-            'phone' => 'required|min:11',
+            'phone' => 'required|numeric|between:8,11',
         ];
     }
 }

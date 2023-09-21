@@ -44,6 +44,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         // ]);
     });
 });
+
+
 // new api v1
 /* Route::prefix('v1')->group(function () {
 
@@ -156,3 +158,29 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Admin middleware controll routes ................
 
 }); */
+
+
+
+
+
+
+
+
+
+
+
+
+//.........................API version v2
+
+
+Route::prefix('v2')->group(function () {
+
+
+//
+    Route::apiResource('brands', BrandController::class);
+    Route::apiResource('categories', CategoryController::class);
+
+//    Route::get('brand/create',[BrandController::class,'store'])->name('brand.create');
+
+
+});
