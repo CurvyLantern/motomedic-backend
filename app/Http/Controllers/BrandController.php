@@ -57,16 +57,11 @@ class BrandController extends Controller
         //
         $validated = $request->validated();
         try {
-            //create brand and save it to database
-            // if ($request->hasFile('img')) {
-            //     $imagePath = $request->file('img')->store('brand', 'public');
-            // }
+            $imagePrefix = 'motomedic-media-image-';
+            $number = 1000;
 
-
-
-
-
-//            var_dump($test);
+            $imageName = $imagePrefix.$number.'.'.$request->file('image')->getClientOriginalExtension();
+            $validated['image'] = $request->file('image')->store('image',$imageName);
 
             $brand = Brand::create($validated);
 
