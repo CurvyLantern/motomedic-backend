@@ -136,7 +136,7 @@ class BrandController extends Controller
             $brand = Brand::find($id);
             if ($brand) {
                 $brand->delete();
-                return send_response('Brand Deleted successfully', []);
+                return send_response('0Brand Deleted successfully', []);
             } else {
                 return send_error('Brand Not Found to delete !!');
             }
