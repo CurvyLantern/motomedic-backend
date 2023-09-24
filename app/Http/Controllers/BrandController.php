@@ -56,19 +56,17 @@ class BrandController extends Controller
     {
         //
         $validated = $request->validated();
-
-
-        // if ($validator->fails()) {
-        //     return send_error('Data validation Failed !!', $validator->errors(), 422);
-        // }
-
         try {
-            //create brand and save it to database
-            // if ($request->hasFile('img')) {
-            //     $imagePath = $request->file('img')->store('brand', 'public');
-            // }
+            $imagePrefix = 'motomedic-media-image-';
+            $number = 1000;
+
+            $imageName = $imagePrefix.$number.'.'.$request->file('image')->getClientOriginalExtension();
+            $validated['image'] = $request->file('image')->store('image',$imageName);
 
             $brand = Brand::create($validated);
+
+
+
             $context = [
                 'brand' => $brand,
             ];
@@ -136,7 +134,7 @@ class BrandController extends Controller
             $brand = Brand::find($id);
             if ($brand) {
                 $brand->delete();
-                return send_response('0Brand Deleted successfully', []);
+                return send_response('Brand Deleted successfully', []);
             } else {
                 return send_error('Brand Not Found to delete !!');
             }

@@ -18,7 +18,7 @@ class ColorFactory extends Factory
     {
         return [
             'name' => fake()->safeColorName(),
-            'code' => fake()->safeHexColor(),
+            'hexcode' => fake()->safeHexColor(),
         ];
     }
 }

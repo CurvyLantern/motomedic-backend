@@ -24,7 +24,7 @@ class StoreBrandRequest extends FormRequest
         return [
             "name" => "required",
             "description" => "required",
-            // "brand_image" => "required",
+             "image" => "image|nullable",
         ];
     }
 }

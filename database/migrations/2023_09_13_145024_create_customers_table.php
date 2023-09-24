@@ -12,25 +12,26 @@ return new class extends Migration
     public function up(): void
     {
         // Schema::disableForeignKeyConstraints();
-        // Schema::create('customers', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('customerName');
-        //     $table->string('email')->unique()->nullable();
-        //     $table->timestamp('email_verified_at')->nullable();
-        //     $table->string('phone')->unique();
-        //     $table->string('verification_code')->unique()->nullable();
-        //     $table->timestamp('phone_verified_at')->nullable();
-        //     $table->string('password');
+         Schema::create('customers', function (Blueprint $table) {
+             $table->id();
+             $table->string('name');
+             $table->string('email')->unique()->nullable();
+             $table->timestamp('email_verified_at')->nullable();
+             $table->string('phone')->unique();
+             $table->string('verification_code')->unique()->nullable();
+             $table->timestamp('phone_verified_at')->nullable();
+             $table->string('password');
+             $table->text('bike_info')->nullable();
+             $table->boolean('status')->default(true);
+             $table->rememberToken();
+             $table->timestamps();
 
-        //     $table->unsignedBigInteger('userDetailsId')->nullable();
-        //     $table->foreign('userDetailsId')->references('id')->on('user_details')->onUpdate('cascade')->onDelete('cascade');
 
-        //     $table->string('bikeInfo')->nullable();
 
-        //     $table->tinyInteger('status')->default(0);
-        //     $table->rememberToken();
-        //     $table->timestamps();
-        // });
+//             $table->unsignedBigInteger('userDetailsId')->nullable();
+//             $table->foreign('userDetailsId')->references('id')->on('user_details')->onUpdate('cascade')->onDelete('cascade');
+
+         });
         // Schema::enableForeignKeyConstraints();
     }
 
