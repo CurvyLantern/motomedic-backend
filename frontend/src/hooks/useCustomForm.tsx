@@ -10,7 +10,11 @@ const useCustomForm: CustomForm = (props) => {
             name: string;
         };
         // console.log(path, "path");
-        values.name = path.toString();
+        const name = path.toString()
+        const newName = name.split('.');
+            const firstPath = newName[0];
+            const restOfThePaths = newName.slice(1).map(i => `[${i}]`).join('');
+        values.name = firstPath + restOfThePaths;
         return values;
     };
     return form;

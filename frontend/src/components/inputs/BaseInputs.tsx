@@ -33,6 +33,8 @@ type InputType = {
     };
 
     form: UseFormReturnType<any, (values: any) => void>;
+
+    name?: string
 };
 
 export const fieldTypes: { [k in ProductFieldInputType]: k } = {
@@ -50,7 +52,7 @@ export const fieldTypes: { [k in ProductFieldInputType]: k } = {
     yearPicker: "yearPicker",
     null: "null",
 };
-const BaseInputs = ({ field, form }: InputType) => {
+const BaseInputs = ({ field, form,name }: InputType) => {
     let inputComponent: JSX.Element | null = null;
 
     const type = field.type;

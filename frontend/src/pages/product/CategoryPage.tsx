@@ -25,6 +25,7 @@ import {
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
 import { useQuery } from "@tanstack/react-query";
 import { ca, tr } from "date-fns/locale";
 import React from "react";
@@ -226,12 +227,14 @@ const CreateCategoryForm = () => {
         validate: validationSchema(),
         //   parentCategoryId: () => null,
     });
-    const onCreate = async (values: typeof form.values) => {
+    const categoryFormRef = useRef<HTMLFormElement>(null);
+    const onCreate = async () => {
         setLoading(true);
 
         const url = "categories";
-        const formData = dataToFormdata({ data: values });
-
+        // const formData = dataToFormdata({ data: values });
+        const formData = new FormData(categoryFormRef.current ?? undefined);
+        // console.log(values , 'from 34')
         // for (const [k, v] of formData.entries()) {
         //     console.log("1 ", k + ", " + JSON.stringify(v));
         // }
@@ -241,6 +244,11 @@ const CreateCategoryForm = () => {
                 .post(url, formData)
                 .then((res) => res.data);
             console.log(res, "from on create");
+            notifications.show({
+                color: 'green',
+                message: 'Category created successfully'
+            })
+            form.reset();
         } catch (error) {
             console.error(error);
         } finally {
@@ -297,7 +305,7 @@ const CreateCategoryForm = () => {
     );
     return (
         <BasicSection title="Create Category">
-            <form onSubmit={form.onSubmit(onCreate)}>
+            <form ref={categoryFormRef} onSubmit={form.onSubmit(onCreate)}>
                 <Grid>
                     {fields.map((field, fieldIdx) => {
                         return (
