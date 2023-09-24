@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Exception;
 use App\Models\Category;
 use App\Models\Product;
@@ -52,10 +53,17 @@ class CategoryController extends Controller
     {
         try {
             $validated = $request->validated();
-            $category = Category::create([
-                'name' => $validated['name'],
-                'parent_category_id' => $validated['parent_category_id'] ?? null,
-            ]);
+
+            if ($request->hasFile('image')){
+                $imagePrefix = 'motomedic-media-image-';
+                $formattedTimestamp = Carbon::now()->format('Ymd_His');
+
+                $imageName = $imagePrefix.$formattedTimestamp.'.'.$request->file('image')->getClientOriginalExtension();
+                $validated['image'] = $request->file('image')->storeAs('image',$imageName);
+            }
+
+            $category = Category::create($validated);
+
             $hasSubcategories = $request->has('sub_categories');
             if ($hasSubcategories) {
                 foreach ($request['sub_categories'] as $subCategoryData) {
@@ -66,28 +74,6 @@ class CategoryController extends Controller
             }
             return response()->json(['message' => 'Category created successfully']);
 
-
-            // if ($validator->fails()) {
-            //     return send_error('Data validation Failed !!', $validator->errors(), 422);
-            // }
-            //create category and save it to database
-            if ($request->hasFile('img')) {
-                $imagePath = $request->file('img')->store('category', 'public');
-            }
-
-            $category = Category::create([
-                "categoryName" => $request->categoryName,
-                'slug' =>  Str::slug($request->categoryName, '-'),
-                "description" => $request->description,
-                "img" => $imagePath,
-                "parentCategoryId" => $request->parentCategoryId,
-            ]);
-            $context = [
-                'category' => $category,
-            ];
-
-
-            return send_response('Category create successfull !', $context);
         } catch (Exception $e) {
             return send_error($e->getMessage(), $e->getCode());
         }

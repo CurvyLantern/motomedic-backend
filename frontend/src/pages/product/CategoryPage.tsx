@@ -229,18 +229,20 @@ const CreateCategoryForm = () => {
     const onCreate = async (values: typeof form.values) => {
         setLoading(true);
 
+        console.log(values, ' values from 232 ');
+
         const url = "categories";
         const formData = dataToFormdata({ data: values });
 
-        // for (const [k, v] of formData.entries()) {
-        //     console.log("1 ", k + ", " + JSON.stringify(v));
-        // }
+        for (const [k, v] of formData.entries()) {
+            console.log("1 ", k + ", " + JSON.stringify(v));
+        }
 
         try {
-            const res = await axiosClient.v1.api
-                .post(url, formData)
-                .then((res) => res.data);
-            console.log(res, "from on create");
+            // const res = await axiosClient.v1.api
+            //     .post(url, formData)
+            //     .then((res) => res.data);
+            // console.log(res, "from on create");
         } catch (error) {
             console.error(error);
         } finally {

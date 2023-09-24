@@ -4,6 +4,9 @@ use App\Http\Controllers\CsrfController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
+
+use App\Http\Controllers\BrandController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,3 +29,6 @@ Route::prefix('v1')->group(function () {
         require __DIR__ . '/auth.php';
     });
 });
+
+
+Route::get('api-test-page',[BrandController::class,'apiTestPage'])->name('api.test.page');
