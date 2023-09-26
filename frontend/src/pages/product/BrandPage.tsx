@@ -13,6 +13,7 @@ import {
     Text,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
 import { useQuery } from "@tanstack/react-query";
 
 const BrandPage = () => {
@@ -48,12 +49,26 @@ const BrandPage = () => {
 
 const useBrandsQuery = () => {
     const url = "brands";
-    const { data: brands } = useQuery({
+    const { data } = useQuery<Brand[] | { data: Brand[] } | null>({
         queryKey: ["get/brands"],
         queryFn: async () => {
             return axiosClient.v1.api.get(url).then((res) => res.data);
         },
     });
+
+    let brands: Brand[] | null = null;
+
+    if (data) {
+        if (Array.isArray(data)) {
+            brands = data;
+        } else if (
+            data.data &&
+            Array.isArray(data.data) &&
+            data.data.length > 0
+        ) {
+            brands = data.data;
+        }
+    }
     return {
         brands,
     };
@@ -61,14 +76,11 @@ const useBrandsQuery = () => {
 
 const ViewBrands = () => {
     const { brands } = useBrandsQuery();
-    console.log({ brands });
-    const data = brands?.data;
-    const hasData = Array.isArray(data);
 
     const editBrand = (brand: Brand) => {
-        const { brand_name, id } = brand;
+        const { name, id } = brand;
         modals.open({
-            title: `Edit brand ${brand_name}`,
+            title: `Edit brand ${name}`,
             centered: true,
             children: (
                 <BrandForm
@@ -85,20 +97,28 @@ const ViewBrands = () => {
             ),
         });
     };
-    const deleteBrand = (id: string | number) => {
+    const deleteBrand = (brand: Brand) => {
+        const url = "brands";
         const confirm = window.confirm(
-            "Are you sure you want to delete this ? " + id
+            "Are you sure you want to delete this ? " + brand.id
         );
         if (confirm) {
             //do something
+            axiosClient.v1.api.delete(`${url}/${brand.id}`).then((res) => {
+                notifications.show({
+                    color: "green",
+                    message: "Brand Deleted",
+                });
+                return res.data;
+            });
         }
     };
 
     return (
         <div>
             <Group position="center" align="normal">
-                {hasData
-                    ? data.map((brand) => {
+                {brands
+                    ? brands.map((brand) => {
                           const id = brand.id;
                           return (
                               <Card
@@ -112,10 +132,10 @@ const ViewBrands = () => {
                                   maw={200}
                               >
                                   <AspectRatio ratio={16 / 11}>
-                                      <Image src={brand.img}></Image>
+                                      <Image src={brand.image}></Image>
                                   </AspectRatio>
                                   <Text size="sm" weight={"bold"} mt={"auto"}>
-                                      {brand.brandName}
+                                      {brand.name}
                                   </Text>
                                   <Box
                                       sx={{
@@ -142,7 +162,7 @@ const ViewBrands = () => {
                                           })}
                                           size="xs"
                                           compact
-                                          onClick={() => deleteBrand(id)}
+                                          onClick={() => deleteBrand(brand)}
                                       >
                                           Delete
                                       </Button>

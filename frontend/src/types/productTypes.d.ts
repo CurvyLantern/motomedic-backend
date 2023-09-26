@@ -13,7 +13,7 @@ type Product = {
 };
 type Brand = {
     id?: string;
-    brand_name: string;
+    name: string;
     description: string;
-    brand_image: string | null;
+    image: string | null;
 };

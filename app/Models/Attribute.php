@@ -14,8 +14,15 @@ class Attribute extends Model
         'priority'
     ];
 
-    public function values()
+    public function attributeValues()
     {
         return $this->hasMany(AttributeValue::class, 'attribute_id');
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_attributes')
+            ->using(ProductAttribute::class)
+            ->withPivot('attribute_value_id');
     }
 }

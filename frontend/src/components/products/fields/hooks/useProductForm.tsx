@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from "zod";
 import { useForm, zodResolver } from "@mantine/form";
 import { productFields } from "../fields";
 import { useQuery } from "@tanstack/react-query";
 import { useCategoryQuery } from "@/queries/categoryQuery";
 import { useEffect, useMemo } from "react";
+import useCustomForm from "@/hooks/useCustomForm";
 
 const initialValues = Object.values(productFields)
     .flat(1)
@@ -12,7 +14,6 @@ const initialValues = Object.values(productFields)
         acc[item.name] = item.data;
         return acc;
     }, {});
-console.log({ initialValues });
 
 const validation = Object.values(productFields)
     .flat(1)
@@ -24,15 +25,17 @@ const productSchema = z.object(validation);
 
 export const useProductForm = () => {
     const { categories } = useCategoryQuery();
-    const category_id = Array.isArray(categories)
-        ? categories.map((c: { name: string; id: number }) => ({
-              ...c,
-              label: c.name,
-              value: String(c.id),
+    const category_id = categories
+        ? categories.map((c) => ({
+              group: c.name,
+              //   items: c.sub_categories.map((subC) => ({
+              //       label: subC.name,
+              //       value: String(subC.id),
+              //   })),
+              items: c.sub_categories.map((subC) => subC.name),
           }))
         : [];
-
-    const form = useForm({
+    const form = useCustomForm({
         validate: zodResolver(productSchema),
         initialValues: () => {
             return {
@@ -42,10 +45,12 @@ export const useProductForm = () => {
         },
     });
 
+    const selectInitialData: Record<string, any> = {
+        category_id,
+    };
+
     return {
         form,
-        selectInitialData: {
-            category_id,
-        },
+        selectInitialData,
     };
 };

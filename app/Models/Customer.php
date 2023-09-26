@@ -15,12 +15,12 @@ class Customer extends Model
      */
     // protected $guard = 'admin';
     protected $fillable = [
-        'customerName',
+        'name',
         'email',
         'password',
         'phone',
         'status',
-        'bikeInfo',
+        'bike_info',
     ];
 
     /**

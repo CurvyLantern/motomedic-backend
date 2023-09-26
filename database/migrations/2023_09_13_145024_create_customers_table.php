@@ -12,21 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         // Schema::disableForeignKeyConstraints();
-         Schema::create('customers', function (Blueprint $table) {
-             $table->id();
-             $table->string('name');
-             $table->string('email')->unique()->nullable();
-             $table->string('phone')->unique();
-             $table->string('bike_info')->nullable();
-             $table->text('address')->nullable();
-             $table->boolean('status')->default(true);
-             $table->rememberToken();
-             $table->timestamps();
-
-        //     $table->unsignedBigInteger('userDetailsId')->nullable();
-        //     $table->foreign('userDetailsId')->references('id')->on('user_details')->onUpdate('cascade')->onDelete('cascade');
-
-         });
+        Schema::create('customers', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique()->nullable();
+            $table->string('phone')->unique();
+            $table->string('bike_info')->nullable();
+            $table->text('address')->nullable();
+            $table->boolean('status')->default(true);
+            $table->rememberToken();
+            $table->timestamps();
+        });
         // Schema::enableForeignKeyConstraints();
     }
 

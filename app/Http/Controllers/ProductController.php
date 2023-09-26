@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Exception;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
@@ -56,42 +57,48 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         $brands = Brand::all();
-        $validator = $request->validated();
-        $category = Category::findOrFail($validator('categoryId'));
+        $validated= $request->validated();
+        $category = Category::findOrFail($validated('categoryId'));
 
         try {
-            $image_path = '';
-            if ($request->hasFile('primaryImg')) {
-                $image_path = $request->file('primaryImg')->store('products', 'public');
+
+            if ($request->hasFile('image')){
+                $imagePrefix = 'motomedic-media-image-';
+                $formattedTimestamp = Carbon::now()->format('Ymd_His');
+
+                $imageName = $imagePrefix.$formattedTimestamp.'.'.$request->file('image')->getClientOriginalExtension();
+                $validated['image'] = $request->file('image')->storeAs('image',$imageName);
             }
+
+
             // products() function is from category model relation
             $product = $category->products()->create([
-                'categoryId' => $validator['category'],
-                'productName' => $validator['productName'],
-                'slug' =>  Str::slug($validator['productName'], '-'),
-                'brandId' => $validator['brandId'],
-                'model' => $validator['model'],
-                'color' => $validator['color'],
-                'tags' => $validator['tags'],
-                'size' => $validator['size'],
-                'year' => $validator['year'],
-                'compitibility' => $validator['compitibility'],
-                'condition' => $validator['condition'],
-                'weight' => $validator['weight'],
-                'manufacturer' => $validator['manufacturer'],
-                'price' => $validator['price'],
-                'quantity' => $validator['quantity'],
-                'price' => $validator['price'],
-                'discoundType' => $validator['discoundType'],
-                'discount' => $validator['discount'],
+                'categoryId' => $validated['category'],
+                'productName' => $validated['productName'],
+                'slug' =>  Str::slug($validated['productName'], '-'),
+                'brandId' => $validated['brandId'],
+                'model' => $validated['model'],
+                'color' => $validated['color'],
+                'tags' => $validated['tags'],
+                'size' => $validated['size'],
+                'year' => $validated['year'],
+                'compitibility' => $validated['compitibility'],
+                'condition' => $validated['condition'],
+                'weight' => $validated['weight'],
+                'manufacturer' => $validated['manufacturer'],
+                'price' => $validated['price'],
+                'quantity' => $validated['quantity'],
+                'price' => $validated['price'],
+                'discoundType' => $validated['discoundType'],
+                'discount' => $validated['discount'],
                 'primaryImg' => $image_path,
-                'shortDescriptions' => $validator['shortDescriptions'],
-                'longDescriptions' => $validator['longDescriptions'],
-                'installationMethod' => $validator['installationMethod'],
-                'warranty' => $validator['warranty'],
-                'note' => $validator['note'],
-                'availability' => $validator['availability'],
-                'status' => $validator['status'],
+                'shortDescriptions' => $validated['shortDescriptions'],
+                'longDescriptions' => $validated['longDescriptions'],
+                'installationMethod' => $validated['installationMethod'],
+                'warranty' => $validated['warranty'],
+                'note' => $validated['note'],
+                'availability' => $validated['availability'],
+                'status' => $validated['status'],
             ]);
             // media_images()
             // Upload multiple thumbnail image

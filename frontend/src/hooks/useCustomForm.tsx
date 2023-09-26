@@ -9,6 +9,7 @@ const useCustomForm: CustomForm = (props) => {
         const values = temp(path) as ReturnType<typeof temp> & {
             name: string;
         };
+        // console.log(path, "path");
         values.name = path.toString();
         return values;
     };

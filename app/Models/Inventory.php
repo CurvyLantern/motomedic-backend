@@ -13,8 +13,12 @@ class Inventory extends Model
         'stock_count'
     ];
 
-    public function product()
+    public function productOrVariation()
     {
-        return $this->belongsTo(Product::class, 'sku', 'sku');
+        return Product::whereHas('inventory', function ($query) {
+            $query->where('sku', $this->sku);
+        })->first() ?? ProductVariation::whereHas('inventory', function ($query) {
+            $query->where('sku', $this->sku);
+        })->first();
     }
 }

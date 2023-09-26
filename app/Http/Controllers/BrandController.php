@@ -7,6 +7,7 @@ use App\Http\Requests\StoreBrandRequest;
 use App\Http\Requests\UpdateBrandRequest;
 use App\Http\Resources\BrandResource;
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
@@ -42,13 +43,11 @@ class BrandController extends Controller
     public function index()
     {
         $brands = Brand::orderBy('id', 'asc')->get();
-
-        $context = [
-            'brands' => $brands,
-
-        ];
-        return BrandResource::collection($brands);
-        return send_response('Brand data successfully loaded !!', $context);
+        if ($brands) {
+            return BrandResource::collection($brands);
+        } else {
+            return send_response('Brand data not found !!', []);
+        }
     }
 
     /**
@@ -57,25 +56,23 @@ class BrandController extends Controller
     public function store(StoreBrandRequest $request)
     {
         //
-        $validated = $request->validated();
-
-
-        // if ($validator->fails()) {
-        //     return send_error('Data validation Failed !!', $validator->errors(), 422);
-        // }
 
         try {
-            //create brand and save it to database
-            // if ($request->hasFile('img')) {
-            //     $imagePath = $request->file('img')->store('brand', 'public');
-            // }
+            $validated = $request->validated();
 
-            $brand = Brand::create(["brand_name" => $request->brandName,
-                // 'slug' =>  Str::slug($request->brandName, '-'),
-                "description" => $request->description,
-                // "brand_image" => $imagePath,
-                "parentbrandId" => $request->parentbrandId,
-            ]);
+            if ($request->hasFile('image')){
+                $imagePrefix = 'motomedic-media-image-';
+                $formattedTimestamp = Carbon::now()->format('Ymd_His');
+
+                $imageName = $imagePrefix.$formattedTimestamp.'.'.$request->file('image')->getClientOriginalExtension();
+                $validated['image'] = $request->file('image')->storeAs('image',$imageName);
+            }
+
+            $brand = Brand::create($validated);
+
+
+
+
             $context = [
                 'brand' => $brand,
             ];
@@ -143,12 +140,20 @@ class BrandController extends Controller
             $brand = Brand::find($id);
             if ($brand) {
                 $brand->delete();
-                return send_response('Brand Deleted successfully', []);
+                return send_response('0Brand Deleted successfully', []);
             } else {
                 return send_error('Brand Not Found to delete !!');
             }
         } catch (Exception $e) {
             return send_error($e->getMessage(), $e->getCode());
         }
+    }
+
+
+    public function apiTestPage(){
+
+
+
+        return view('apitest');
     }
 }

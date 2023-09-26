@@ -180,8 +180,26 @@ const FileUploadButton = ({ field, form }: InputType) => {
 const CustomSelect = ({ field, form }: InputType) => {
     if (field.name === "category_id") {
         console.log(field.name, "from name custom select ");
-        const dataTemp = form.values[field.name];
+        const dataTemp = field.data;
         console.log({ dataTemp });
+
+        const data = [
+            {
+                group: "Frontend",
+                items: [
+                    { label: "React", value: "1" },
+                    { label: "Angular", value: "2" },
+                ],
+            },
+        ];
+        return (
+            <Select
+                {...form.getInputProps(field.name)}
+                label={field.label}
+                placeholder={field.label}
+                data={data}
+            />
+        );
     }
     return (
         <Select

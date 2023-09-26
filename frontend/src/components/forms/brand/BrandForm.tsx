@@ -1,3 +1,4 @@
+import useCustomForm from "@/hooks/useCustomForm";
 import axiosClient from "@/lib/axios";
 import dataToFormData from "@/utils/dataToFormdata";
 import {
@@ -9,6 +10,7 @@ import {
     Textarea,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
+import { AxiosError } from "axios";
 import { z } from "zod";
 type BrandFormProps = {
     method?: "GET" | "POST" | "PUT" | "DELETE";
@@ -25,27 +27,25 @@ export const BrandForm = ({
     onCancel = () => {},
     submitUrl = "",
 }: BrandFormProps) => {
-    const form = useForm<Brand>({
+    const form = useCustomForm<Brand>({
         initialValues: {
-            brand_name: brand?.brand_name ? brand.brand_name : "My Cool Brand",
+            name: brand?.name ? brand.name : "My Cool Brand",
             description: brand?.description
                 ? brand.description
                 : "My Brand is very cool",
-            brand_image: null,
+            image: null,
         },
         validate: zodResolver(
             z.object({
-                brand_name: z.string(),
+                name: z.string(),
                 description: z.string(),
-                brand_image: z.any(),
+                image: z.any(),
             })
         ),
     });
 
-    const submitForm = () => {
-        const values = form.values;
-        const formData = new FormData();
-        dataToFormData(formData, values);
+    const submitForm = (values: typeof form.values) => {
+        const formData = dataToFormData({ data: values });
         // submitUrl, formData, {
         // // headers: {
         // //     "Content-Type": "multipart/form-data",
@@ -63,22 +63,21 @@ export const BrandForm = ({
                 onSuccess();
             })
             .catch((error) => {
-                throw error;
+                const axiosError = error as AxiosError;
+                form.setErrors(axiosError.data.errors);
+                throw axiosError;
             });
     };
     return (
         <form onSubmit={form.onSubmit(submitForm)}>
             <Stack>
-                <TextInput
-                    {...form.getInputProps("brand_name")}
-                    label="Brand Name"
-                />
+                <TextInput {...form.getInputProps("name")} label="Brand Name" />
                 <Textarea
                     {...form.getInputProps("description")}
                     label="Brand Description"
                 />
                 <FileInput
-                    {...form.getInputProps("brand_image")}
+                    {...form.getInputProps("image")}
                     label="Upload files"
                     placeholder="Upload files"
                     accept="image/png,image/jpeg"

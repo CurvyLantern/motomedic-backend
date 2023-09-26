@@ -36,10 +36,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
             return new UserResource($user);
         });
 
-        Route::apiResource('categories', CategoryController::class);
         Route::apiResource('brands', BrandController::class);
+        Route::apiResource('categories', CategoryController::class);
+        // Route::apiResources([
+        //     'categories' => CategoryController::class,
+        //     'brands' => BrandController::class
+        // ]);
     });
 });
+
+
 // new api v1
 /* Route::prefix('v1')->group(function () {
 
@@ -152,3 +158,32 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Admin middleware controll routes ................
 
 }); */
+
+
+
+
+
+
+
+
+
+
+
+
+//.........................API version v2
+
+
+Route::prefix('v2')->group(function () {
+
+
+//
+    Route::apiResource('brands', BrandController::class);
+    Route::apiResource('categories', CategoryController::class);
+
+    Route::post('brands/create',[BrandController::class,'store'])->name('create.request');
+    Route::post('brands/create',[BrandController::class,'store'])->name('create.request');
+
+//    Route::get('brand/create',[BrandController::class,'store'])->name('brand.create');
+
+
+});
