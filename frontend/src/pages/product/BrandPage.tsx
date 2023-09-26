@@ -1,6 +1,7 @@
 import { BrandForm } from "@/components/forms/brand/BrandForm";
 import BasicSection from "@/components/sections/BasicSection";
 import axiosClient from "@/lib/axios";
+import { useBrandQuery } from "@/queries/brandQuery";
 import {
     AspectRatio,
     Box,
@@ -47,35 +48,8 @@ const BrandPage = () => {
     );
 };
 
-const useBrandsQuery = () => {
-    const url = "brands";
-    const { data } = useQuery<Brand[] | { data: Brand[] } | null>({
-        queryKey: ["get/brands"],
-        queryFn: async () => {
-            return axiosClient.v1.api.get(url).then((res) => res.data);
-        },
-    });
-
-    let brands: Brand[] | null = null;
-
-    if (data) {
-        if (Array.isArray(data)) {
-            brands = data;
-        } else if (
-            data.data &&
-            Array.isArray(data.data) &&
-            data.data.length > 0
-        ) {
-            brands = data.data;
-        }
-    }
-    return {
-        brands,
-    };
-};
-
 const ViewBrands = () => {
-    const { brands } = useBrandsQuery();
+    const { brands } = useBrandQuery();
 
     const editBrand = (brand: Brand) => {
         const { name, id } = brand;

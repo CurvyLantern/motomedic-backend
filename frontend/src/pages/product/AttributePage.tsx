@@ -1,6 +1,10 @@
 import BasicSection from "@/components/sections/BasicSection";
+import useCustomForm from "@/hooks/useCustomForm";
 import axiosClient from "@/lib/axios";
+import { Attribute, IdField } from "@/types/defaultTypes";
 import {
+    Badge,
+    NumberInput,
     Button,
     Group,
     Grid,
@@ -9,19 +13,39 @@ import {
     SimpleGrid,
     TextInput,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { zodResolver } from "@mantine/form";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-const url = "v1/product-attribute/all";
+import { z } from "zod";
+import { qc } from "@/providers/QueryProvider";
+import {
+    invalidateAttributeQuery,
+    useAttributeQuery,
+} from "@/queries/attributeQuery";
+
+const url = "attributes";
 const AttributePage = () => {
-    const onEditAttrs = (id: number) => {};
-    const onDeleteAttrs = (id: number) => {};
-    const { data: attrs } = useQuery({
-        queryKey: ["attribute"],
-        queryFn: async () => {
-            return axiosClient.get(url).then((res) => res.data);
-        },
-        refetchInterval: 20,
-    });
+    const attrs = useAttributeQuery();
+    const onEditAttrs = (attr: Attribute) => {};
+    const onDeleteAttrs = (attr: Attribute) => {
+        axiosClient.v1.api
+            .delete(`${url}/${attr.id}`)
+            .then((res) => {
+                notifications.show({
+                    message: "Attribute deleted successfully",
+                    color: "green",
+                });
+                invalidateAttributeQuery();
+
+                return res.data;
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
+
+    console.log(attrs, "attrs from fetch");
     return (
         <>
             <Grid>
@@ -31,39 +55,61 @@ const AttributePage = () => {
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Priority</th>
                                     <th>Values</th>
                                     <th style={{ width: "20%" }}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {attrs.map((attr) => {
-                                    return (
-                                        <tr key={attr.id}>
-                                            <td>{attr.name}</td>
-                                            <td>Attr 1</td>
-                                            <td>
-                                                <Group>
-                                                    <Button
-                                                        compact
-                                                        onClick={() => {
-                                                            onEditAttrs(0);
-                                                        }}
-                                                    >
-                                                        edit
-                                                    </Button>
-                                                    <Button
-                                                        compact
-                                                        onClick={() => {
-                                                            onDeleteAttrs(0);
-                                                        }}
-                                                    >
-                                                        delete
-                                                    </Button>
-                                                </Group>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
+                                {attrs
+                                    ? attrs.map((attr) => {
+                                          return (
+                                              <tr key={attr.id}>
+                                                  <td>{attr.name}</td>
+                                                  <td>{attr.priority}</td>
+                                                  <td>
+                                                      {attr.values.map(
+                                                          (value) => {
+                                                              return (
+                                                                  <Badge
+                                                                      key={
+                                                                          value
+                                                                      }
+                                                                  >
+                                                                      {value}
+                                                                  </Badge>
+                                                              );
+                                                          }
+                                                      )}
+                                                  </td>
+                                                  <td>
+                                                      <Group>
+                                                          <Button
+                                                              compact
+                                                              onClick={() => {
+                                                                  onEditAttrs(
+                                                                      attr
+                                                                  );
+                                                              }}
+                                                          >
+                                                              edit
+                                                          </Button>
+                                                          <Button
+                                                              compact
+                                                              onClick={() => {
+                                                                  onDeleteAttrs(
+                                                                      attr
+                                                                  );
+                                                              }}
+                                                          >
+                                                              delete
+                                                          </Button>
+                                                      </Group>
+                                                  </td>
+                                              </tr>
+                                          );
+                                      })
+                                    : null}
                             </tbody>
                         </Table>
                     </BasicSection>
@@ -78,52 +124,62 @@ const AttributePage = () => {
     );
 };
 const CreateAttributeForm = () => {
-    const [subAttrs, setSubAttrs] = useState<
-        Array<{ id: number; name: string; value: string }>
-    >([]);
-    const subIdRef = useRef(0);
+    const attributeFormRef = useRef<HTMLFormElement>(null);
+
+    const form = useCustomForm({
+        initialValues: {
+            name: "My cool attribute",
+            priority: 0,
+            attribute_values: [],
+        },
+        validate: zodResolver(
+            z.object({
+                name: z.string().min(1, "Attribute name cannot be empty"),
+                priority: z.number(),
+                attribute_values: z.array(
+                    z.string().min(1, "value cannot be empty")
+                ),
+            })
+        ),
+    });
     const onCreateSubAttr = () => {
-        setSubAttrs((p) => [
-            ...p,
-            { id: subIdRef.current++, name: "name", value: "value" },
-        ]);
+        form.insertListItem("attribute_values", "");
+        console.log(form.values, "form values");
     };
     const onReset = () => {
         const confirm = window.confirm("Are you sure ?");
         if (confirm) {
-            setSubAttrs([]);
+            form.reset();
         }
     };
-    const onDeleteSubField = (id: number) => {
-        setSubAttrs((p) => {
-            return p.filter((item) => item.id !== id);
-        });
+    const onCreate = async (values: typeof form.values) => {
+        try {
+            const data = await axiosClient.v1.api
+                .post(url, values)
+                .then((res) => res.data);
+
+            notifications.show({
+                message: "Attribute created successfully",
+                color: "green",
+            });
+            form.reset();
+            invalidateAttributeQuery();
+        } catch (error) {
+            console.error(error);
+        }
     };
-    const onSubFieldChange = ({
-        value = "",
-        id = 0,
-        propertyName = "name",
-    }: {
-        value: string;
-        id: number;
-        propertyName: string;
-    }) => {
-        setSubAttrs((p) => {
-            const _subAttr = p.find((item) => item.id === id);
-            if (_subAttr) {
-                // @ts-expect-error ecpect error at line 102 attribute page
-                _subAttr[propertyName] = value;
-            }
-            return [...p];
-        });
-    };
-    useEffect(() => {
-        console.log(subAttrs, "subAttrs");
-    }, [subAttrs]);
     return (
-        <form>
+        <form ref={attributeFormRef} onSubmit={form.onSubmit(onCreate)}>
             <Stack>
-                <TextInput label="Attribute Name" />
+                <TextInput
+                    label="Attribute Name"
+                    {...form.getInputProps("name")}
+                />
+                <NumberInput
+                    label="Attribute Priority"
+                    placeholder="set zero for normal priority"
+                    {...form.getInputProps("priority")}
+                />
                 <Button
                     onClick={() => {
                         onCreateSubAttr();
@@ -134,16 +190,15 @@ const CreateAttributeForm = () => {
                 <Table>
                     <thead>
                         <tr>
-                            <th>Name</th>
                             <th>Value</th>
-                            <th style={{ width: "10%" }}>Action</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {subAttrs.length <= 0 ? (
+                        {form.values.attribute_values.length <= 0 ? (
                             <tr>
                                 <td
-                                    colSpan={3}
+                                    colSpan={2}
                                     style={{
                                         textAlign: "center",
                                         verticalAlign: "middle",
@@ -153,55 +208,80 @@ const CreateAttributeForm = () => {
                                 </td>
                             </tr>
                         ) : (
-                            subAttrs.map((attr) => {
-                                return (
-                                    <tr key={attr.id}>
-                                        <td>
-                                            <TextInput
-                                                onChange={(v) => {
-                                                    onSubFieldChange({
-                                                        value: v.currentTarget
-                                                            .value,
-                                                        id: attr.id,
-                                                        propertyName: "name",
-                                                    });
-                                                }}
-                                            />
-                                        </td>
-                                        <td>
-                                            <TextInput
-                                                onChange={(v) => {
-                                                    onSubFieldChange({
-                                                        value: v.currentTarget
-                                                            .value,
-                                                        id: attr.id,
-                                                        propertyName: "value",
-                                                    });
-                                                }}
-                                            />
-                                        </td>
-                                        <td>
-                                            <Button
-                                                onClick={() => {
-                                                    onDeleteSubField(attr.id);
-                                                }}
-                                                compact
-                                                size={"xs"}
-                                            >
-                                                Delete
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                );
-                            })
+                            form.values.attribute_values.map(
+                                (attrValue, attrValueIndex) => {
+                                    return (
+                                        <tr key={attrValueIndex}>
+                                            {/* <td>
+                                                <TextInput
+                                                    onChange={(v) => {
+                                                        onSubFieldChange({
+                                                            value: v
+                                                                .currentTarget
+                                                                .value,
+                                                            id: attrValue.id,
+                                                            propertyName:
+                                                                "name",
+                                                        });
+                                                    }}
+                                                />
+                                            </td> */}
+                                            <td>
+                                                <TextInput
+                                                    {...form.getInputProps(
+                                                        `attribute_values.${attrValueIndex}`
+                                                    )}
+                                                />
+                                            </td>
+                                            {/* <td>
+                                                <TextInput
+                                                    onChange={(v) => {
+                                                        onSubFieldChange({
+                                                            value: v
+                                                                .currentTarget
+                                                                .value,
+                                                            id: attrValue.id,
+                                                            propertyName:
+                                                                "value",
+                                                        });
+                                                    }}
+                                                />
+                                            </td> */}
+                                            <td>
+                                                <Button
+                                                    onClick={() => {
+                                                        // onDeleteSubField(
+                                                        //     attrValue.id
+                                                        // );
+                                                        form.removeListItem(
+                                                            "attribute_values",
+                                                            attrValueIndex
+                                                        );
+                                                    }}
+                                                    compact
+                                                    size={"xs"}
+                                                >
+                                                    Delete
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    );
+                                }
+                            )
                         )}
                     </tbody>
                 </Table>
 
                 <SimpleGrid cols={2}>
-                    <Button disabled={subAttrs.length <= 0}>Save</Button>
                     <Button
-                        disabled={subAttrs.length <= 0}
+                        type="submit"
+                        disabled={form.values.attribute_values.length <= 0}
+                    >
+                        Save
+                    </Button>
+                    <Button
+                        type="button"
+                        disabled={form.values.attribute_values.length <= 0}
                         onClick={() => {
                             onReset();
                         }}

@@ -1,16 +1,16 @@
 import {
-  TbShoppingBag,
-  TbSettingsAutomation,
-  TbHammer,
-  TbUser,
-  TbCash,
-  TbUserDollar,
-  TbHome,
-  TbCardboards,
+    TbShoppingBag,
+    TbSettingsAutomation,
+    TbHammer,
+    TbUser,
+    TbCash,
+    TbUserDollar,
+    TbHome,
+    TbCardboards,
 } from "react-icons/tb";
 
 const getNavUrl = (prefix: string, url: string) => {
-  return `${prefix}/${url}`;
+    return `${prefix}/${url}`;
 };
 
 export const navData = [
@@ -154,6 +154,22 @@ export const navData = [
                 href: getNavUrl("customer", "all"),
                 label: "All Customers",
                 icon: TbUserDollar,
+            },
+        ],
+    },
+    {
+        label: "Billing Management",
+        icon: TbUser,
+        childLinks: [
+            {
+                href: getNavUrl("billing", "add"),
+                label: "Create Customer Invoice",
+                icon: TbCardboards,
+            },
+            {
+                href: getNavUrl("billing", "all"),
+                label: "Customer Invoices",
+                icon: TbCardboards,
             },
         ],
     },

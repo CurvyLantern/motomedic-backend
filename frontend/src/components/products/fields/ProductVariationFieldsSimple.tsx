@@ -31,7 +31,7 @@ const useProductVariationData = () => {
     };
 };
 
-export const ProductVariationFields = () => {
+export const ProductVariationFieldsSimple = () => {
     const { colors } = useProductVariationData();
     const [isVariationEnabled, setIsVariationEnabled] = useState(false);
     const dispatch = useAppDispatch();

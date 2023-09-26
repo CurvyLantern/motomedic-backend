@@ -33,8 +33,6 @@ type InputType = {
     };
 
     form: UseFormReturnType<any, (values: any) => void>;
-
-    name?: string
 };
 
 export const fieldTypes: { [k in ProductFieldInputType]: k } = {
@@ -52,7 +50,7 @@ export const fieldTypes: { [k in ProductFieldInputType]: k } = {
     yearPicker: "yearPicker",
     null: "null",
 };
-const BaseInputs = ({ field, form,name }: InputType) => {
+const BaseInputs = ({ field, form }: InputType) => {
     let inputComponent: JSX.Element | null = null;
 
     const type = field.type;
@@ -78,24 +76,22 @@ const BaseInputs = ({ field, form,name }: InputType) => {
             );
             break;
         case "select":
-            inputComponent = <CustomSelect field={field} form={form} />;
+            inputComponent = (
+                <Select
+                    searchable
+                    nothingFound={"Not found"}
+                    {...form.getInputProps(field.name)}
+                    label={field.label}
+                    placeholder={field.label}
+                    data={field.data ? field.data : []}
+                />
+            );
             break;
         case "richText":
-            inputComponent = <DescriptionEditor />;
+            inputComponent = <CustomRichText form={form} field={field} />;
             break;
         case "dropZone":
-            inputComponent = (
-                <>
-                    <Text align="center" my={rem(20)} size={"lg"} weight={600}>
-                        {field.label}
-                    </Text>
-                    <ImgDropzone
-                        onFileSave={(files) => {
-                            console.log({ files });
-                        }}
-                    />
-                </>
-            );
+            inputComponent = <CustomDropZone field={field} form={form} />;
             break;
         case "fileInput":
             inputComponent = (
@@ -155,6 +151,45 @@ const BaseInputs = ({ field, form,name }: InputType) => {
 
     return <div>{inputComponent}</div>;
 };
+const CustomRichText = ({ field, form }: InputType) => {
+    console.log(form.values[field.name], "adasdad");
+    return (
+        <DescriptionEditor
+            content={form.values[field.name]}
+            setContent={(v) => {
+                form.setFieldValue(field.name, v);
+            }}
+        />
+    );
+};
+const CustomDropZone = ({ field, form }: InputType) => {
+    const [file, setFile] = useState<File | null>(null);
+    return (
+        <>
+            {/* <Text align="center" my={rem(20)} size={"lg"} weight={600}>
+                {field.label}
+            </Text> */}
+            {form.errors[field.name] ? (
+                <Text
+                    align="center"
+                    color="red"
+                    my={rem(20)}
+                    size={"lg"}
+                    weight={600}
+                >
+                    {form.errors[field.name]}
+                </Text>
+            ) : null}
+            <ImgDropzone
+                disabled={Boolean(file)}
+                onDrop={(files) => {
+                    setFile(Array.isArray(files) ? files[0] : file);
+                }}
+            />
+        </>
+    );
+};
+
 const FileUploadButton = ({ field, form }: InputType) => {
     // const [barcodeFile, setBarCodeFile] = useState<File | null>(null);
     const accessor = field.name.split(".");
@@ -179,39 +214,7 @@ const FileUploadButton = ({ field, form }: InputType) => {
         </Group>
     );
 };
-const CustomSelect = ({ field, form }: InputType) => {
-    if (field.name === "category_id") {
-        console.log(field.name, "from name custom select ");
-        const dataTemp = field.data;
-        console.log({ dataTemp });
 
-        const data = [
-            {
-                group: "Frontend",
-                items: [
-                    { label: "React", value: "1" },
-                    { label: "Angular", value: "2" },
-                ],
-            },
-        ];
-        return (
-            <Select
-                {...form.getInputProps(field.name)}
-                label={field.label}
-                placeholder={field.label}
-                data={data}
-            />
-        );
-    }
-    return (
-        <Select
-            {...form.getInputProps(field.name)}
-            label={field.label}
-            placeholder={field.label}
-            data={field.data ? field.data : []}
-        />
-    );
-};
 const CustomYearPicker = ({ field, form }: InputType) => {
     return (
         <Stack align="center">

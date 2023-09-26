@@ -1,5 +1,6 @@
 import { ProductFieldType, TypedObject } from "@/types/defaultTypes";
 import { z } from "zod";
+import { fieldTypes } from "./ProductFields";
 const productInputFields: ProductFieldType = {
     product_name: {
         label: "Product Name",
@@ -18,59 +19,44 @@ const productInputFields: ProductFieldType = {
         validate: z.boolean(),
     },
     brand_id: {
-        validate: z.string().nullable(),
+        validate: z.string().min(1, "brand id is needed"),
         name: "brand_id",
         label: "Brand",
         type: "select",
-        data: [
-            { value: "1", label: "hero honda 1" },
-            { value: "2", label: "hero honda 2" },
-            { value: "3", label: "hero honda 3" },
-            { value: "4", label: "hero honda 4" },
-        ],
+        data: "",
     },
     category_id: {
-        validate: z.string().nullable(),
+        validate: z.string().min(1, "category id is needed"),
         label: "Category",
         type: "select",
         name: "category_id",
-        data: [
-            // { value: "1", label: "hero honda 1" },
-            // { value: "2", label: "hero honda 2" },
-            // { value: "3", label: "hero honda 3" },
-            // { value: "4", label: "hero honda 4" },
-        ],
+        data: "",
     },
     sku: {
-        validate: z.string(),
+        validate: z.string().min(1, "sku is needed"),
         name: "sku",
         label: "SKU",
         type: "text",
         data: "",
     },
-    color_id: {
-        validate: z.string(),
-        name: "color_id",
-        label: "Color",
-        type: "select",
-        data: [],
-    },
     description: {
-        validate: z.string(),
+        validate: z
+            .string()
+            .min(1, "please give the product a nice description"),
         name: "description",
         label: "Description",
         type: "richText",
-        data: "",
+        data: '<h2 style="text-align: center;">Please Give a meaningfull description to the product</h2><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li></ul>',
     },
     material: {
-        validate: z.string(),
+        validate: z.string().nullable(),
         name: "material",
         label: "Material",
         type: "text",
         data: "",
     },
     discount: {
-        validate: z.number(),
+        validate: z.number().default(0),
         name: "discount",
         label: "Discount",
         type: "number",
@@ -84,21 +70,21 @@ const productInputFields: ProductFieldType = {
         data: "",
     },
     price: {
-        validate: z.number(),
+        validate: z.number().default(0),
         name: "price",
         label: "Price",
         type: "number",
         data: 10,
     },
     weight: {
-        validate: z.string(),
+        validate: z.string().nullable(),
         name: "weight",
         label: "Weight",
         type: "text",
         data: "",
     },
     year: {
-        validate: z.string(),
+        validate: z.string().nullable(),
         name: "year",
         label: "Year",
         type: "yearPicker",
@@ -109,14 +95,16 @@ const productInputFields: ProductFieldType = {
         label: "Product Image",
         data: null,
         type: "dropZone",
-        validate: z.custom((file) => file instanceof File),
+        validate: z.any().refine((file) => {
+            return file instanceof File || !file;
+        }, "Image is required"),
     },
     warranty: {
         name: "warranty",
         label: "Product Warranty",
         data: "",
         type: "text",
-        validate: z.string(),
+        validate: z.string().min(1, "warranty field is needed"),
     },
 };
 const _productFields = {
@@ -126,7 +114,6 @@ const _productFields = {
         productInputFields.brand_id,
         productInputFields.sku,
         productInputFields.model,
-        productInputFields.color_id,
         productInputFields.weight,
 
         //
@@ -221,7 +208,7 @@ const _productFields = {
         //     data: 0,
         // },
         {
-            validate: z.string(),
+            validate: z.string().nullable(),
             name: "barcode",
             label: "Barcode",
             type: "text",
@@ -229,7 +216,9 @@ const _productFields = {
         },
 
         {
-            validate: z.custom<File>((file) => file instanceof File),
+            validate: z.any().refine((file) => {
+                return file instanceof File || !file;
+            }, "Image is required"),
             name: "qrcodeImg",
             label: "Upload qrcode image",
             type: "fileButton",
@@ -239,25 +228,32 @@ const _productFields = {
     img: [productInputFields.image],
     variation: [
         {
+            validate: z.boolean().default(false),
+            name: "variation_enabled",
+            label: "Enable Variations",
+            type: "",
+            data: false,
+        },
+        {
             validate: z.string(),
             name: "colors",
             label: "Colors",
             type: "multiSelect",
-            data: [],
+            data: "",
         },
         {
             validate: z.string(),
             name: "attrs",
             label: "Attributes",
             type: "multiSelect",
-            data: [],
+            data: "",
         },
         {
             validate: z.string(),
             name: "size",
             label: "Size",
             type: "multiSelect",
-            data: [],
+            data: "",
         },
     ],
     seoTag: [
@@ -294,16 +290,13 @@ const _productFields = {
         productInputFields.price,
         productInputFields.discount,
 
-        {
-            validate: z.string(),
-            name: "discountType",
-            label: "Discount Type",
-            type: "select",
-            data: [
-                { value: "1", label: "flat" },
-                { value: "2", label: "prcnt" },
-            ],
-        },
+        // {
+        //     validate: z.string(),
+        //     name: "discountType",
+        //     label: "Discount Type",
+        //     type: "select",
+        //     data: "",
+        // },
     ],
 };
 

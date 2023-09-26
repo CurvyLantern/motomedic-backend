@@ -4,14 +4,21 @@ type CompWithChildren = React.FC<{ children?: React.ReactNode }>;
 type TypedObject<T, V = undefined> = {
     [key in keyof T]: V extends undefined ? T[key] : V;
 };
+type IdField = string | number;
+type SelectInputItem = {
+    value: string;
+    label: string;
+    group?: string;
+};
+
 type User = {
-    id: number | string;
+    id: IdField;
     name: string;
     email: string;
 };
 
 type Category = {
-    id: string | number;
+    id: IdField;
     name: string;
     image?: string;
     parent_category_id?: string | number;
@@ -20,15 +27,21 @@ type CategoryWithSubCateogry = Category & {
     sub_categories: Array<Category>;
 };
 
+type Brand = {
+    id: IdField;
+    name: string;
+    description: string;
+    image: string | null;
+};
 
 type Product = {
     warranty: string;
     sku: string;
     product_name: string;
-    category_id: string | number;
-    brand_id: string | number;
+    category_id: IdField;
+    brand_id: IdField;
     model: string;
-    color_id: string | number;
+    // color_id: IdField;
     material: string;
     year: string | number;
     weight: number | string;
@@ -51,6 +64,7 @@ type ProductFieldInputType =
     | "textarea"
     | "yearPicker"
     | "colorInput"
+    | "switch"
     | "null";
 type ProductFieldDataType =
     | File
@@ -70,3 +84,18 @@ type ProductFieldValueType = {
 type ProductFieldType = {
     [K in keyof Product]: ProductFieldValueType;
 };
+
+type Variation = {
+    name: string;
+    image: File | null;
+    price: number;
+    colorCode: string;
+};
+
+type Attribute = {
+    id: IdField;
+    priority: number;
+    name: string;
+    values: string[];
+};
+type Color = { id: IdField; name: string; hexcode: string };

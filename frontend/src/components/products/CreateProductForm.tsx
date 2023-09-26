@@ -1,17 +1,27 @@
 import BasicSection from "@/components/sections/BasicSection";
 import axiosClient from "@/lib/axios";
-import { Button, Grid, Group, SimpleGrid } from "@mantine/core";
+import {
+    Switch,
+    Stack,
+    Text,
+    Button,
+    Grid,
+    Group,
+    SimpleGrid,
+    Title,
+} from "@mantine/core";
 // import ProductFields from "./ProductFields";
 
 import BaseInputs from "@/components/inputs/BaseInputs";
-import { ProductVariationFields } from "@/components/products/fields/ProductVariationField";
 import { productFields } from "@/components/products/fields/fields";
 import { useProductForm } from "@/components/products/fields/hooks/useProductForm";
 import { TypedObject } from "@/types/defaultTypes";
+import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useMemo } from "react";
 import { fieldTypes } from "./fields/ProductFields";
-
+import { ProductVariationFieldsSimple } from "./fields/ProductVariationFieldsSimple";
+import VariantProducts from "./fields/VariantProducts";
 const url = "products";
 const uploadProduct = async (data: unknown) => {
     try {
@@ -55,7 +65,6 @@ const CreateProductForm = () => {
                         const isSelect = field.type === fieldTypes.select;
                         if (isSelect) {
                             field.data = selectInitialData[field.name];
-                            console.log(field, "field");
                         }
                         return (
                             <BaseInputs
@@ -74,32 +83,74 @@ const CreateProductForm = () => {
 
     const onFormSubmit = (values: unknown) => {
         console.log(values, "from form");
-        uploadProduct({
-            productName: "Vanella",
-            categoryId: 2,
-            brandId: 2,
-            model: "RandomModel",
-            color: "RandomColor",
-            material: "RandomMaterial",
-            size: "RandomSize",
-            year: 2022,
-            compitibility: "RandomCompitibility",
-            condition: "RandomCondition",
-            weight: "RandomWeight",
-            quantity: 10,
-            price: 10,
-            discount: 10,
-            shortDescriptions: "RandomShortDescriptions",
-            availability: 0,
-            status: 0,
-        });
+        // uploadProduct({
+        //     productName: "Vanella",
+        //     categoryId: 2,
+        //     brandId: 2,
+        //     model: "RandomModel",
+        //     color: "RandomColor",
+        //     material: "RandomMaterial",
+        //     size: "RandomSize",
+        //     year: 2022,
+        //     compitibility: "RandomCompitibility",
+        //     condition: "RandomCondition",
+        //     weight: "RandomWeight",
+        //     quantity: 10,
+        //     price: 10,
+        //     discount: 10,
+        //     shortDescriptions: "RandomShortDescriptions",
+        //     availability: 0,
+        //     status: 0,
+        // });
     };
-    console.log(form.values, " form values ");
     return (
         <form onSubmit={form.onSubmit(onFormSubmit)}>
             {/* <Stack spacing="xl"> */}
             {/* basic and description */}
+
             <Grid m={0} justify="center" gutter={"sm"} grow>
+                <Grid.Col span={12}>
+                    <BasicSection>
+                        <Group>
+                            <Title mr={"auto"} order={1}>
+                                Enter necessary info here
+                            </Title>
+                            <Button type="submit" size="lg">
+                                Submit
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    // console.log(form.values, "form values");
+                                    modals.openConfirmModal({
+                                        title: "Reset everything ??",
+                                        centered: true,
+                                        children: (
+                                            <Text size="sm">
+                                                Are you sure you want to rest
+                                                form ?
+                                            </Text>
+                                        ),
+                                        labels: {
+                                            confirm: "Yes",
+                                            cancel: "No",
+                                        },
+                                        confirmProps: { variant: "danger" },
+                                        onCancel: () => {},
+                                        onConfirm: () => {
+                                            form.reset();
+                                        },
+                                    });
+                                }}
+                                variant={"danger"}
+                                type="button"
+                                size="lg"
+                            >
+                                Reset
+                            </Button>
+                        </Group>
+                    </BasicSection>
+                </Grid.Col>
+
                 <Grid.Col span={12} lg={6}>
                     <BasicSection title="Basic Info">
                         <ProductFieldSimpleGrid>
@@ -108,10 +159,17 @@ const CreateProductForm = () => {
                         </ProductFieldSimpleGrid>
                     </BasicSection>
                 </Grid.Col>
-                <Grid.Col span={12} lg={6}>
+                <Grid.Col span={12} md={6} lg={3}>
                     <BasicSection title="Formal Fields">
                         <SimpleGrid cols={1}>
                             {FieldElements.formals}
+                        </SimpleGrid>
+                    </BasicSection>
+                </Grid.Col>
+                <Grid.Col span={12} md={6} lg={3}>
+                    <BasicSection title="Service Infos">
+                        <SimpleGrid cols={1}>
+                            {FieldElements.serviceInfo}
                         </SimpleGrid>
                     </BasicSection>
                 </Grid.Col>
@@ -128,19 +186,17 @@ const CreateProductForm = () => {
                 </Grid.Col>
 
                 <Grid.Col span={12} lg={6}>
-                    <ProductVariationFields />
-                </Grid.Col>
-
-                <Grid.Col span={"auto"}>
-                    <BasicSection>
-                        <Group>
-                            <Button type="submit" size="lg">
-                                Submit
-                            </Button>
-                            <Button type="button" size="lg">
-                                Cancel
-                            </Button>
-                        </Group>
+                    {/* <ProductVariationFields /> */}
+                    {/* <ProductVariationFieldsSimple /> */}
+                    <BasicSection title="Product Variation">
+                        <Stack>
+                            <Switch
+                                {...form.getInputProps("variation_enabled")}
+                                label="Enable Variations"
+                                labelPosition="left"
+                            ></Switch>
+                            <VariantProducts />
+                        </Stack>
                     </BasicSection>
                 </Grid.Col>
             </Grid>

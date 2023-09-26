@@ -3,11 +3,11 @@ import GuestLayout, { guestLayoutLoader } from "@/layouts/GuestLayout";
 import LoginPage, { loginLoader } from "@/pages/guest/LoginPage";
 import RegisterPage, { registerLoader } from "@/pages/guest/RegisterPage";
 import ForgotPasswordPage, {
-  forgotPasswordLoader,
+    forgotPasswordLoader,
 } from "@/pages/guest/ForgotPasswordPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AuthenticatedLayout, {
-  authenticatedLoader,
+    authenticatedLoader,
 } from "@/layouts/AuthenticatedLayout";
 import { qc } from "@/providers/QueryProvider";
 import AddProductPage from "@/pages/product/AddProductPage";
@@ -24,6 +24,7 @@ import CreateInvoicePage from "@/pages/invoice/CreateInvoicePage";
 import AllInvoicePage from "@/pages/invoice/AllInvoicePage";
 import RootErrorBoundary from "@/components/erorrBoundary/RootErrorBoundary";
 import AllInventoryPage from "@/pages/inventory/AllInventory";
+import CreateBillingPage from "@/pages/billing/CreateBillingPage";
 
 const routes: RouteObject[] = [
     {
@@ -146,8 +147,17 @@ const routes: RouteObject[] = [
                 path: "service",
                 children: [
                     {
-                        path: "all",
+                        path: "add",
                         element: <CreateServicePage />,
+                    },
+                ],
+            },
+            {
+                path: "billing",
+                children: [
+                    {
+                        path: "add",
+                        element: <CreateBillingPage />,
                     },
                 ],
             },
