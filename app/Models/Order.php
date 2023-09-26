@@ -9,34 +9,36 @@ class Order extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'customerId',
-        'serviceId',
-        'productId',
-        'subtotal',
+        'customer_id',
         'total',
-        'tax',
         'discount',
+        'tax',
         'note',
-        'extra',
-        'serviceStatus',
-        'queue',
+        'status',
     ];
 
-    public function products()
-    {
-        return $this->belongsToMany(Product::class);
+    public function customer(){
+        return $this->belongsToMany(Customer::class,'customers','id','customer_id');
     }
 
-    public function service()
-    {
-        return $this->belongsToMany(Service::class);
+    public function orderItems(){
+        return $this->hasMany(OrderItem::class);
     }
-    public function customer()
-    {
-        return $this->belongsToMany(Customer::class);
-    }
-    public function queues()
-    {
-        return $this->belongsTo(Queue::class);
-    }
+//    public function products()
+//    {
+//        return $this->belongsToMany(Product::class);
+//    }
+//
+//    public function service()
+//    {
+//        return $this->belongsToMany(Service::class);
+//    }
+//    public function customer()
+//    {
+//        return $this->belongsToMany(Customer::class);
+//    }
+//    public function queues()
+//    {
+//        return $this->belongsTo(Queue::class);
+//    }
 }

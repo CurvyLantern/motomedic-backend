@@ -17,10 +17,10 @@ class Customer extends Model
     protected $fillable = [
         'name',
         'email',
-        'password',
         'phone',
-        'status',
+        'address',
         'bike_info',
+        'status',
     ];
 
     /**

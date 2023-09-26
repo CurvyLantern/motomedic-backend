@@ -22,9 +22,12 @@ class StoreCustomerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed',
-            'phone' => 'required|numeric|between:8,11',
+            "name" => "required",
+            "email" => "nullable",
+            "phone" => "required",
+            "address" => "nullable",
+            "bike_info" => "nullable",
+            "status" => "nullable",
         ];
     }
 }

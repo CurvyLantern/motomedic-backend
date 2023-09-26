@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use Exception;
 use App\Models\Customer;
 use App\Models\User;
@@ -9,6 +10,7 @@ use App\Models\UserDetail;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Resources\CustomerResource;
+use PhpParser\Node\Scalar\String_;
 
 class CustomerController extends Controller
 {
@@ -18,12 +20,6 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::orderBy('id', 'asc')->paginate(15);
-
-        $context = [
-            'customers' => $customers,
-        ];
-
-        // return send_response('Customers Data successfully loaded !', $context);
         return CustomerResource::collection($customers);
     }
 
@@ -33,21 +29,13 @@ class CustomerController extends Controller
     public function show(String $id)
     {
         try {
-
-
             $customer = Customer::whereId($id)->firstOrFail();
-
-            $customerDetails = UserDetail::where('id', $customer->userDetailsId)->firstOrFail();
-
-
-
             if ($customer) {
 
                 $context = [
                     'customer' => $customer,
-                    'customerDetails' => $customerDetails,
                 ];
-                return send_response('Customer founded !', $context);
+                return CustomerResource::collection($context);
             } else {
                 return send_error('Customer not found !', []);
             }
@@ -62,29 +50,15 @@ class CustomerController extends Controller
     public function store(StoreCustomerRequest $request)
     {
         $validated = $request->validated();
-        if (!$validated) {
-            return send_error('Data validation Failed !!', $validated->errors(), 422);
-        }
-
-
         try {
-
-            // Create a new user
-            $user = User::create([
-                'email' => $request->email,
-                'name' => $request->customerName,
-                'password' => bcrypt($request->password),
-                'phone' => $request->phone,
-            ]);
-
             // Create an admin record associated with the user
             $customer = Customer::create([
-                'customerName' => $request->customerName,
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-                'phone' => $request->phone,
+                'name' => $validated->name,
+                'email' => $validated->email,
+                'phone' => $validated->phone,
+                'address' => $validated->address,
+                'bike_info' => $validated->bike_info,
             ]);
-
 
             return send_response('Customer Login Success !', $customer);
         } catch (Exception $e) {
@@ -98,21 +72,19 @@ class CustomerController extends Controller
      * Update the specified resource in storage.
      */
     // String $id
-    public function update(UpdateCustomerRequest $request, Customer $customer)
+    public function update(UpdateCustomerRequest $request, Customer $customer, String $id)
     {
-        $validator = $request->validate();
-        // if ($validator->fails()) {
-        //     return send_error('Data validation Failed !!', $validator->errors(), 422);
-        // }
-
+        $validated = $request->validated();
         try {
 
-            $customer = Customer::find($customer);
+            $customer = Customer::find($id);
 
-            $customer->customerName = $request->customerName;
-            $customer->email = $request->email;
-            $customer->phone = $request->phone;
-            $customer->password = $request->password;
+            $customer->customerName = $validated->name;
+            $customer->email = $validated->email;
+            $customer->phone = $validated->phone;
+            $customer->address = $validated->address;
+            $customer->bike_info = $validated->bike_info;
+            $customer->status = $validated->status;
 
             $customer->save();
 
@@ -120,7 +92,7 @@ class CustomerController extends Controller
                 'customer' => $customer,
             ];
 
-            return send_response('Customer Update Successfull ', $customer);
+            return CustomerResource::collection($context);
         } catch (Exception $e) {
             return send_error($e->getMessage(), $e->getCode());
         }

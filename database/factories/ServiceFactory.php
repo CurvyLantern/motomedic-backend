@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Mechanic;
 use Illuminate\Support\Str;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -21,15 +22,13 @@ class ServiceFactory extends Factory
         $serviceName = fake()->words(3, true);
 
         return [
-            'serviceName' => $serviceName,
+            'name' => $serviceName,
             'slug' => Str::slug($serviceName, '-'),
             'description' => fake()->paragraph,
-            'img' => fake()->imageUrl(200, 200),
             'price' => fake()->randomFloat(2, 600, 2000),
-            'durationHours' => fake()->numberBetween(1, 8),
-            'status' => fake()->numberBetween(0, 1),
-            'featured' => fake()->boolean(),
+            'duration' => fake()->numberBetween(1, 8),
             'note' => fake()->sentence,
+            'mechanic_id' => Mechanic::select('id')->inRandomOrder()->first()->id,
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Customer;
@@ -9,6 +10,7 @@ use App\Models\Service;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use Exception;
+use GuzzleHttp\Psr7\Request;
 
 class OrderController extends Controller
 {
@@ -24,63 +26,9 @@ class OrderController extends Controller
             'orders' => $orders,
             // 'products' => $products,
         ];
-        return send_response('Products Data successfully loaded !', $context);
+        return OrderResource::collection($context);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreOrderRequest $request)
-    {
-        $validator = $request->validate();
-
-        // if ($validator->fails()) {
-        //     return send_error('Data validation Failed !!', $validator->errors(), 422);
-        // }
-
-        try {
-
-            $i = 20;
-
-
-            $order = Order::create([
-                'customerId' => $request->customerId,
-                'serviceId' => $request->serviveId,
-                // 'productId'=> $request->productId,
-                'quantity' => $request->quantity,
-                'subtotal' => $request->subtotal,
-                'total' => $request->total,
-                'tax' => $request->tax,
-                'discount' => $request->discount,
-                'note' => $request->note,
-                'extra' => $request->extra,
-                'serviceStatus' => $request->serviceStatus,
-                'queue' => $i,
-                'orderCreator' => $request->orderCreator,
-                // foreach($request->productId as $key => $product){
-                //         'productId' = $product->productId;
-                // }
-
-            ]);
-
-            $queue = $order->queues()->create([
-                'arriveDateTime' => $request->arriveDateTime,
-                'departDateTime' => $request->departDateTime,
-                'orderId' => $order->id,
-                'serviceId' => $order->serviceId,
-                'staffId' => $request->staffId,
-            ]);
-
-            $queue = $i++;
-
-            $context = [
-                'order' => $order,
-            ];
-            return send_response('Order Create Successfully', $context);
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
-    }
 
     /**
      * Display the specified resource.
@@ -91,17 +39,13 @@ class OrderController extends Controller
             $orders = Order::find($id);
             if ($orders) {
 
-                $customer = Customer::where('id', $orders->customerId)->get();
-                $products = Product::where('id', $orders->productId)->get();
-                $service = Service::where('id', $orders->serviceId)->get();
+                $customer = Customer::where('id', $orders->customer_id)->first();
                 if ($orders) {
                     $context = [
                         'orders' => $orders,
-                        'products' => $products,
                         'customer' => $customer,
-                        'service' => $service,
                     ];
-                    return send_response('Orders founded !', $context);
+                    return OrderResource::collection($context);
                 } else {
                     return send_error('Orders Not found !!!');
                 }
@@ -115,19 +59,93 @@ class OrderController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreOrderRequest $request)
+    {
+        $validated = $request->validated();
+        try {
+            $discount= 0 ;
+            $tax = 0;
+            $order = Order::create([
+                'customer_id' => $validated->customer_id,
+                'total' => 0,
+                'discount' => $discount,
+                'tax' => $tax,
+                'note' => $validated->note,
+                'status' => $validated->status,
+            ]);
+
+            $serviceOrderItems = [
+                [
+                    'order_id' => $order->id,
+                    'service_id' => $request->service_id, // Replace with the service's ID
+                    'quantity' => $request->quantity,
+                    'price' => $request->price,
+                ],
+            ];
+
+            $productOrderItems = [
+                [
+                    'order_id' => $order->id,
+                    'product_id' => $request->product_id, // Replace with the product's ID
+                    'quantity' => $request->quantity,
+                    'price' => $request->price,
+                ],
+            ];
+
+            // Create order items and calculate the total amount
+            $orderItems = array_merge($productOrderItems, $serviceOrderItems);
+
+            foreach ($orderItems as $orderItemData) {
+                $orderItem = $order->orderItems()->create($orderItemData);
+
+                $product = Product::where('id',$orderItem->product_id)->firts();
+                $productPrice = $product->price;
+
+                $service = Service::where('id', $orderItem->service_id)->first();
+                $servicePrice = $service->price;
+
+                // Calculate and update the total amount for the order
+                $order->increment('price', $productPrice * $orderItem->quantity) + $servicePrice;
+            }
+
+            $order->update([
+                'total' => $order->total->sum('price'),
+            ]);
+
+            $context = [
+                'order' => $order,
+            ];
+            return send_response('Order Create Successfully', OrderResource::collection($context));
+            //            // Create order items for services
+//            $serviceOrderItems = $order->orderItems()->create([
+//                'order_id' => $order->id,
+//                'service_id' => $request->service_id, // Replace with the service's ID
+//                'quantity' => $request->quantity,
+//                'price' => $request->price,
+//            ]);
+//
+//            // Create order items for products
+//            $productProductItems = $order->orderItems()->create([
+//                'order_id' => $order->id,
+//                'product_id' => $request->product_id, // Replace with the product's ID
+//                'quantity' => $request->quantity,
+//                'price' => $request->price,
+//            ]);
+        }catch (Exception $e) {
+            return send_error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateOrderRequest $request, String $id)
     {
-        $validator = $request->validate();
-        // if ($validator->fails()) {
-        //     return send_error('Data validation Failed !!', $validator->errors(), 422);
-        // }
-
+        $validated = $request->validated();
         try {
-
             $order = Order::find($id);
-
 
             // $order->customerId = $request->customerId;
             $order->serviceId = $request->serviveId;

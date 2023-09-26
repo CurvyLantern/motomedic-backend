@@ -12,32 +12,37 @@ return new class extends Migration
     public function up(): void
     {
         // Schema::disableForeignKeyConstraints();
-        // Schema::create('orders', function (Blueprint $table) {
-        //     $table->id();
+         Schema::create('orders', function (Blueprint $table) {
+             $table->id();
+             $table->unsignedBigInteger('customer_id');
+             $table->foreign('customer_id')->references('id')->on('customers')->onUpdate('cascade');
+             $table->double('total');
+             $table->double('discount')->nullable();
+             $table->double('tax')->default(0);
+             $table->text('note')->nullable();
+             $table->enum('status',['Onhold', 'Processing', 'Completed'])->default('Onhold');
+//
 
 
-        //     $table->unsignedBigInteger('customerId');
-        //     $table->foreign('customerId')->references('id')->on('customers')->onUpdate('cascade')->onDelete('cascade');
 
-        //     $table->unsignedBigInteger('serviceId');
-        //     $table->foreign('serviceId')->references('id')->on('services')->onUpdate('cascade')->onDelete('cascade');
+
 
         //     $table->unsignedBigInteger('productId');
         //     $table->foreign('productId')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');
 
         //     $table->integer('quantity');
-        //     $table->float('subtotal');
-        //     $table->float('total');
-        //     $table->float('tax')->nullable();
+//             $table->float('subtotal');
+
+
         //     $table->float('discount')->nullable();
-        //     $table->text('note')->nullable();
+
         //     $table->integer('extra')->nullable();
         //     $table->enum('serviceStatus', ['Onhold', 'Processing', 'Completed'])->default('Onhold');
         //     $table->enum('status', ['Onhold', 'Processing', 'Completed'])->default('Onhold');
         //     $table->integer('queue');
         //     $table->bigInteger('orderCreator')->nullable();
-        //     $table->timestamps();
-        // });
+             $table->timestamps();
+         });
         // Schema::enableForeignKeyConstraints();
     }
 
@@ -49,3 +54,6 @@ return new class extends Migration
         Schema::dropIfExists('orders');
     }
 };
+
+
+

@@ -9,25 +9,35 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
+    public function up(): void{
 
-        // Schema::create('services', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('serviceName');
-        //     $table->string('slug');
-        //     $table->text('description')->nullable();
-        //     $table->string('img')->nullable();
-        //     $table->float('price');
-        //     $table->integer('durationHours');
-        //     $table->boolean('status')->default(true);
-        //     $table->boolean('featured')->default(true);
-        //     $table->unsignedBigInteger('serviceCreator')->nullable();
-        //     //$table->bigInteger('category');
-        //     //$table->foreign('category')->references('id')->on('service_categories');
-        //     $table->text('note')->nullable();
-        //     $table->timestamps();
-        // });
+        Schema::create('mechanics', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique()->nullable();
+            $table->string('phone')->unique();
+            $table->text('address')->nullable();
+            $table->boolean('status')->default(true);
+            $table->timestamps();
+        });
+
+
+         Schema::create('services', function (Blueprint $table) {
+             $table->id();
+             $table->string('name');
+             $table->string('slug');
+             $table->text('description')->nullable();
+             $table->float('price');
+             $table->string('duration');
+             $table->text('note')->nullable();
+
+             $table->unsignedBigInteger('mechanic_id');
+             $table->foreign('mechanic_id')->references('id')->on('mechanics')->onUpdate('cascade');
+
+             $table->boolean('status')->default(true);
+             $table->timestamps();
+         });
+
     }
 
     /**
@@ -36,5 +46,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('services');
+        Schema::dropIfExists('mechanics');
     }
 };

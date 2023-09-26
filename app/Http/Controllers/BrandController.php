@@ -7,6 +7,7 @@ use App\Http\Requests\StoreBrandRequest;
 use App\Http\Requests\UpdateBrandRequest;
 use App\Http\Resources\BrandResource;
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
@@ -15,6 +16,11 @@ use Exception;
 
 class BrandController extends Controller
 {
+
+    public function page()
+    {
+        return view('apitest');
+    }
 
 
     /**
@@ -55,15 +61,20 @@ class BrandController extends Controller
     public function store(StoreBrandRequest $request)
     {
         //
-        $validated = $request->validated();
-        try {
-            $imagePrefix = 'motomedic-media-image-';
-            $number = 1000;
 
-            $imageName = $imagePrefix . $number . '.' . $request->file('image')->getClientOriginalExtension();
-            $validated['image'] = $request->file('image')->store('image', $imageName);
+        try {
+            $validated = $request->validated();
+
+            if ($request->hasFile('image')) {
+                $imagePrefix = 'motomedic-media-image-';
+                $formattedTimestamp = Carbon::now()->format('Ymd_His');
+
+                $imageName = $imagePrefix . $formattedTimestamp . '.' . $request->file('image')->getClientOriginalExtension();
+                $validated['image'] = $request->file('image')->storeAs('image', $imageName);
+            }
 
             $brand = Brand::create($validated);
+
 
 
 
@@ -141,5 +152,14 @@ class BrandController extends Controller
         } catch (Exception $e) {
             return send_error($e->getMessage(), $e->getCode());
         }
+    }
+
+
+    public function apiTestPage()
+    {
+
+
+
+        return view('apitest');
     }
 }

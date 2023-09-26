@@ -231,6 +231,8 @@ const CreateCategoryForm = () => {
     const onCreate = async () => {
         setLoading(true);
 
+        console.log(values, " values from 232 ");
+
         const url = "categories";
         // const formData = dataToFormdata({ data: values });
         const formData = new FormData(categoryFormRef.current ?? undefined);
@@ -245,9 +247,9 @@ const CreateCategoryForm = () => {
                 .then((res) => res.data);
             console.log(res, "from on create");
             notifications.show({
-                color: 'green',
-                message: 'Category created successfully'
-            })
+                color: "green",
+                message: "Category created successfully",
+            });
             form.reset();
         } catch (error) {
             console.error(error);
