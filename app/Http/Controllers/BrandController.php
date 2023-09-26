@@ -60,8 +60,8 @@ class BrandController extends Controller
             $imagePrefix = 'motomedic-media-image-';
             $number = 1000;
 
-            $imageName = $imagePrefix.$number.'.'.$request->file('image')->getClientOriginalExtension();
-            $validated['image'] = $request->file('image')->store('image',$imageName);
+            $imageName = $imagePrefix . $number . '.' . $request->file('image')->getClientOriginalExtension();
+            $validated['image'] = $request->file('image')->store('image', $imageName);
 
             $brand = Brand::create($validated);
 

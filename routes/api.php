@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttributeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,8 +37,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
             return new UserResource($user);
         });
 
+        Route::apiResource('colors', ColorController::class);
         Route::apiResource('brands', BrandController::class);
-        Route::apiResource('categories', CategoryController::class);
+        Route::apiResource('attributes', AttributeController::class);
+        Route::apiResource('categories', CategoryController::class)->names([
+            'index' => 'category.index'
+        ]);
+        Route::apiResource('colors', ColorController::class);
+        Route::get('products/createInfos', [ProductController::class, 'createInfos'])->name('products.createInfos');
+
         // Route::apiResources([
         //     'categories' => CategoryController::class,
         //     'brands' => BrandController::class
@@ -176,11 +184,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::prefix('v2')->group(function () {
 
 
-//
+    //
     Route::apiResource('brands', BrandController::class);
     Route::apiResource('categories', CategoryController::class);
 
-//    Route::get('brand/create',[BrandController::class,'store'])->name('brand.create');
+    //    Route::get('brand/create',[BrandController::class,'store'])->name('brand.create');
 
 
 });

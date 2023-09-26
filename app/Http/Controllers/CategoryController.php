@@ -7,7 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use App\Http\Resources\CateogryResource;
+use App\Http\Resources\CategoryResource;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
 
@@ -32,17 +32,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        // $category = Category::orderBy('id', 'asc')->get();
 
-        // $context = [
-        //     'categories' =>  $category,
-        // ];
+        $parentCategories = Category::allWithChildren();
 
-        $parentCategories = Category::with('children')->whereNull('parent_category_id')->get();
-
-        return CateogryResource::collection($parentCategories);
-
-        // return send_response('Category data successfully loaded !!', $context);
+        return $parentCategories;
     }
 
     /**

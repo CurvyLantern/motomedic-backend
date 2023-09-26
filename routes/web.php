@@ -20,6 +20,15 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
+Route::get('/logs', function () {
+    $logContent = file_get_contents(storage_path('logs/laravel.log'));
+
+    // You can also parse and format the log content as needed
+
+    return '<pre>' . e($logContent) . '</pre>';
+});
+
+
 Route::prefix('v1')->group(function () {
     Route::get('csrf', [CsrfController::class, 'show'])->name('csrf');
     Route::prefix('auth')->group(function () {

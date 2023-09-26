@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Color;
 use App\Http\Requests\StoreColorRequest;
 use App\Http\Requests\UpdateColorRequest;
+use App\Http\Resources\ColorResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Exception;
@@ -17,15 +18,9 @@ class ColorController extends Controller
     public function index()
     {
         try {
-            $colors = Color::orderBy('id', 'asc')->paginate(10);
-            if ($colors) {
-                $context = [
-                    'colors' => $colors,
-                ];
-                return send_response('Colors Data Found ! ', $context);
-            } else {
-                return send_error('No Color Found !!');
-            }
+            $colors = Color::orderBy('id', 'asc')->get();
+
+            return ColorResource::collection($colors)->all();
         } catch (Exception $e) {
             return send_error($e->getMessage(), $e->getCode());
         }

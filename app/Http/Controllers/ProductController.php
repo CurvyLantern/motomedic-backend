@@ -6,13 +6,15 @@ use Exception;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\BrandResource;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use App\Models\Brand;
 use App\Models\Category;
 use Illuminate\Support\Facades\Storage;
-
-
+use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ColorResource;
+use App\Models\Color;
 
 class ProductController extends Controller
 {
@@ -21,6 +23,16 @@ class ProductController extends Controller
      * Display a listing of the resource.
      *  @return \Illuminate\Http\JsonResponse
      */
+
+    public function createInfos()
+    {
+        $categories = Category::allWithChildren();
+
+        $brands = BrandResource::collection(Brand::orderBy('id', 'asc')->get());
+
+        $colors = ColorResource::collection(Color::all());
+        return response()->json(compact('categories', 'brands', 'colors'));
+    }
 
     public function getProductAttributeData()
     {

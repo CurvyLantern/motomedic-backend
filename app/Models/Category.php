@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Resources\CategoryResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -16,6 +17,13 @@ class Category extends Model
         'description',
         'parent_category_id',
     ];
+
+    // data fetching methods
+    public static function allWithChildren()
+    {
+        $data = static::with('children')->whereNull('parent_category_id')->get();
+        return CategoryResource::collection($data);
+    }
 
 
     public function children()
