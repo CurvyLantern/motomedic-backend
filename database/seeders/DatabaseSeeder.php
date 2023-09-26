@@ -5,6 +5,10 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Mechanic;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\Service;
 use App\Models\User;
 use App\Models\Color;
 use App\Models\Customer;
@@ -25,9 +29,14 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        User::factory(5)->create();
-//        Customer::factory(10)->create();
-//        Color::factory(100)->create();
+        User::factory(2)->create();
+        Customer::factory(10)->create();
+        Mechanic::factory(10)->create();
+        Service::factory(10)->create();
+        Color::factory(100)->create();
+
+//        Product::factory(10)->create();
+        Order::factory(10)->create();
 
 
     }

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 // custom controllers
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\MechanicController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BrandController;
@@ -176,9 +177,18 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::prefix('v2')->group(function () {
 
 
-//
+// final api routes .............
     Route::apiResource('brands', BrandController::class);
     Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('customers', CustomerController::class);
+    Route::apiResource('mechanics', MechanicController::class);
+    Route::apiResource('services', ServiceController::class);
+
+    Route::apiResource('orders', OrderController::class);
+
+
+
+// Test api routes ...............
 
     Route::post('brands/create',[BrandController::class,'store'])->name('create.request');
     Route::post('brands/create',[BrandController::class,'store'])->name('create.request');

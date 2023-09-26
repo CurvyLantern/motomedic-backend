@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         // Schema::disableForeignKeyConstraints();
-//         Schema::create('orders', function (Blueprint $table) {
-//             $table->id();
-//             $table->unsignedBigInteger('customer_id');
-//             $table->foreign('customer_id')->references('id')->on('customers')->onUpdate('cascade');
-//             $table->double('total');
-//             $table->double('discount')->nullable();
-//             $table->double('tax')->default(0);
-//             $table->text('note')->nullable();
-//             $table->enum('status',['Onhold', 'Processing', 'Completed'])->default('Onhold');
+         Schema::create('orders', function (Blueprint $table) {
+             $table->id();
+             $table->unsignedBigInteger('customer_id');
+             $table->foreign('customer_id')->references('id')->on('customers')->onUpdate('cascade');
+             $table->double('total');
+             $table->double('discount')->nullable();
+             $table->double('tax')->default(0);
+             $table->text('note')->nullable();
+             $table->enum('status',['Onhold', 'Processing', 'Completed'])->default('Onhold');
 //
 
 
@@ -41,8 +41,8 @@ return new class extends Migration
         //     $table->enum('status', ['Onhold', 'Processing', 'Completed'])->default('Onhold');
         //     $table->integer('queue');
         //     $table->bigInteger('orderCreator')->nullable();
-        //     $table->timestamps();
-//         });
+             $table->timestamps();
+         });
         // Schema::enableForeignKeyConstraints();
     }
 
@@ -54,3 +54,6 @@ return new class extends Migration
         Schema::dropIfExists('orders');
     }
 };
+
+
+

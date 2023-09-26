@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('bike_info')->nullable();
             $table->text('address')->nullable();
             $table->boolean('status')->default(true);
-            $table->rememberToken();
             $table->timestamps();
         });
         // Schema::enableForeignKeyConstraints();

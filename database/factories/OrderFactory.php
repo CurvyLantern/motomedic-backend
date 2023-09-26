@@ -19,16 +19,13 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
-        $queue = 1;
         return [
-            'customerId' => Customer::select('id')->inRandomOrder()->first()->id,
-            'serviceId' => Service::select('id')->inRandomOrder()->first()->id,
-            'productId' => Product::select('id')->inRandomOrder()->first()->id,
-            'subtotal' => rand(500, 18000), // Generates a random image URL
-            'total' => rand(1200, 35000),
-            'quantity' => rand(1, 10),
-            'queue' => $queue++,
-
+            'customer_id' => Customer::select('id')->inRandomOrder()->first()->id,
+            'total' => fake()->numberBetween(1500,5000),
+            'discount' => fake()->numberBetween(500,1200),
+            'tax' => fake()->numberBetween(10,100), // Generates a random image URL
+            'note' => fake()->sentence(),
+            'status' => fake()->randomElement(['Onhold','Processing','Completed']),
         ];
     }
 }

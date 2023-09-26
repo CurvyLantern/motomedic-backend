@@ -16,10 +16,10 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        $service = Service::orderBy('id', 'asc')->get();
+        $service = Service::orderBy('id', 'asc')->paginate(5);
 
         if ($service) {
-            return send_response('Service data successfully loded', ServiceResource::collection($service));
+            return ServiceResource::collection($service);
         } else {
             return send_error('Data fetching task failed !!');
         }
@@ -28,7 +28,6 @@ class ServiceController extends Controller
     /**
      * Display the specified resource.
      * @param  \App\Models\Service  $service
-     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -37,7 +36,11 @@ class ServiceController extends Controller
         $service = Service::find($id);
 
         if ($service) {
-            return send_response("Data Found !", $service);
+
+            $context =[
+                'service' => $service,
+            ];
+            return ServiceResource::collection($context);
         } else {
             return send_error("Service Data Not Found ");
         }
@@ -49,41 +52,18 @@ class ServiceController extends Controller
      */
     public function store(StoreServiceRequest $request)
     {
-        $validator = $request->validate();
-
-        // if ($validator->fails()) {
-        //     return send_error('Validation Error', $validator->errors(), 422);
-        // }
-
+        $validated = $request->validated();
         try {
-            //upload image to server and get path
-            // no need to worry form line 51 to line 55
-            // if($request->hasFile('img')){
-            //     $destinationPath= 'public/img/service';
-            //     $image = $request->file('img');
-            //     $imageName = $image->getClientOriginalName();
-            //     $imagePath = $request->file('img')->storeAs($imagePath,$destinationPath);
-
-            // };
-
-            $image_path = '';
-
-            if ($request->hasFile('img')) {
-                $image_path = $request->file('img')->store('service', 'public');
-            }
-
-
-
             $service = Service::create([
-                'serviceName' => $request->serviceName,
-                'slug' =>  Str::slug($request->serviceName, '-'),
-                'description' => $request->description,
-                'img' => $image_path,
-                'price' => $request->price,
-                'durationHours' => $request->durationHours,
-                'img' => $request->img,
+                'name' => $validated->name,
+                'slug' =>  Str::slug($validated->name, '-'),
+                'description' => $validated->description,
+                'price' => $validated->price,
+                'duration' => $validated->duration,
+                'note' => $validated->note,
+                'mechanic_id' => $validated->mechanic_id,
             ]);
-            return send_response("service create successfull", new ServiceResource($service));
+            return send_response("Service create successfull", new ServiceResource($service));
         } catch (Exception $e) {
             return send_error($e->getMessage(), $e->getCode());
         }
@@ -99,24 +79,19 @@ class ServiceController extends Controller
      */
     public function update(StoreServiceRequest $request, $id)
     {
-        $validator = $request->validate();
-
-        // if ($validator->fails()) {
-        //     return send_error('Validation Error', $validator->errors(), 422);
-        // }
-
+        $validated = $request->validated();
         try {
 
             $service = Service::find($id);
             if ($service) {
 
-                $service->serviceName = $request->serviceName;
-
+                $service->name = $request->name;
                 $service->slug = Str::slug($request->serviceName, '-');
                 $service->description = $request->description;
-                $service->img = $request->img;
                 $service->price = $request->price;
-                $service->durationHours = $request->durationHours;
+                $service->duration = $request->duration;
+                $service->note = $request->note;
+                $service->mechanic_id = $request->mechanic_id;
                 $service->save();
                 return send_response("Service Update successfully !", new ServiceResource($service));
             } else {
@@ -129,11 +104,8 @@ class ServiceController extends Controller
 
     public function destroy($id)
     {
-
         try {
-
             $service = Service::find($id);
-
             if ($service) {
                 $service->delete();
             }

@@ -17,6 +17,10 @@ use Exception;
 class BrandController extends Controller
 {
 
+    public function page(){
+        return view('apitest');
+    }
+
 
     /**
      * Display a listing of the resource.

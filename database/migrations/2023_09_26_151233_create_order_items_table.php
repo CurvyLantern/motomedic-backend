@@ -11,12 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-//        Schema::create('order_items', function (Blueprint $table) {
-//            $table->id();
-//            $table->unsignedBigInteger('serviceId');
-//            $table->foreign('serviceId')->references('id')->on('services')->onUpdate('cascade')->onDelete('cascade');
-//            $table->timestamps();
-//        });
+        Schema::create('order_items', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('order_id');
+            $table->unsignedBigInteger('product_id')->nullable();
+            $table->unsignedBigInteger('service_id')->nullable();
+            $table->integer('quantity');
+            $table->decimal('price', 10, 2);
+            // Add other fields as needed
+            $table->timestamps();
+
+            $table->foreign('order_id')->references('id')->on('orders')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onUpdate('cascade');
+            $table->foreign('service_id')->references('id')->on('services')->onUpdate('cascade');
+        });
     }
 
     /**
