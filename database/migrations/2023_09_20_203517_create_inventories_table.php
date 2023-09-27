@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('contact_number')->nullable();
             $table->string('email')->nullable();
             $table->string('address')->nullable();
+            $table->timestamps();
         });
 
         Schema::create('invoices', function (Blueprint $table) {
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->unsignedDecimal('invoice_total_cost')->default(0);
             $table->unsignedDecimal('invoice_total_due')->default(0);
             $table->json('purchased_products');
+            $table->timestamps();
         });
 
         Schema::create('inventories', function (Blueprint $table) {
