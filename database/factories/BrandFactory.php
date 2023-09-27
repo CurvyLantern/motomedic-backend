@@ -19,9 +19,9 @@ class BrandFactory extends Factory
     public function definition(): array
     {
         return [
-            'brandName' => fake()->company,
+            'name' => fake()->company,
             'slug' => Str::slug(fake()->unique()->company, '-'),
-            'img' => fake()->imageUrl(200, 200), // Generates a random image URL
+            'image' => fake()->imageUrl(200, 200), // Generates a random image URL
             'description' => fake()->paragraph,
         ];
     }

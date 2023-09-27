@@ -23,7 +23,7 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             'customer_id' => "required",
-            'total' => "required",
+//            'total' => "nullable",
             'discount' => "nullable",
             'tax' => "nullable",
             'note' => "nullable",

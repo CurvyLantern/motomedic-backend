@@ -20,7 +20,6 @@ class Product extends Model
         'weight',
         'price',
         'quantity',
-        'price',
         'description',
         'warranty',
         'status',
