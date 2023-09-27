@@ -1,15 +1,38 @@
-import { ProductFieldType, TypedObject } from "@/types/defaultTypes";
+import {
+    ProductFieldType,
+    ProductFieldValueType,
+    TypedObject,
+} from "@/types/defaultTypes";
 import { z } from "zod";
 import { fieldTypes } from "./ProductFields";
 const productInputFields: ProductFieldType = {
-    product_name: {
+    status: {
+        label: "Product Status",
+        type: "select",
+        name: "status",
+        data: [
+            { label: "active", value: "1" },
+            { label: "inactive", value: "0" },
+        ],
+        validate: z
+            .string()
+            .min(1, { message: "Product Status can not be empty" }),
+    },
+    name: {
         label: "Product Name",
         type: "text",
-        name: "product_name",
+        name: "name",
         data: "",
         validate: z
             .string()
             .min(1, { message: "Product name can not be empty" }),
+    },
+    color_id: {
+        label: "Product Color",
+        type: "select",
+        name: "color_id",
+        data: [],
+        validate: z.string().min(1, "Color need to be selected"),
     },
     active: {
         label: "Active",
@@ -109,12 +132,14 @@ const productInputFields: ProductFieldType = {
 };
 const _productFields = {
     basicInfo: [
-        productInputFields.product_name,
+        productInputFields.name,
         productInputFields.category_id,
         productInputFields.brand_id,
-        productInputFields.sku,
+        productInputFields.color_id,
+        // productInputFields.sku,
         productInputFields.model,
         productInputFields.weight,
+        productInputFields.status,
 
         //
         // {
@@ -226,36 +251,7 @@ const _productFields = {
         },
     ],
     img: [productInputFields.image],
-    variation: [
-        {
-            validate: z.boolean().default(false),
-            name: "variation_enabled",
-            label: "Enable Variations",
-            type: "",
-            data: false,
-        },
-        {
-            validate: z.string(),
-            name: "colors",
-            label: "Colors",
-            type: "multiSelect",
-            data: "",
-        },
-        {
-            validate: z.string(),
-            name: "attrs",
-            label: "Attributes",
-            type: "multiSelect",
-            data: "",
-        },
-        {
-            validate: z.string(),
-            name: "size",
-            label: "Size",
-            type: "multiSelect",
-            data: "",
-        },
-    ],
+
     seoTag: [
         // {
         //     validate: z.string(),
@@ -300,5 +296,50 @@ const _productFields = {
     ],
 };
 
+// type ProductVariationFields = Omit<ProductFieldValueType, 'data'> & {
+//     data: unknown
+// }
+// ProductVariationFields[]
+export type VariationField = {
+    name: string;
+    color_id: string;
+    attribute_value_ids: string[];
+    price: number;
+    image: File | null;
+};
+export const productVariationFields = [
+    {
+        validate: z.boolean().default(false),
+        name: "variation_enabled",
+        label: "Enable Variations",
+        type: "switch",
+        data: false,
+    },
+    {
+        validate: z
+            .object({
+                name: z.string().default("prod-x-xx-xxx"),
+                color_id: z.string().min(1, "color has to be selected"),
+                attribute_value_ids: z.array(z.string()),
+                price: z.number().nonnegative("price cannot be negative"),
+                image: z.any().refine((file) => {
+                    return file instanceof File || !file;
+                }, "Image is required"),
+            })
+            .array(),
+        name: "variations",
+        label: "Variations",
+        type: "null",
+        data: [
+            {
+                name: "prod-x-xx-xxx",
+                color_id: "",
+                attribute_value_ids: [],
+                price: 100,
+                image: null,
+            },
+        ],
+    },
+] as const;
 export const productFields: TypedObject<typeof _productFields> = _productFields;
 // TypedObject<typeof _productFields>

@@ -9,7 +9,7 @@ class Invoice extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['invoice_paper_id', 'invoice_seller_id', 'invoice_total_cost', 'invoice_total_due', 'purchased_products'];
+    protected $fillable = ['invoice_paper_id', 'invoice_seller_id', 'invoice_total_cost', 'invoice_total_due', 'purchased_products', 'type'];
 
     protected $casts = [
         'purchased_products' => 'array', // Cast the purchased_products attribute as an array

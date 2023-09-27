@@ -21,7 +21,8 @@ class AttributeResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'priority' => $this->priority,
-            'values' => $this->attributeValues->pluck('name')->toArray(),
+            // 'values' => $this->attributeValues->pluck('name')->toArray(),
+            'values' => $this->attributeValues->toArray(),
         ];
     }
 }

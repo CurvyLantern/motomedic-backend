@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Inventory;
 use App\Http\Requests\StoreInventoryRequest;
 use App\Http\Requests\UpdateInventoryRequest;
+use App\Http\Resources\InventoryResource;
 
 class InventoryController extends Controller
 {
@@ -13,7 +14,8 @@ class InventoryController extends Controller
      */
     public function index()
     {
-        //
+        $inventories = Inventory::all();
+        return InventoryResource::collection($inventories)->all();
     }
 
     /**

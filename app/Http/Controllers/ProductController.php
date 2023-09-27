@@ -15,7 +15,12 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ColorResource;
+use App\Models\AttributeValue;
 use App\Models\Color;
+use App\Models\Inventory;
+use App\Models\ProductVariation;
+use Database\Factories\AttributeValueFactory;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -24,6 +29,35 @@ class ProductController extends Controller
      * Display a listing of the resource.
      *  @return \Illuminate\Http\JsonResponse
      */
+
+    public function search(Request $request)
+    {
+        $searchQuery = $request->input('query');
+
+
+        // Search for products by name, SKU, or ID in the 'products' table
+        $products = Product::where('name', 'like', '%' . $searchQuery . '%')
+            ->orWhere('sku', 'like', '%' . $searchQuery . '%')
+            ->orWhere('id', $searchQuery)
+            ->get();
+
+        // return response()->json(compact('products'));
+
+        // Search for products by SKU, ID, or name in the 'product_variations' table
+        $variationProducts = ProductVariation::where('name', 'like', '%' . $searchQuery . '%')
+            ->orWhere('sku', 'like', '%' . $searchQuery . '%')
+            ->orWhere('id', $searchQuery)
+            ->orWhereHas('product', function ($query) use ($searchQuery) {
+                $query->where('name', 'like', '%' . $searchQuery . '%');
+            })
+            ->get();
+
+        // Combine the results from both tables into a single collection
+        $allProducts = $products->concat($variationProducts);
+
+        // You now have a collection of products matching the search term
+        return response()->json($allProducts);
+    }
 
     public function createInfos()
     {
@@ -67,19 +101,70 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        $categories = Category::all();
-        $brands = Brand::all();
-        $validated= $request->validated();
-        $category = Category::findOrFail($validated('categoryId'));
+
+        $validated = $request->validated();
+        $product = Product::create($validated);
+
+        // Generate the 'sku' based on the product's ID
+        $product->sku = 'SKU-' . $product->id;
+        $product->save();
+
+        $productInventory = Inventory::create([
+            'sku' => $product->sku,
+        ]);
+
+        $variations = $request->variations;
+
+
+        foreach ($variations as $variationData) {
+            // Create a new ProductVariation instance
+            $variation = ProductVariation::create([
+                'color_id' => $variationData['color_id'],
+                'price' => $variationData['price'],
+                'name' => $variationData['name']
+                // 'image' => $variationData['image'],
+            ]);
+
+            // Generate the 'sku' based on the desired format
+            $sku = $variation->id . '-' . $variationData['color_id'] . '' . implode('', $variationData['attribute_value_ids']);
+
+            // Set the 'sku' for the variation
+            $variation->sku = $sku;
+
+            // Save the variation to the database
+            $variation->save();
+
+            $variationInventory = Inventory::create([
+                'sku' => $variation->sku,
+            ]);
+
+            // Associate the variation with the product (assuming $product is the product model)
+            $product->variations()->save($variation);
+
+            // Loop through the attribute_value_ids and associate each one with the variation
+            foreach ($variationData['attribute_value_ids'] as $attributeValueId) {
+                // Find the corresponding attribute value
+                $attributeValue = AttributeValue::find($attributeValueId);
+
+                // Associate the attribute value with the variation
+                $variation->attributeValue()->associate($attributeValue);
+            }
+        }
+
+        return response()->json(compact('variations', 'validated', 'product'));
+
+        // $categories = Category::all();
+        // $brands = Brand::all();
+        // $category = Category::findOrFail($validated('categoryId'));
 
         try {
 
-            if ($request->hasFile('image')){
+            if ($request->hasFile('image')) {
                 $imagePrefix = 'motomedic-media-image-';
                 $formattedTimestamp = Carbon::now()->format('Ymd_His');
 
-                $imageName = $imagePrefix.$formattedTimestamp.'.'.$request->file('image')->getClientOriginalExtension();
-                $validated['image'] = $request->file('image')->storeAs('image',$imageName);
+                $imageName = $imagePrefix . $formattedTimestamp . '.' . $request->file('image')->getClientOriginalExtension();
+                $validated['image'] = $request->file('image')->storeAs('image', $imageName);
             }
 
 

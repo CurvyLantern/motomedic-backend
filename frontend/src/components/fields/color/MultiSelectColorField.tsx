@@ -39,14 +39,19 @@ const MultiSelectColorField = ({
 };
 
 type SelectColorFieldProps = {
-    disabled: boolean;
     colors: SelectInputItem[];
 };
 export const SelectColorField = ({
     colors,
-    disabled,
+    ...props
 }: SelectColorFieldProps) => {
-    return <Select data={colors} itemComponent={CustomColorItem}></Select>;
+    return (
+        <Select
+            {...props}
+            data={colors}
+            itemComponent={CustomColorItem}
+        ></Select>
+    );
 };
 
 const CustomColorItem = forwardRef<

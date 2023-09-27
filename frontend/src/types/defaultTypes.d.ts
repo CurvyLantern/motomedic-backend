@@ -37,11 +37,11 @@ type Brand = {
 type Product = {
     warranty: string;
     sku: string;
-    product_name: string;
+    name: string;
     category_id: IdField;
     brand_id: IdField;
     model: string;
-    // color_id: IdField;
+    color_id: IdField;
     material: string;
     year: string | number;
     weight: number | string;
@@ -50,6 +50,11 @@ type Product = {
     description: string;
     active: boolean;
     image: File | null;
+    status: "active" | "inactive";
+};
+type ProductVariation = {
+    variation_enabled: boolean;
+    variations: null;
 };
 type ProductFieldInputType =
     | "number"
@@ -76,7 +81,7 @@ type ProductFieldDataType =
 type ProductFieldValueType = {
     label: string;
     type: ProductFieldInputType;
-    name: keyof Product;
+    name: keyof Product | keyof ProductVariation;
     data: ProductFieldDataType;
     validate: z.ZodString | z.ZodNumber | z.ZodBoolean | z.ZodObject;
 };
@@ -96,6 +101,12 @@ type Attribute = {
     id: IdField;
     priority: number;
     name: string;
-    values: string[];
+    values: { name: string; id: IdField }[];
 };
 type Color = { id: IdField; name: string; hexcode: string };
+
+type InventoryItemType = {
+    id: string;
+    sku: string;
+    stock_count: string | number;
+};

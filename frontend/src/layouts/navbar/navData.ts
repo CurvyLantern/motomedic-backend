@@ -98,15 +98,16 @@ export const navData = [
         icon: TbCardboards,
         childLinks: [
             {
-                href: getNavUrl("inventory", "add"),
-                label: "Add to Inventory",
-                icon: TbCardboards,
-            },
-            {
                 href: getNavUrl("inventory", "all"),
-                label: "See Inventory",
+                label: "All Inventory",
                 icon: TbCardboards,
             },
+            // {
+            //     href: getNavUrl("inventory", "add"),
+            //     label: "Add to Inventory",
+            //     icon: TbCardboards,
+            // },
+
             // {
             //     href: "service/create-service-data",
             //     label: "Create Service Essentitals",

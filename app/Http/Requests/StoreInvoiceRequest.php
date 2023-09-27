@@ -11,7 +11,7 @@ class StoreInvoiceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class StoreInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'type' => 'required|in:buying,selling',
+            'invoice_paper_id' => 'required',
+            'invoice_seller_id' => 'required',
+            'invoice_total_cost' => 'required',
+            'invoice_total_due' => 'required',
+            'invoice_products' => 'required',
         ];
     }
 }

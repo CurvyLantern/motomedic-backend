@@ -22,26 +22,20 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'productName' => "required",
-            'categoryId' => "required",
-            'brandId' => "required",
+            'name' => "required",
+            'category_id' => "required",
+            'brand_id' => "required",
             'model' => "required",
-            'color' => "required",
-            'material' => "required",
-            'size' => "required",
-            'year' => "required",
-            'compitibility' => "required",
-            'condition' => "required",
+            'color_id' => "required",
+            'material' => "nullable",
             'weight' => "required",
-            'quantity' => "required",
+            'year' => "nullable",
             'price' => "required",
-            'discount' => "required",
-            'primaryImg' => "required",
-            'shortDescriptions' => "required",
-            'availability' => "required",
+            'description' => "required",
+            'warranty' => "required",
             'status' => "required",
-            'thumbImg' => 'required',
-            'thumbImg.*' => 'mimes:jpg,png'
+            'image' => "image|nullable",
+            'variation_enabled' => 'boolean|required'
         ];
     }
 }

@@ -30,12 +30,12 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         User::factory(2)->create();
-        Customer::factory(10)->create();
-        Mechanic::factory(10)->create();
-        Service::factory(10)->create();
+        // Customer::factory(10)->create();
+        // Mechanic::factory(10)->create();
+        // Service::factory(10)->create();
         Color::factory(100)->create();
 
         //        Product::factory(10)->create();
-        Order::factory(10)->create();
+        // Order::factory(10)->create();
     }
 }

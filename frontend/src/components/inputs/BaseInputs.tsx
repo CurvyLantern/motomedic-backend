@@ -14,6 +14,7 @@ import {
     Paper,
     Select,
     Stack,
+    Switch,
     Text,
     TextInput,
     Textarea,
@@ -21,7 +22,7 @@ import {
 } from "@mantine/core";
 import { YearPicker } from "@mantine/dates";
 import { UseFormReturnType } from "@mantine/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type InputType = {
     field: {
@@ -36,6 +37,7 @@ type InputType = {
 };
 
 export const fieldTypes: { [k in ProductFieldInputType]: k } = {
+    switch: "switch",
     checkbox: "checkbox",
     colorInput: "colorInput",
     dropZone: "dropZone",
@@ -57,6 +59,15 @@ const BaseInputs = ({ field, form }: InputType) => {
     const isArr = Array.isArray(field.data);
 
     switch (type) {
+        case "switch":
+            inputComponent = (
+                <Switch
+                    {...form.getInputProps(field.name, { type: "checkbox" })}
+                    label={field.label}
+                    labelPosition="left"
+                ></Switch>
+            );
+            break;
         case "number":
             inputComponent = (
                 <NumberInput
@@ -152,7 +163,6 @@ const BaseInputs = ({ field, form }: InputType) => {
     return <div>{inputComponent}</div>;
 };
 const CustomRichText = ({ field, form }: InputType) => {
-    console.log(form.values[field.name], "adasdad");
     return (
         <DescriptionEditor
             content={form.values[field.name]}
@@ -164,6 +174,9 @@ const CustomRichText = ({ field, form }: InputType) => {
 };
 const CustomDropZone = ({ field, form }: InputType) => {
     const [file, setFile] = useState<File | null>(null);
+    useEffect(() => {
+        form.setFieldValue(field.name, file);
+    }, [file, field.name]);
     return (
         <>
             {/* <Text align="center" my={rem(20)} size={"lg"} weight={600}>
