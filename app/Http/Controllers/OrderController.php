@@ -14,6 +14,22 @@ use GuzzleHttp\Psr7\Request;
 
 class OrderController extends Controller
 {
+    public function apipage()
+    {
+        $orders = Order::orderBy('id', 'asc')->get();
+
+        $context = [
+            'orders' => $orders,
+        ];
+        //        return send_response('Products Data successfully loaded !', $context);
+
+        return view('apitest', compact('context'));
+    }
+
+
+
+
+
     /**
      * Display a listing of the resource.
      */
@@ -65,7 +81,7 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
         try {
-            $discount= 0 ;
+            $discount = 0;
             $tax = 0;
             $order = Order::create([
                 'customer_id' => $validated->customer_id,
@@ -100,7 +116,7 @@ class OrderController extends Controller
             foreach ($orderItems as $orderItemData) {
                 $orderItem = $order->orderItems()->create($orderItemData);
 
-                $product = Product::where('id',$orderItem->product_id)->firts();
+                $product = Product::where('id', $orderItem->product_id)->firts();
                 $productPrice = $product->price;
 
                 $service = Service::where('id', $orderItem->service_id)->first();
@@ -119,21 +135,21 @@ class OrderController extends Controller
             ];
             return send_response('Order Create Successfully', OrderResource::collection($context));
             //            // Create order items for services
-//            $serviceOrderItems = $order->orderItems()->create([
-//                'order_id' => $order->id,
-//                'service_id' => $request->service_id, // Replace with the service's ID
-//                'quantity' => $request->quantity,
-//                'price' => $request->price,
-//            ]);
-//
-//            // Create order items for products
-//            $productProductItems = $order->orderItems()->create([
-//                'order_id' => $order->id,
-//                'product_id' => $request->product_id, // Replace with the product's ID
-//                'quantity' => $request->quantity,
-//                'price' => $request->price,
-//            ]);
-        }catch (Exception $e) {
+            //            $serviceOrderItems = $order->orderItems()->create([
+            //                'order_id' => $order->id,
+            //                'service_id' => $request->service_id, // Replace with the service's ID
+            //                'quantity' => $request->quantity,
+            //                'price' => $request->price,
+            //            ]);
+            //
+            //            // Create order items for products
+            //            $productProductItems = $order->orderItems()->create([
+            //                'order_id' => $order->id,
+            //                'product_id' => $request->product_id, // Replace with the product's ID
+            //                'quantity' => $request->quantity,
+            //                'price' => $request->price,
+            //            ]);
+        } catch (Exception $e) {
             return send_error($e->getMessage(), $e->getCode());
         }
     }

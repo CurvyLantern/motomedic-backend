@@ -3,28 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <title> API Test </title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+
+        }
+
+        .search {
+
+            top: 6px;
+            left: 10px;
+        }
+
+        .form-control {
+
+            border: none;
+            padding-left: 32px;
+        }
+
+        .form-control:focus {
+
+            border: none;
+            box-shadow: none;
+        }
+
+        .green {
+
+            color: green;
+        }
+    </style>
 </head>
 
 <body class="" style="background-color: #f1f1f1;">
 
-{{--<section class="bg-white container border p-2 m-auto mt-4 border rounded">--}}
-{{--    <h3>--}}
-{{--        {{ Session::get('email') }}--}}
-{{--        --}}{{-- @foreach ($products as $data)--}}
-{{--    <h3> {{$data->productName}}--}}
-{{--    <img src="products/{{$data->primaryImg}}" width="100">--}}
-{{--    @endforeach --}}
-{{--    </h3>--}}
-{{--</section>--}}
+    {{-- <section class="bg-white container border p-2 m-auto mt-4 border rounded"> --}}
+    {{--    <h3> --}}
+    {{--        {{ Session::get('email') }} --}}
+    {{--        --}}{{-- @foreach ($products as $data) --}}
+    {{--    <h3> {{$data->productName}} --}}
+    {{--    <img src="products/{{$data->primaryImg}}" width="100"> --}}
+    {{--    @endforeach --}}
+    {{--    </h3> --}}
+    {{-- </section> --}}
 
 
-<section class="bg-white container border p-2 m-auto mt-4 border rounded">
+    <section class="bg-white container border p-2 m-auto mt-4 border rounded">
+        <h3 class="text-center p-2"> Total Order </h3>
+
+        {{-- @foreach ($context as $data )
+        {{$data}}
+        @endforeach --}}
+
+        <div class="row">
+            <div class="col-12">
+                <div class="container mt-5 px-2">
+                    <div class="table-responsive">
+                        <table class="table table-responsive table-borderless">
+
+                            <thead>
+                                <tr class="bg-light">
+                                    <th scope="col" width="5%"><i class="fa-sharp fa-solid"> </i>#id</th>
+                                    <th scope="col" width="20%">Order Date</th>
+                                    <th scope="col" width="10%">Status</th>
+                                    <th scope="col" width="20%">Amount</th>
+                                    <th scope="col" class="text-end" width="20%"><span>Action</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($context['orders'] as $order )
+                                <tr>
+                                    <td>{{$order->id}}</td>
+                                    <td>{{$order->created_at}}</td>
+                                    <td><i class="fa-solid fa-truck-ramp-box"></i><span class="ms-1">{{$order->status}}</span></td>
+                                    <td>{{$order->total}}</td>
+                                    <td class="text-end" width="20%">
+                                        <a href="{{url('/api/v2/orders')}}">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </a>
+                                        <a href="#">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </a>
+                                        <a href="#">
+                                            <i class="fa-regular fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </section>
+
+    {{-- <section class="bg-white container border p-2 m-auto mt-4 border rounded">
     <h3 class="text-center p-2"> Brand Create </h3>
     <form class="p-4 " action="{{route('create.request')}}" method="post" enctype="multipart/form-data">
-{{--    <form class="p-4 " action="{{ route('attribute.create') }}" method="post">--}}
         {{ csrf_field() }}
 
         <div class="form-group">
@@ -45,9 +133,9 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
-</section>
+</section> --}}
 
-{{-- <section class="bg-white container border p-2 m-auto mt-4 border rounded">
+    {{-- <section class="bg-white container border p-2 m-auto mt-4 border rounded">
     <h3 class="text-center p-2"> Service Section </h3>
 
     <form class="p-4 " action="{{ url('api/service/create') }}" method="post" enctype="multipart/form-data">
@@ -367,10 +455,10 @@
 
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
-</script>
-<script src="main.js"></script>
+    </script>
+    <script src="main.js"></script>
 </body>
 </body>
 

@@ -202,6 +202,8 @@ Route::prefix('v2')->group(function () {
 
     Route::apiResource('orders', OrderController::class);
 
+    Route::get('apitest', [OrderController::class, 'apipage'])->name('apipage');
+
 
 
     // Test api routes ...............
