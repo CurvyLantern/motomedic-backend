@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Invoice;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
+use App\Http\Resources\InvoiceResource;
 
 class InvoiceController extends Controller
 {
@@ -13,7 +15,9 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        //
+        $mechanics = Invoice::orderBy('id', 'asc')->paginate(15);
+
+        return InvoiceResource::collection($mechanics);
     }
 
     /**
@@ -43,8 +47,18 @@ class InvoiceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Invoice $invoice)
+    public function destroy(Invoice $invoice, $id)
     {
-        //
+        try {
+            $invoice = Invoice::find($id);
+            if ($invoice) {
+                $invoice->delete();
+            } else {
+                return send_response('Customer Not Found !', []);
+            }
+            return send_response('Customer Deleted successfully', []);
+        } catch (Exception $e) {
+            return send_error($e->getMessage(), $e->getCode());
+        }
     }
 }

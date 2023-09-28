@@ -16,6 +16,7 @@ use App\Http\Controllers\ProductAttributeController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\ProductVariationController;
+use App\Http\Controllers\SellerController;
 use App\Http\Resources\UserResource;
 use PhpParser\Node\Scalar\MagicConst\Dir;
 
@@ -191,10 +192,14 @@ Route::prefix('v2')->group(function () {
     Route::apiResource('customers', CustomerController::class);
     Route::apiResource('mechanics', MechanicController::class);
     Route::apiResource('services', ServiceController::class);
+    Route::apiResource('sellers', SellerController::class);
+    Route::apiResource('mechanics', MechanicController::class);
 
-//    Route::apiResource('orders', OrderController::class);
-    Route::post('orders/create', [OrderController::class,'store']);
+    // Route::apiResource('orders', OrderController::class);
+    Route::post('orders/create', [OrderController::class, 'store']);
 
+
+    // api test pages ...................
     Route::get('apitest', [OrderController::class, 'apiTest'])->name('api.test');
     Route::get('apicreate', [OrderController::class, 'apiCreatePage'])->name('api.create');
 
@@ -204,6 +209,7 @@ Route::prefix('v2')->group(function () {
 
     Route::post('brands/create', [BrandController::class, 'store'])->name('create.request');
     Route::post('brands/create', [BrandController::class, 'store'])->name('create.request');
+
 
     //    Route::get('brand/create',[BrandController::class,'store'])->name('brand.create');
 

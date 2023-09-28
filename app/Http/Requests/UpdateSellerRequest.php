@@ -22,7 +22,10 @@ class UpdateSellerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required',
+            'contact_number' => 'required',
+            'email' => 'nullable',
+            'address' => 'nullable',
         ];
     }
 }

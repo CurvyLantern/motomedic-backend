@@ -51,16 +51,15 @@ class CustomerController extends Controller
     {
         $validated = $request->validated();
         try {
-            // Create an admin record associated with the user
             $customer = Customer::create([
-                'name' => $validated->name,
-                'email' => $validated->email,
-                'phone' => $validated->phone,
-                'address' => $validated->address,
-                'bike_info' => $validated->bike_info,
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'bike_info' => $request->bike_info,
             ]);
 
-            return send_response('Customer Login Success !', $customer);
+            return send_response('Customer Create Success !', $customer);
         } catch (Exception $e) {
             return send_error($e->getMessage(), $e->getCode());
         }

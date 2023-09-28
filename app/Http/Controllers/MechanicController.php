@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Exception;
 use App\Http\Resources\MechanicResource;
 use App\Models\Mechanic;
@@ -28,10 +29,10 @@ class MechanicController extends Controller
         try {
             // Create an admin record associated with the user
             $mechanic = Mechanic::create([
-                'name' => $validated->name,
-                'email' => $validated->email,
-                'phone' => $validated->phone,
-                'address' => $validated->address,
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'address' => $request->address,
             ]);
 
             return send_response('Mechanic create Success !', $mechanic);
@@ -46,7 +47,7 @@ class MechanicController extends Controller
     public function show(String $id)
     {
         try {
-//            $mechanic = Mechanic::find($id)->first();
+            //            $mechanic = Mechanic::find($id)->first();
             $mechanic = Mechanic::whereId($id)->firstOrFail();
             if ($mechanic) {
                 $context = [
@@ -64,18 +65,18 @@ class MechanicController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMechanicRequest $request, Mechanic $mechanic,String $id)
+    public function update(UpdateMechanicRequest $request, Mechanic $mechanic, String $id)
     {
         $validated = $request->validated();
         try {
 
             $mechanic = Mechanic::find($id);
 
-            $mechanic->name = $validated->name;
-            $mechanic->email = $validated->email;
-            $mechanic->phone = $validated->phone;
-            $mechanic->address = $validated->address;
-            $mechanic->status = $validated->status;
+            $mechanic->name = $request->name;
+            $mechanic->email = $request->email;
+            $mechanic->phone = $request->phone;
+            $mechanic->address = $request->address;
+            $mechanic->status = $request->status;
 
             $mechanic->save();
 

@@ -112,8 +112,8 @@ class OrderController extends Controller
             $order = Order::create([
                 'customer_id' => $request->customer_id,
                 'total' => 0,
-                'discount' => $discount,
-                'tax' => $tax,
+                'discount' => $request->discount,
+                'tax' => $request->tax,
                 'note' => $request->note,
                 'status' => $request->status,
             ]);
