@@ -117,8 +117,6 @@ class OrderController extends Controller
                 'note' => $request->note,
                 'status' => $request->status,
             ]);
-            //            return send_response('order Create Successfull ',$order);
-
             //....................... Order Item Create ....................
 
             $product = Product::where('id', $request->product_id)->get();
@@ -130,22 +128,8 @@ class OrderController extends Controller
                     'service_id' => $request->service_id,
                     'product_id' => $request->product_id,
                     'quantity' => $request->quantity,
-                    // 'price' => $service->first()->price + $product->first()->price * $request->quantity,
                 ]
             ];
-
-
-            // foreach ($orderItemCreate as $itemData) {
-            //     $orderItem = $order->orderItems()->create($itemData);
-
-            //     $product = Product::where('id', $request->product_id)->get();
-            //     $productPrice = $product->first()->price;
-            //     $service = Service::where('id', $request->service_id)->get();
-            //     $servicePrice = $service->first()->price;
-
-
-            //     $order->increment('total', $productPrice * $orderItem->quantity + $servicePrice);
-            // }
 
             foreach ($orderItemCreate as $itemData) {
                 // Initialize the prices to zero
@@ -167,93 +151,10 @@ class OrderController extends Controller
                         $servicePrice = $service->price;
                     }
                 }
-
                 $orderItem = $order->orderItems()->create($itemData);
-
-                // $orderItem = $order->orderItems()->create([
-                //     'order_id' => $itemData['order_id'],
-                //     'service_id' => $itemData['service_id'],
-                //     'product_id' => $itemData['product_id'],
-                //     'quantity' => $itemData['quantity'],
-                // ]);
-
-                // $order->increment('total', $productPrice * $orderItem->quantity + $servicePrice);
                 $order->increment('total', $productPrice * $itemData['quantity'] + $servicePrice);
             }
-
-
-
             //....................... Order Item Create ends....................
-
-            //  .................. create order .............
-
-            // $service = Service::where('id', $request->service_id)->get();
-
-            // $serviceOrderItems = [
-            //     [
-            //         'order_id' => $order->id,
-            //         'service_id' => $request->service_id,
-            //         'quantity' => $request->quantity,
-            //         'price' => $service->first()->price,
-            //     ]
-            // ];
-            // $product = Product::where('id', $request->product_id)->get();
-            // $productOrderItems = [
-            //     [
-            //         'order_id' => $order->id,
-            //         'product_id' => $request->product_id, // Replace with the product's ID
-            //         'quantity' => $request->quantity,
-            //         'price' => $product->first()->price,
-            //     ]
-            // ];
-
-            // Create order items and calculate the total amount
-            //            $orderItems = [
-            //                $serviceOrderItems,
-            //                $productOrderItems,
-            //            ];
-
-            // foreach ($serviceOrderItems as $serviceData) {
-            //     $orderItem = $order->orderItems()->create($serviceData);
-            //     $service = Service::where('id', $request->service_id)->get();
-            //     $servicePrice = $service->first()->price;
-            //     $order->increment('total', $servicePrice);
-            // }
-
-            // foreach ($productOrderItems as $productData) {
-            //     //                $orderItem = $order->orderItems()->create($productData);
-            //     $orderItem = $order->orderItems()->create([
-            //         'order_id' => $order->id,
-            //         'product_id' => $request->product_id, // Replace with the product's ID
-            //         'quantity' => $request->quantity,
-            //         'price' => $product->first()->price,
-            //     ]);
-            //     $product = Product::where('id', $request->product_id)->get();
-            //     $productPrice = $product->first()->price;
-            // $order->increment('total', $productPrice * $orderItem->quantity);
-            // }
-
-
-            //  .................. end create order .............
-
-            //            foreach ($orderItems as $orderItemData) {
-            //                $orderItem = $order->orderItems()->create($orderItemData);
-            //
-            //                $productPrice =0;
-            //                $product = Product::where('id', $orderItemData->product_id)->get();
-            //                $productPrice = $product->first()->price;
-            //
-            //                $servicePrice =0;
-            //                $service = Service::where('id', $orderItemData->service_id)->get();
-            //                $servicePrice = $service->first()->price;
-            //
-            //                // Calculate and update the total amount for the order
-            //                $order->increment('price', $productPrice * $orderItem->quantity) + $servicePrice;
-            //            }
-            //
-            //            $order->update([
-            //                'total' => $order->total->sum('total'),
-            //            ]);
 
             $context = [
                 'order' => $order,
@@ -275,17 +176,12 @@ class OrderController extends Controller
             $order = Order::find($id);
 
             // $order->customerId = $request->customerId;
-            $order->serviceId = $request->serviveId;
-            $order->productId = $request->productId;
-            $order->quantity = $request->quantity;
-            $order->subtotal = $request->subtotal;
+            $order->customer_id = $request->customer_id;
             $order->total = $request->total;
-            $order->tax = $request->tax;
             $order->discount = $request->discount;
+            $order->tax = $request->tax;
             $order->note = $request->note;
-            $order->extra = $request->extra;
-            $order->serviceStatus = $request->serviceStatus;
-            $order->queue = $request->queue;
+            $order->status = $request->status;
 
             $order->save();
 
@@ -294,7 +190,7 @@ class OrderController extends Controller
             ];
             return send_response("Order Update successfully !", $context);
         } catch (Exception $e) {
-            return send_error("Order data update failed !!!");
+            return send_error($e->getMessage(), $e->getCode());
         }
     }
 
@@ -316,3 +212,127 @@ class OrderController extends Controller
         }
     }
 }
+
+
+
+
+
+
+
+
+
+// .................... Dump code ...............
+
+
+// [
+
+
+//             // foreach ($orderItemCreate as $itemData) {
+//             //     $orderItem = $order->orderItems()->create($itemData);
+
+//             //     $product = Product::where('id', $request->product_id)->get();
+//             //     $productPrice = $product->first()->price;
+//             //     $service = Service::where('id', $request->service_id)->get();
+//             //     $servicePrice = $service->first()->price;
+
+
+//             //     $order->increment('total', $productPrice * $orderItem->quantity + $servicePrice);
+//             // }
+// ]
+
+// [
+
+//     // 'price' => $service->first()->price + $product->first()->price * $request->quantity,
+// ]
+
+
+// [
+
+
+//                 // $orderItem = $order->orderItems()->create([
+//                 //     'order_id' => $itemData['order_id'],
+//                 //     'service_id' => $itemData['service_id'],
+//                 //     'product_id' => $itemData['product_id'],
+//                 //     'quantity' => $itemData['quantity'],
+//                 // ]);
+
+//                 // $order->increment('total', $productPrice * $orderItem->quantity + $servicePrice);
+
+// ]
+
+
+
+// [
+//     //  .................. create order .............
+
+//             // $service = Service::where('id', $request->service_id)->get();
+
+//             // $serviceOrderItems = [
+//             //     [
+//             //         'order_id' => $order->id,
+//             //         'service_id' => $request->service_id,
+//             //         'quantity' => $request->quantity,
+//             //         'price' => $service->first()->price,
+//             //     ]
+//             // ];
+//             // $product = Product::where('id', $request->product_id)->get();
+//             // $productOrderItems = [
+//             //     [
+//             //         'order_id' => $order->id,
+//             //         'product_id' => $request->product_id, // Replace with the product's ID
+//             //         'quantity' => $request->quantity,
+//             //         'price' => $product->first()->price,
+//             //     ]
+//             // ];
+
+//             // Create order items and calculate the total amount
+//             //            $orderItems = [
+//             //                $serviceOrderItems,
+//             //                $productOrderItems,
+//             //            ];
+
+//             // foreach ($serviceOrderItems as $serviceData) {
+//             //     $orderItem = $order->orderItems()->create($serviceData);
+//             //     $service = Service::where('id', $request->service_id)->get();
+//             //     $servicePrice = $service->first()->price;
+//             //     $order->increment('total', $servicePrice);
+//             // }
+
+//             // foreach ($productOrderItems as $productData) {
+//             //     //                $orderItem = $order->orderItems()->create($productData);
+//             //     $orderItem = $order->orderItems()->create([
+//             //         'order_id' => $order->id,
+//             //         'product_id' => $request->product_id, // Replace with the product's ID
+//             //         'quantity' => $request->quantity,
+//             //         'price' => $product->first()->price,
+//             //     ]);
+//             //     $product = Product::where('id', $request->product_id)->get();
+//             //     $productPrice = $product->first()->price;
+//             // $order->increment('total', $productPrice * $orderItem->quantity);
+//             // }
+
+
+//             //  .................. end create order .............
+// ]
+
+// [
+
+//             //            foreach ($orderItems as $orderItemData) {
+//             //                $orderItem = $order->orderItems()->create($orderItemData);
+//             //
+//             //                $productPrice =0;
+//             //                $product = Product::where('id', $orderItemData->product_id)->get();
+//             //                $productPrice = $product->first()->price;
+//             //
+//             //                $servicePrice =0;
+//             //                $service = Service::where('id', $orderItemData->service_id)->get();
+//             //                $servicePrice = $service->first()->price;
+//             //
+//             //                // Calculate and update the total amount for the order
+//             //                $order->increment('price', $productPrice * $orderItem->quantity) + $servicePrice;
+//             //            }
+//             //
+//             //            $order->update([
+//             //                'total' => $order->total->sum('total'),
+//             //            ]);
+// ]

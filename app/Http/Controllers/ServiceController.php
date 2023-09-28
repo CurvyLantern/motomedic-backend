@@ -55,13 +55,13 @@ class ServiceController extends Controller
         $validated = $request->validated();
         try {
             $service = Service::create([
-                'name' => $validated->name,
-                'slug' =>  Str::slug($validated->name, '-'),
-                'description' => $validated->description,
-                'price' => $validated->price,
-                'duration' => $validated->duration,
-                'note' => $validated->note,
-                'mechanic_id' => $validated->mechanic_id,
+                'name' => $request->name,
+                'slug' =>  Str::slug($request->name, '-'),
+                'description' => $request->description,
+                'price' => $request->price,
+                'duration' => $request->duration,
+                'note' => $request->note,
+                'mechanic_id' => $request->mechanic_id,
             ]);
             return send_response("Service create successfull", new ServiceResource($service));
         } catch (Exception $e) {
