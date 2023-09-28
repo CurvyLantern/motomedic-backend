@@ -442,16 +442,17 @@
                     </select>
                 </div>
             </div>
-            <div class="col">
+            {{-- <div class="col">
                 <div class="form-group">
                     <label for="product_id">Select a Product:</label>
                     <select class="form-select" id="product_id" name="product_id">
+                        <option value="">No Product </option>
                         @foreach ($context["products"] as $product)
                             <option value="{{ $product->id }}">{{ $product->name }}</option>
                         @endforeach
                     </select>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="col">
                 <div class="form-group">
