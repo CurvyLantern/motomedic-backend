@@ -15,6 +15,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductAttributeController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\AttributeValueController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductVariationController;
 use App\Http\Controllers\SellerController;
 use App\Http\Resources\UserResource;
@@ -46,7 +48,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
             'index' => 'category.index'
         ]);
         Route::apiResource('colors', ColorController::class);
+        Route::apiResource('inventories', InventoryController::class);
+        Route::apiResource('invoices', InvoiceController::class);
+
+
+        Route::post('products/search', [ProductController::class, 'search'])->name('product.search');
         Route::get('products/createInfos', [ProductController::class, 'createInfos'])->name('products.createInfos');
+        Route::apiResource('products', ProductController::class);
 
         // Route::apiResources([
         //     'categories' => CategoryController::class,

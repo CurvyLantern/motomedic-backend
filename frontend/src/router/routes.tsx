@@ -124,10 +124,10 @@ const routes: RouteObject[] = [
                         path: "all",
                         element: <AllInventoryPage />,
                     },
-                    {
-                        path: "add",
-                        element: <CreateInventoryPage />,
-                    },
+                    // {
+                    //     path: "add",
+                    //     element: <CreateInventoryPage />,
+                    // },
                 ],
             },
             {

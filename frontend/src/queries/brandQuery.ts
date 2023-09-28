@@ -1,4 +1,6 @@
 import axiosClient from "@/lib/axios";
+import { qc } from "@/providers/QueryProvider";
+import { Brand } from "@/types/defaultTypes";
 import { useQuery } from "@tanstack/react-query";
 
 export const useBrandQuery = () => {
@@ -26,4 +28,8 @@ export const useBrandQuery = () => {
     return {
         brands,
     };
+};
+
+export const invalidateBrandQuery = () => {
+    qc.invalidateQueries(["get/brands"]);
 };

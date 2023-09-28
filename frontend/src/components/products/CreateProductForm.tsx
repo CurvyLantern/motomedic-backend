@@ -18,22 +18,13 @@ import { useProductForm } from "@/components/products/fields/hooks/useProductFor
 import { TypedObject } from "@/types/defaultTypes";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fieldTypes } from "./fields/ProductFields";
 import { ProductVariationFieldsSimple } from "./fields/ProductVariationFieldsSimple";
 import VariantProducts from "./fields/VariantProducts";
+import dataToFormData from "@/utils/dataToFormdata";
 const url = "products";
-const uploadProduct = async (data: unknown) => {
-    try {
-        await axiosClient.v1.api.post(url, data);
-        notifications.show({
-            message: "Product Created Successfully",
-            color: "green",
-        });
-    } catch (error) {
-        console.error(error);
-    }
-};
+
 const ProductFieldSimpleGrid: React.FC<{
     sm?: number;
     md?: number;
@@ -64,13 +55,14 @@ const CreateProductForm = () => {
                     (field, fieldIdx) => {
                         const isSelect = field.type === fieldTypes.select;
                         if (isSelect) {
-                            field.data = selectInitialData[field.name];
+                            field.data =
+                                selectInitialData[field.name] ?? field.data;
                         }
                         return (
                             <BaseInputs
                                 form={form}
                                 // @ts-expect-error i dont know why
-                                field={{ ...field }}
+                                field={field}
                                 key={field.name}
                             />
                         );
@@ -81,28 +73,45 @@ const CreateProductForm = () => {
         [form, selectInitialData]
     );
 
-    const onFormSubmit = (values: unknown) => {
+    const onFormSubmit = async (values: typeof form.values) => {
         console.log(values, "from form");
-        // uploadProduct({
-        //     productName: "Vanella",
-        //     categoryId: 2,
-        //     brandId: 2,
-        //     model: "RandomModel",
-        //     color: "RandomColor",
-        //     material: "RandomMaterial",
-        //     size: "RandomSize",
-        //     year: 2022,
-        //     compitibility: "RandomCompitibility",
-        //     condition: "RandomCondition",
-        //     weight: "RandomWeight",
-        //     quantity: 10,
-        //     price: 10,
-        //     discount: 10,
-        //     shortDescriptions: "RandomShortDescriptions",
-        //     availability: 0,
-        //     status: 0,
-        // });
+        const formData = dataToFormData({
+            data: values,
+        });
+
+        for (const [k, v] of formData.entries()) {
+            console.log(`${k} => ${v} ${typeof v}`);
+        }
+
+        try {
+            const data = await axiosClient.v1.api
+                .post(url, formData)
+                .then((res) => res.data);
+            console.log(data, " from product submit server ");
+            notifications.show({
+                message: "Product Created Successfully",
+                color: "green",
+            });
+        } catch (error) {
+            console.error(error);
+        }
     };
+    const [previousVariationsArr, setPreviousVariationsArr] = useState<[]>([]);
+    useEffect(() => {
+        if (!form.values.variation_enabled) {
+            setPreviousVariationsArr(form.values.variations as unknown as []);
+            form.setFieldValue(
+                "variations",
+                [] as unknown as typeof form.values.variations
+            );
+        } else {
+            form.setFieldValue(
+                "variations",
+                previousVariationsArr as unknown as typeof form.values.variations
+            );
+        }
+    }, [form.values.variation_enabled]);
+
     return (
         <form onSubmit={form.onSubmit(onFormSubmit)}>
             {/* <Stack spacing="xl"> */}
@@ -191,11 +200,15 @@ const CreateProductForm = () => {
                     <BasicSection title="Product Variation">
                         <Stack>
                             <Switch
-                                {...form.getInputProps("variation_enabled")}
+                                {...form.getInputProps("variation_enabled", {
+                                    type: "checkbox",
+                                })}
                                 label="Enable Variations"
                                 labelPosition="left"
                             ></Switch>
-                            <VariantProducts />
+                            {form.values.variation_enabled ? (
+                                <VariantProducts form={form} />
+                            ) : null}
                         </Stack>
                     </BasicSection>
                 </Grid.Col>

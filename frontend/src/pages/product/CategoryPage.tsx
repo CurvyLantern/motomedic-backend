@@ -5,6 +5,7 @@ import axiosClient from "@/lib/axios";
 import {
     deleteCategory,
     editCategory,
+    invalidateCateogryQuery,
     useCategoryQuery,
 } from "@/queries/categoryQuery";
 import { CategoryWithSubCateogry } from "@/types/defaultTypes";
@@ -231,8 +232,6 @@ const CreateCategoryForm = () => {
     const onCreate = async () => {
         setLoading(true);
 
-        console.log(values, " values from 232 ");
-
         const url = "categories";
         // const formData = dataToFormdata({ data: values });
         const formData = new FormData(categoryFormRef.current ?? undefined);
@@ -251,6 +250,7 @@ const CreateCategoryForm = () => {
                 message: "Category created successfully",
             });
             form.reset();
+            invalidateCateogryQuery();
         } catch (error) {
             console.error(error);
         } finally {

@@ -3,28 +3,43 @@ import useCustomForm from "@/hooks/useCustomForm";
 import useProductFormQuery from "@/queries/productFormQuery";
 import { zodResolver } from "@mantine/form";
 import { z } from "zod";
-import { productFields } from "../fields";
-import { SelectInputItem } from "@/types/defaultTypes";
+import { productFields, productVariationFields } from "../fields";
+import {
+    ProductFieldDataType,
+    ProductFieldValueType,
+    SelectInputItem,
+} from "@/types/defaultTypes";
 
-const initialValues = Object.values(productFields)
-    .flat(1)
-    .reduce((acc, item) => {
-        //@ts-expect-error don't need typescript help here
+const initialValues = {
+    ...Object.values(productFields)
+        .flat(1)
+        .reduce((acc, item) => {
+            acc[item.name as unknown as ProductFieldValueType["name"]] =
+                item.data;
+            return acc;
+        }, {} as Record<ProductFieldValueType["name"], ProductFieldDataType>),
+    ...productVariationFields.reduce((acc, item) => {
         acc[item.name] = item.data;
         return acc;
-    }, {});
-
-const validation = Object.values(productFields)
-    .flat(1)
-    .reduce((acc, item) => {
+    }, {} as Record<(typeof productVariationFields)[number]["name"], (typeof productVariationFields)[number]["data"]>),
+};
+const validation = {
+    ...Object.values(productFields)
+        .flat(1)
+        .reduce((acc, item) => {
+            acc[item.name as unknown as ProductFieldValueType["name"]] =
+                item.validate;
+            return acc;
+        }, {} as Record<ProductFieldValueType["name"], z.AnyZodObject>),
+    ...productVariationFields.reduce((acc, item) => {
         acc[item.name] = item.validate;
         return acc;
-    }, {} as Record<string, z.AnyZodObject>);
-const productSchema = z.object(validation);
-
+    }, {} as Record<(typeof productVariationFields)[number]["name"], (typeof productVariationFields)[number]["validate"]>),
+};
+export type ProductFormValueType = typeof initialValues;
 export const useProductForm = () => {
     const form = useCustomForm({
-        validate: zodResolver(productSchema),
+        validate: zodResolver(z.object(validation)),
         initialValues: {
             ...initialValues,
         },

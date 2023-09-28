@@ -27,7 +27,6 @@ const ImgDropzone: React.FC<Omit<DropzoneProps, "children">> = ({
 
     useEffect(() => {
         onDrop(filesState);
-        console.log(filesState, ";");
     }, [filesState, onDrop]);
 
     const previews = filesState.map((file, index) => {

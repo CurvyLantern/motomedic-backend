@@ -15,7 +15,8 @@ class ProductVariation extends Model
         'color_id',
         'image',
         'price',
-        'sku'
+        'sku',
+        'name'
     ];
 
     public function product()

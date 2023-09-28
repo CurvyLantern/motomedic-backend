@@ -47,12 +47,12 @@ class CategoryController extends Controller
         try {
             $validated = $request->validated();
 
-            if ($request->hasFile('image')){
+            if ($request->hasFile('image')) {
                 $imagePrefix = 'motomedic-media-image-';
                 $formattedTimestamp = Carbon::now()->format('Ymd_His');
 
-                $imageName = $imagePrefix.$formattedTimestamp.'.'.$request->file('image')->getClientOriginalExtension();
-                $validated['image'] = $request->file('image')->storeAs('image',$imageName);
+                $imageName = $imagePrefix . $formattedTimestamp . '.' . $request->file('image')->getClientOriginalExtension();
+                $validated['image'] = $request->file('image')->storeAs('image', $imageName);
             }
 
             $category = Category::create($validated);
@@ -66,7 +66,6 @@ class CategoryController extends Controller
                 }
             }
             return response()->json(['message' => 'Category created successfully']);
-
         } catch (Exception $e) {
             return send_error($e->getMessage(), $e->getCode());
         }

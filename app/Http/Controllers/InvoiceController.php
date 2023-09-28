@@ -6,7 +6,11 @@ use Exception;
 use App\Models\Invoice;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
+<<<<<<< HEAD
 use App\Http\Resources\InvoiceResource;
+=======
+use App\Models\Inventory;
+>>>>>>> 5336032bb037c8b76a12fe2018e8f6f1d07a3e68
 
 class InvoiceController extends Controller
 {
@@ -25,7 +29,26 @@ class InvoiceController extends Controller
      */
     public function store(StoreInvoiceRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $products = $validated['invoice_products'];
+
+        foreach ($products as $product) {
+            $inventory = Inventory::where('sku', $product['product_sku'])->first();
+            $inventory->stock_count = $inventory->stock_count + $product['stock_count'];
+            $inventory->save();
+        }
+
+        $invoice = Invoice::create([
+            'invoice_paper_id' => $validated['invoice_paper_id'],
+            'invoice_seller_id' => $validated['invoice_seller_id'],
+            'invoice_total_cost' => $validated['invoice_total_cost'],
+            'invoice_total_due' => $validated['invoice_total_due'],
+            'type' => $validated['type'],
+            'purchased_products' => $validated['invoice_products'],
+        ]);
+
+        return response()->json(compact('invoice'));
     }
 
     /**

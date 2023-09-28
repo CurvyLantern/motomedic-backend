@@ -1,7 +1,8 @@
 import { BrandForm } from "@/components/forms/brand/BrandForm";
 import BasicSection from "@/components/sections/BasicSection";
 import axiosClient from "@/lib/axios";
-import { useBrandQuery } from "@/queries/brandQuery";
+import { invalidateBrandQuery, useBrandQuery } from "@/queries/brandQuery";
+import { notifications } from "@mantine/notifications";
 import {
     AspectRatio,
     Box,
@@ -14,8 +15,7 @@ import {
     Text,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
-import { notifications } from "@mantine/notifications";
-import { useQuery } from "@tanstack/react-query";
+import { Brand } from "@/types/defaultTypes";
 
 const BrandPage = () => {
     // const onCreate = (values) => {
@@ -38,7 +38,16 @@ const BrandPage = () => {
                     <Tabs.Panel value="create">
                         <Box maw={600} mx="auto">
                             <BasicSection>
-                                <BrandForm submitUrl="brands" />
+                                <BrandForm
+                                    onSuccess={() => {
+                                        notifications.show({
+                                            message:
+                                                "Brand created successfully",
+                                        });
+                                        invalidateBrandQuery();
+                                    }}
+                                    submitUrl="brands"
+                                />
                             </BasicSection>
                         </Box>
                     </Tabs.Panel>
@@ -90,7 +99,7 @@ const ViewBrands = () => {
 
     return (
         <div>
-            <Group position="center" align="normal">
+            <Group align="normal">
                 {brands
                     ? brands.map((brand) => {
                           const id = brand.id;

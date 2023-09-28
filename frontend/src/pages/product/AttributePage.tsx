@@ -73,10 +73,12 @@ const AttributePage = () => {
                                                               return (
                                                                   <Badge
                                                                       key={
-                                                                          value
+                                                                          value.id
                                                                       }
                                                                   >
-                                                                      {value}
+                                                                      {
+                                                                          value.name
+                                                                      }
                                                                   </Badge>
                                                               );
                                                           }

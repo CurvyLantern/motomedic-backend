@@ -33,6 +33,9 @@ export const useCategoryQuery = () => {
         categories,
     };
 };
+export const invalidateCateogryQuery = () => {
+    qc.invalidateQueries(["get/categories"]);
+};
 export const editCategory = async (category: Category) => {
     return axiosClient.v1.api
         .put(`${url}/${category.id}`, category)

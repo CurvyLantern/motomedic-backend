@@ -76,8 +76,6 @@ return new class extends Migration
             $table->string('sku')->nullable();
             $table->string('model')->nullable();
 
-             $table->unsignedBigInteger('color_id')->nullable();
-             $table->foreign('color_id')->references('id')->on('colors')->onUpdate('cascade')->onDelete('cascade');
 
             $table->string('material')->nullable();
             $table->string('weight');
@@ -105,7 +103,6 @@ return new class extends Migration
             $table->unsignedBigInteger('attribute_value_id');
             $table->foreign('attribute_value_id')->references('id')->on('attribute_values')->onUpdate('cascade')->onDelete('cascade');
         });
-
         // product variation table
         Schema::create(
             'product_variations',
