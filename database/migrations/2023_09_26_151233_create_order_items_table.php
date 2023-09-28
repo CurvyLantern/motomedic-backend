@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id')->nullable();
             $table->unsignedBigInteger('service_id')->nullable();
             $table->integer('quantity')->default(1);
-            $table->decimal('price', 10, 2);
+            // $table->decimal('price', 10, 2);
             // Add other fields as needed
             $table->timestamps();
 

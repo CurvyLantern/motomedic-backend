@@ -421,6 +421,7 @@
                 <div class="form-group">
                     <label for="product_id">Select a Service :</label>
                     <select class="form-select" id="service_id" name="service_id">
+                        <option value="">No Service </option>
                         @foreach ($context["services"] as $service)
                             <option value="{{ $service->id }}">{{ $service->name }}</option>
                         @endforeach
@@ -434,6 +435,7 @@
                 <div class="form-group">
                     <label for="product_id">Select a Product:</label>
                     <select class="form-select" id="product_id" name="product_id">
+                        <option value="">No Product </option>
                         @foreach ($context["products"] as $product)
                             <option value="{{ $product->id }}">{{ $product->name }}</option>
                         @endforeach
