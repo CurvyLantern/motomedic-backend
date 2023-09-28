@@ -14,7 +14,7 @@ class OrderItem extends Model
         'product_id',
         'service_id',
         'quantity',
-        'price',
+        // 'price',
     ];
 
 

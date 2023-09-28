@@ -200,9 +200,11 @@ Route::prefix('v2')->group(function () {
     Route::apiResource('mechanics', MechanicController::class);
     Route::apiResource('services', ServiceController::class);
 
-    Route::apiResource('orders', OrderController::class);
+//    Route::apiResource('orders', OrderController::class);
+    Route::post('orders/create', [OrderController::class,'store']);
 
-    Route::get('apitest', [OrderController::class, 'apipage'])->name('apipage');
+    Route::get('apitest', [OrderController::class, 'apiTest'])->name('api.test');
+    Route::get('apicreate', [OrderController::class, 'apiCreatePage'])->name('api.create');
 
 
 

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use Illuminate\Support\Str;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,13 +19,14 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
-        $categoryName = fake()->userName;
+        $name = fake()->domainName();
         return [
-            'categoryName' => $categoryName,
-            'slug' => Str::slug($categoryName, '-'),
-            'img' => $this->faker->imageUrl(200, 200), // Generates a random image URL
+            'name' => $name,
+            'slug' => Str::slug($name, '-'),
+            'image' => $this->faker->imageUrl(200, 200), // Generates a random image URL
             'description' => $this->faker->sentence,
-            'parentCategoryId' => $this->faker->numberBetween(1, 5),
+//            'parent_category_id' => Category::select('id')->inRandomOrder()->first()->id,
+//            'parent_category_id' => fake()->numberBetween(3,8),
         ];
     }
 }

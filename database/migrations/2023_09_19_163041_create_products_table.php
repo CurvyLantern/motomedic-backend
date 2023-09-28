@@ -76,6 +76,9 @@ return new class extends Migration
             $table->string('sku')->nullable();
             $table->string('model')->nullable();
 
+            $table->unsignedBigInteger('color_id')->nullable();
+            $table->foreign('color_id')->references('id')->on('colors')->onUpdate('cascade');
+
             $table->string('material')->nullable();
             $table->string('weight');
             $table->decimal('price');
