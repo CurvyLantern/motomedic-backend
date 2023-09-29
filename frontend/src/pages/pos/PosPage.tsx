@@ -33,6 +33,8 @@ import WithCustomerLayout from "@/layouts/WithCustomerLayout";
 import { useAppSelector } from "@/hooks/storeConnectors";
 import { notifications } from "@mantine/notifications";
 
+import { useCustomInputStyles } from "./customInput.styles";
+
 const getPercentage = (prcnt: number, outOf: number) => outOf * (prcnt / 100);
 
 type FlatOrPercent = "flat" | "percent";
@@ -130,6 +132,8 @@ const PosContents = () => {
       .then((res) => res.data);
     console.log(serverData, "Server response data");
   };
+
+  const { classes } = useCustomInputStyles();
 
   return (
     <Grid h={"100%"}>
@@ -372,8 +376,8 @@ const PosContents = () => {
             })}
           </Stack>
           <Stack
-            spacing={3}
-            p={5}
+            spacing={"xs"}
+            p={"xs"}
             sx={{
               position: "absolute",
               bottom: 0,
@@ -387,30 +391,28 @@ const PosContents = () => {
           >
             <SimpleGrid
               cols={3}
+              spacing={"xs"}
               sx={{
                 fontSize: "10px",
                 fontWeight: 600,
-                gap: 2,
               }}
             >
-              <Text>
-                <Badge fullWidth size="xs" color="green" variant="filled">
-                  Discount : {cartDiscount} ৳
-                </Badge>
-              </Text>
-              <Text>
-                <Badge fullWidth size="xs" color="red" variant="filled">
-                  Tax : {cartTax} ৳
-                </Badge>
-              </Text>
-              <Text>
-                <Badge variant="gradient" fullWidth>
-                  Total : {cartTotal}
-                </Badge>
-              </Text>
+              <Badge fullWidth color="green" variant="filled">
+                Discount : {cartDiscount} ৳
+              </Badge>
+
+              <Badge fullWidth color="red" variant="filled">
+                Tax : {cartTax} ৳
+              </Badge>
+
+              <Badge variant="gradient" fullWidth>
+                Total : {cartTotal}
+              </Badge>
             </SimpleGrid>
-            <SimpleGrid cols={2}>
+            <SimpleGrid cols={2} spacing={"xs"}>
               <NumberInput
+                classNames={classes}
+                label="Discount"
                 hideControls
                 placeholder="Discount"
                 value={cartDiscountInput}
@@ -419,13 +421,17 @@ const PosContents = () => {
                 }}
               />
               <Select
+                classNames={classes}
+                label="Discount Type"
                 value={cartDiscountType}
                 onChange={(v) => setCartDiscountType(v as FlatOrPercent)}
                 data={["flat", "percent"]}
               />
             </SimpleGrid>
-            <SimpleGrid cols={2}>
+            <SimpleGrid cols={2} spacing={"xs"}>
               <NumberInput
+                classNames={classes}
+                label="Tax"
                 hideControls
                 placeholder="Tax"
                 value={cartTaxInput}
@@ -434,6 +440,8 @@ const PosContents = () => {
                 }}
               />
               <Select
+                classNames={classes}
+                label="Tax Type"
                 value={cartTaxType}
                 onChange={(v) => setCartTaxType(v as FlatOrPercent)}
                 data={["flat", "percent"]}
