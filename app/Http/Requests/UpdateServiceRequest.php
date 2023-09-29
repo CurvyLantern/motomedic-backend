@@ -22,7 +22,15 @@ class UpdateServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+          'name' => "required",
+          'service_type' => "required",
+          'customer_id' => "required",
+          'problem_details' => "nullable",
+          'mechanic_id' => "required",
+          'price' => "nullable",
+          'items'=> "array | nullable ",
+          'note' => "nullable",
+          'status' => "nullable",
         ];
     }
 }

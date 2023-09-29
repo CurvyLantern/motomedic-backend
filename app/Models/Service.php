@@ -10,15 +10,19 @@ class Service extends Model
 {
   use HasFactory;
   protected $fillable = [
-    'serviceName',
+    'name',
     'slug',
-    'description',
-    'img',
+    'type',
+    'service_type',
+    'job_number',
+    'customer_id',
+    'problem_details',
+    'mechanic_id',
     'price',
-    'durationHours',
-    'status',
-    'featured',
+    'items',
+    'elapsed_time',
     'note',
+    'status',
   ];
 
   public function product()
