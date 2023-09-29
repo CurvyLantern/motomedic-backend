@@ -15,6 +15,8 @@ import {
   TransferList,
   TransferListData,
   Modal,
+  Select,
+  TextInput,
 } from "@mantine/core";
 import { serviceData } from "../fields";
 import { useEffect, useState } from "react";
@@ -22,155 +24,232 @@ import { CompWithChildren, IdField } from "@/types/defaultTypes";
 import { faker } from "@faker-js/faker";
 import { addCustomerOrderService } from "@/store/slices/CustomerSlice";
 import { addOrder } from "@/store/slices/OrderSlice";
+import { useMechanicQuery } from "@/queries/mechanicQuery";
+import { notifications } from "@mantine/notifications";
+import useCustomForm from "@/hooks/useCustomForm";
+import { zodResolver } from "@mantine/form";
+import { z } from "zod";
+import axiosClient from "@/lib/axios";
+import { useQuery } from "@tanstack/react-query";
+import { qc } from "@/providers/QueryProvider";
 
 export const UserServiceActions = () => {
   return <BasicSection title="Actions">asd</BasicSection>;
 };
 
-const mechanics = Array.from({ length: 100 }, (v, k) => {
+const mechanics2 = Array.from({ length: 100 }, (v, k) => {
   return {
     id: k + 1,
     name: faker.person.firstName(),
   };
 });
-export const UserService = ({
-  setIncompleteServices,
-}: {
-  setIncompleteServices: (v: unknown) => void;
-}) => {
+export const UserService = () => {
   const serviceTypes = useAppSelector((state) => state.service.serviceTypes);
   const [myServiceTypes, setMyServiceTypes] = useState([]);
   const [problemDetails, setProblemDetails] = useState("");
   const [modalOpened, { open: openModal, close: closeModal }] =
     useDisclosure(false);
+  const mechanics = useMechanicQuery();
+  const isArr = mechanics && Array.isArray(mechanics.data);
   const [assignedMechanics, setAssignedMechanics] = useState<
     (typeof mechanics)[number][]
   >([]);
 
-  const confirmService = () => {
-    setIncompleteServices((p) => {
-      return [
-        ...p,
-        {
-          id: faker.string.uuid(),
-          created_at: Date.now(),
-          serviceTypes: myServiceTypes,
-          problemDetails,
-          assignedMechanics,
-        },
-      ];
+  const selectedCustomer = useAppSelector((s) => s.customer.selectedCustomer);
+  const form = useCustomForm({
+    initialValues: {
+      name: "",
+      service_type_id: "",
+      problem_details: "",
+      mechanic_id: "",
+    },
+    validate: zodResolver(
+      z.object({
+        name: z.string().min(1, "Service name required"),
+        service_type_id: z.string().min(1, "service type is needed"),
+        problem_details: z.string().min(1, "Problem details is needed"),
+        mechanic_id: z.string().min(1, "service type is needed"),
+      })
+    ),
+  });
+  const confirmService = async (values: typeof form.values) => {
+    if (!selectedCustomer) {
+      notifications.show({
+        message: "Please select a customer",
+        color: "red",
+      });
+      throw new Error("no customer selected");
+    }
+
+    const submitData = {
+      name: values.name,
+      service_type: values.service_type_id,
+      customer_id: selectedCustomer.id,
+      problem_details: values.problem_details,
+      mechanic_id: values.mechanic_id,
+      price: 0,
+      note: "Note",
+      status: "created",
+      type: "service",
+    };
+    console.log(submitData, "submit Data 100");
+
+    const data = await axiosClient.v1.api
+      .post("services", submitData)
+      .then((res) => res.data);
+
+    console.log(data, "from server");
+    notifications.show({
+      message: "Service created",
+      color: "green",
     });
+    form.reset();
+
+    qc.invalidateQueries(["get/services/incomplete"]);
+
+    // setIncompleteServices((p) => {
+    //   return [
+    //     ...p,
+    //     {
+    //       id: faker.string.uuid(),
+    //       created_at: Date.now(),
+    //       serviceTypes: myServiceTypes,
+    //       problemDetails,
+    //       assignedMechanics,
+    //     },
+    //   ];
+    // });
   };
 
-  const tRows = mechanics.map((mechanic) => {
-    return (
-      <tr key={mechanic.id}>
-        <td>{mechanic.id}</td>
-        <td>{mechanic.name}</td>
-        <td>
-          {assignedMechanics.find((am) => am.id === mechanic.id) ? (
-            <Button
-              compact
-              size="xs"
-              onClick={() => {
-                setAssignedMechanics((p) => {
-                  return p.filter((am) => am.id !== mechanic.id);
-                });
-              }}
-            >
-              Unassign
-            </Button>
-          ) : (
-            <Button
-              compact
-              size="xs"
-              onClick={() => {
-                setAssignedMechanics((p) => {
-                  return [...p, mechanic];
-                });
-              }}
-            >
-              Assign
-            </Button>
-          )}
-        </td>
-      </tr>
-    );
-  });
+  const assignedMechanic =
+    isArr && mechanics.data.find((m) => m.id == form.values.mechanic_id);
+
+  const tRows = isArr
+    ? mechanics.data.map((mechanic) => {
+        return (
+          <tr key={mechanic.id}>
+            <td>{mechanic.id}</td>
+            <td>{mechanic.name}</td>
+            <td>
+              {assignedMechanic?.id == mechanic.id ? (
+                <Button
+                  compact
+                  size="xs"
+                  onClick={() => {
+                    // setAssignedMechanics((p) => {
+                    //   return p.filter((am) => am.id !== mechanic.id);
+                    // });
+                    form.setFieldValue("mechanic_id", "");
+                  }}
+                >
+                  Unassign
+                </Button>
+              ) : (
+                <Button
+                  compact
+                  size="xs"
+                  onClick={() => {
+                    // setAssignedMechanics((p) => {
+                    //   return [...p, mechanic];
+                    // });
+                    form.setFieldValue("mechanic_id", String(mechanic.id));
+                  }}
+                >
+                  Assign
+                </Button>
+              )}
+            </td>
+          </tr>
+        );
+      })
+    : [];
+
+  console.log(form.errors);
   return (
     <BasicSection title="Service Info">
-      <Stack>
-        <SimpleGrid cols={1} breakpoints={[{ minWidth: "md", cols: 2 }]}>
-          {/* Service */}
-          <MultiSelect
-            onChange={setMyServiceTypes}
-            data={serviceTypes}
-            placeholder={serviceData.userService.ph}
-            label={serviceData.userService.label}
-            withAsterisk={serviceData.userService.required}
-          />
+      <form onSubmit={form.onSubmit(confirmService)}>
+        <Stack>
+          <SimpleGrid cols={1} breakpoints={[{ minWidth: "md", cols: 2 }]}>
+            {/* Service */}
+            <Select
+              {...form.getInputProps("service_type_id")}
+              data={serviceTypes}
+              placeholder={serviceData.userService.ph}
+              label={serviceData.userService.label}
+              withAsterisk={serviceData.userService.required}
+            />
+            {/* name */}
+            <TextInput
+              {...form.getInputProps("name")}
+              placeholder={"Service name"}
+              label={"Service Name"}
+              withAsterisk={true}
+            />
+          </SimpleGrid>
           {/* name */}
-          <NumberInput
-            placeholder={serviceData.userJob.ph}
-            label={serviceData.userJob.label}
-            withAsterisk={serviceData.userJob.required}
-            hideControls
+          <Textarea
+            {...form.getInputProps("problem_details")}
+            placeholder={serviceData.userProblem.ph}
+            label={serviceData.userProblem.label}
+            withAsterisk={serviceData.userProblem.required}
           />
-        </SimpleGrid>
-        {/* name */}
-        <Textarea
-          onChange={(e) => setProblemDetails(e.currentTarget.value)}
-          placeholder={serviceData.userProblem.ph}
-          label={serviceData.userProblem.label}
-          withAsterisk={serviceData.userProblem.required}
-        />
 
-        <Table withBorder withColumnBorders>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {assignedMechanics.map((mechanic) => {
+          <Table withBorder withColumnBorders>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* {assignedMechanics.map((mechanic) => {
               return (
                 <tr key={mechanic.id}>
                   <td>{mechanic.id}</td>
                   <td>{mechanic.name}</td>
                 </tr>
               );
-            })}
-          </tbody>
-        </Table>
-
-        <Modal
-          centered
-          opened={modalOpened}
-          onClose={closeModal}
-          title="Assign Mechanic Modal"
-        >
-          <ScrollArea h={"60vh"}>
-            <Table withBorder withColumnBorders>
-              <thead>
+            })} */}
+              {assignedMechanic ? (
                 <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Action</th>
+                  <td>{assignedMechanic.id}</td>
+                  <td>{assignedMechanic.name}</td>
                 </tr>
-              </thead>
-              <tbody>{tRows}</tbody>
-            </Table>
-          </ScrollArea>
-        </Modal>
-        <Button onClick={openModal}>Assign Mechanic</Button>
-        <Button
-          disabled={assignedMechanics.length <= 0}
-          onClick={confirmService}
-        >
-          Confirm
-        </Button>
-      </Stack>
+              ) : (
+                <tr>
+                  <td colSpan={2}>No mechanics assigned</td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+
+          <Modal
+            centered
+            opened={modalOpened}
+            onClose={closeModal}
+            title="Assign Mechanic Modal"
+          >
+            <ScrollArea h={"60vh"}>
+              <Table withBorder withColumnBorders>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>{tRows}</tbody>
+              </Table>
+            </ScrollArea>
+          </Modal>
+          <Button type="button" onClick={openModal}>
+            Assign Mechanic
+          </Button>
+          <Button disabled={!assignedMechanic} type="submit">
+            Confirm
+          </Button>
+        </Stack>
+      </form>
     </BasicSection>
   );
 };
@@ -223,11 +302,15 @@ const IncompleteServiceTableRow = ({
     { open: openServiceDetailsModal, close: closeServiceDetailsModal },
   ] = useDisclosure(false);
   const [elapsedTime, setElapsedTime] = useState(
-    Math.trunc((Date.now() - service.created_at) * 0.001)
+    Math.trunc((Date.now() - new Date(service.created_at).getTime()) * 0.001)
   );
   useEffect(() => {
     const interval = setInterval(() => {
-      setElapsedTime(Math.trunc((Date.now() - service.created_at) * 0.001));
+      setElapsedTime(
+        Math.trunc(
+          (Date.now() - new Date(service.created_at).getTime()) * 0.001
+        )
+      );
     }, 1000);
 
     return () => {
@@ -255,17 +338,18 @@ const IncompleteServiceTableRow = ({
               </tr>
             </thead>
             <tbody>
-              {service.assignedMechanics.map((mechanic) => {
+              {/* {service.assignedMechanics.map((mechanic) => {
                 return (
                   <tr key={mechanic.id}>
                     <td>{mechanic.id}</td>
                     <td>{mechanic.name}</td>
                   </tr>
                 );
-              })}
+              })} */}
             </tbody>
           </Table>
-          Service types : {service.serviceTypes.join(",")}
+          {/* .join(",") */}
+          Service types : {service.serviceTypes}
         </Modal>
         <Button onClick={openServiceDetailsModal} compact size="xs">
           Details
@@ -287,31 +371,65 @@ export const ServiceFieldWrapper: CompWithChildren = ({ children }) => {
   const totalColSize = 12;
   const leftColSize = 7;
   const rightColSize = totalColSize - 7;
-  const [incompleteServices, setIncompleteServices] = useState<unknown>([]);
   const selectedCustomer = useAppSelector((s) => s.customer.selectedCustomer);
   const dispatch = useAppDispatch();
 
-  const onIncompleteServiceFinish = (service: unknown) => {
-    setIncompleteServices((p) => {
-      return p.filter((is) => is.id !== service.id);
+  const onIncompleteServiceFinish = async (service: unknown) => {
+    console.log(service, "ajsdkajdjkaljdjakldjklasjkldjalkdjakjd");
+
+    const updatedService = await axiosClient.v1.api
+      .put(`services/${service.id}`, { status: "completed" })
+      .then((res) => res.data);
+
+    const submitData = {
+      customer_id: updatedService.customer_id,
+      total: 0,
+      discount: 0,
+      tax: 0,
+      note: updatedService.note,
+      type: "service",
+      status: "Onhold",
+      items: [
+        {
+          id: updatedService.id,
+          quantity: 1,
+          total_price: 0,
+          unit_price: 0,
+        },
+      ],
+    };
+
+    const serverData = await axiosClient.v1.api
+      .post("orders", submitData)
+      .then((res) => res.data);
+
+    notifications.show({
+      message: "Bike service completed.",
+      color: "green",
     });
 
-    const test = () => {
-      // console.log(selectedCustomer, " selected customer old");
-      dispatch(addCustomerOrderService(service));
-      // setTimeout(() => {
-      //     console.log(selectedCustomer, " selected customer new");
-      // }, 100);
+    qc.invalidateQueries(["get/services/incomplete"]);
 
-      // await dispatch(addOrder(selectedCustomer));
-    };
-    test();
+    console.log(serverData, "Server response data");
   };
 
   useEffect(() => {
     // console.log(selectedCustomer, " updated ");
     dispatch(addOrder(selectedCustomer));
   }, [selectedCustomer, dispatch]);
+
+  const { data: incompleteServices } = useQuery({
+    queryKey: ["get/services/incomplete"],
+    queryFn: () => {
+      return axiosClient.v1.api
+        .get(`services?status=running`)
+        .then((res) => res.data);
+    },
+  });
+
+  console.log(incompleteServices, "incmplete services");
+  const isArr = incompleteServices && Array.isArray(incompleteServices.data);
+
   return (
     <Grid>
       <Grid.Col span={leftColSize}>
@@ -319,9 +437,9 @@ export const ServiceFieldWrapper: CompWithChildren = ({ children }) => {
           {/* user enter data */}
 
           {/*  service and items*/}
-          <SimpleGrid cols={1} breakpoints={[{ cols: 2, minWidth: "lg" }]}>
-            <UserService setIncompleteServices={setIncompleteServices} />
-            <UserItems />
+          <SimpleGrid cols={1} breakpoints={[{ cols: 1, minWidth: "lg" }]}>
+            <UserService />
+            {/* <UserItems /> */}
           </SimpleGrid>
 
           {/* mechanic and actions */}
@@ -340,15 +458,21 @@ export const ServiceFieldWrapper: CompWithChildren = ({ children }) => {
               </tr>
             </thead>
             <tbody>
-              {incompleteServices.map((service) => {
-                return (
-                  <IncompleteServiceTableRow
-                    onComplete={() => onIncompleteServiceFinish(service)}
-                    service={service}
-                    key={service.id}
-                  />
-                );
-              })}
+              {isArr ? (
+                incompleteServices.data.map((service) => {
+                  return (
+                    <IncompleteServiceTableRow
+                      onComplete={() => onIncompleteServiceFinish(service)}
+                      service={service}
+                      key={service.id}
+                    />
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={4}>No services</td>
+                </tr>
+              )}
             </tbody>
           </Table>
         </BasicSection>

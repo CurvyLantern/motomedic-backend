@@ -27,6 +27,7 @@ import AllInventoryPage from "@/pages/inventory/AllInventory";
 import CreateBillingPage from "@/pages/billing/CreateBillingPage";
 import PosPage from "@/pages/pos/PosPage";
 import CustomerPage from "@/pages/customers/CustomerPage";
+import MechanicPage from "@/pages/mechanic/MechanicPage";
 
 const routes: RouteObject[] = [
   {
@@ -170,6 +171,15 @@ const routes: RouteObject[] = [
       {
         path: "customers",
         element: <CustomerPage />,
+      },
+      {
+        path: "mechanic",
+        children: [
+          {
+            path: "all",
+            element: <MechanicPage />,
+          },
+        ],
       },
     ],
   },

@@ -17,6 +17,7 @@ class OrderItem extends Model
     'quantity',
     'total_price',
     'unit_price',
+    'status'
   ];
 
 

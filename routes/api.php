@@ -58,6 +58,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('products', ProductController::class);
 
 
+    Route::apiResource('mechanics', MechanicController::class);
+    Route::apiResource('services', ServiceController::class);
+
+
 
     Route::apiResource('orders', OrderController::class);
 
@@ -203,11 +207,10 @@ Route::prefix('v2')->group(function () {
   Route::apiResource('brands', BrandController::class);
   Route::apiResource('categories', CategoryController::class);
   Route::apiResource('customers', CustomerController::class);
-  Route::apiResource('mechanics', MechanicController::class);
 
 
-//  Route::apiResource('services', ServiceController::class);
-  Route::post('service/create', [ServiceController::class,'store']);
+  //  Route::apiResource('services', ServiceController::class);
+  Route::post('service/create', [ServiceController::class, 'store']);
 
 
   //    Route::apiResource('orders', OrderController::class);
