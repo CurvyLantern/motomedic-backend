@@ -220,7 +220,7 @@ Route::prefix('v2')->group(function () {
   // Test api routes ...............
 
   Route::post('brands/create', [BrandController::class, 'store'])->name('create.request');
-  Route::post('brands/create', [BrandController::class, 'store'])->name('create.request');
+
 
   //    Route::get('brand/create',[BrandController::class,'store'])->name('brand.create');
 
