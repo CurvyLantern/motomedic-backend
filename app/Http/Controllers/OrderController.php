@@ -10,207 +10,287 @@ use App\Models\Service;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use Exception;
+use Illuminate\Support\Facades\DB;
+use App\Models\OrderItem;
+use App\Models\ProductVariation;
 
 class OrderController extends Controller
 {
-    public function apiTest()
-    {
-        $orders = Order::orderBy('id', 'asc')->get();
+  public function apiTest()
+  {
+    $orders = Order::orderBy('id', 'asc')->get();
 
-        $context = [
+    $context = [
+      'orders' => $orders,
+    ];
+    //        return send_response('Products Data successfully loaded !', $context);
+
+    return view('apiTest', compact('context'));
+  }
+
+  public function apiCreatePage()
+  {
+
+    // all product data .........
+
+    $products = Product::all();
+
+
+    // all customer data ......
+
+    $customers = Customer::all();
+
+    // all service data ......
+
+    $services = Service::all();
+
+    $context = [
+      'products' => $products,
+      'customers' => $customers,
+      'services' => $services,
+    ];
+    return view('apiCreate', compact('context'));
+  }
+
+
+
+
+
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    $orders = Order::orderBy('id', 'asc')->paginate(15);
+    // $products = $orders->products()->where('id','productId');
+
+    $context = [
+      'orders' => $orders,
+      // 'products' => $products,
+    ];
+    return OrderResource::collection($context);
+  }
+
+
+  /**
+   * Display the specified resource.
+   */
+  public function show(String $id)
+  {
+    try {
+      $orders = Order::find($id);
+      if ($orders) {
+
+        $customer = Customer::where('id', $orders->customer_id)->first();
+        if ($orders) {
+          $context = [
             'orders' => $orders,
-        ];
-        //        return send_response('Products Data successfully loaded !', $context);
+            'customer' => $customer,
+          ];
+          return OrderResource::collection($context);
+        } else {
+          return send_error('Orders Not found !!!');
+        }
+      } else {
+        return send_error('Order Not Found !!!!!');
+      }
+    } catch (Exception $e) {
 
-        return view('apiTest', compact('context'));
+      return send_error($e->getMessage(), $e->getCode());
     }
+  }
 
-    public function apiCreatePage()
-    {
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(StoreOrderRequest $request)
+  {
 
-        // all product data .........
+    $validatedData = $request->validated();
+    // Begin a database transaction
 
-        $products = Product::all();
+    // return response()->json($validatedData);
+    DB::beginTransaction();
 
+    try {
+      // Create the order
+      $order = Order::create([
+        'customer_id' => $validatedData["customer_id"],
+        'total' => $validatedData["total"],
+        'discount' => $validatedData["discount"],
+        'tax' => $validatedData["tax"],
+        'note' => $validatedData["note"],
+        'status' => $validatedData["status"],
+      ]);
 
-        // all customer data ......
+      // temp test 1
 
-        $customers = Customer::all();
+      // Calculate the total for the order
+      // $totalOrderPrice = 0;
 
-        // all service data ......
+      foreach ($validatedData['items'] as $itemData) {
+        // $totalOrderPrice += $itemData['total_price'];
 
-        $services = Service::all();
-
-        $context = [
-            'products' => $products,
-            'customers' => $customers,
-            'services' => $services,
-        ];
-        return view('apiCreate', compact('context'));
-    }
-
-
-
-
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $orders = Order::orderBy('id', 'asc')->paginate(15);
-        // $products = $orders->products()->where('id','productId');
-
-        $context = [
-            'orders' => $orders,
-            // 'products' => $products,
-        ];
-        return OrderResource::collection($context);
-    }
+        // Create the order item
+        OrderItem::create([
+          'order_id' => $order->id,
+          'product_id' => ($validatedData['type'] === 'product') ? $itemData['id'] : null,
+          'service_id' => ($validatedData['type'] === 'service') ? $itemData['id'] : null,
+          'quantity' => $itemData['quantity'],
+          'total_price' => $itemData['total_price'],
+          'unit_price' => $itemData['unit_price'],
+        ]);
 
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(String $id)
-    {
-        try {
-            $orders = Order::find($id);
-            if ($orders) {
-
-                $customer = Customer::where('id', $orders->customer_id)->first();
-                if ($orders) {
-                    $context = [
-                        'orders' => $orders,
-                        'customer' => $customer,
-                    ];
-                    return OrderResource::collection($context);
-                } else {
-                    return send_error('Orders Not found !!!');
-                }
-            } else {
-                return send_error('Order Not Found !!!!!');
+        // update inventory
+        if ($validatedData['type'] === 'product') {
+          $product = Product::where('sku', $itemData['sku'])->first();
+          $inventory = null;
+          if ($product) {
+            $inventory = $product->inventory;
+          } else {
+            $productVariation = ProductVariation::where('sku', $itemData['sku'])->first();
+            if ($productVariation) {
+              $inventory = $productVariation->inventory;
             }
-        } catch (Exception $e) {
-
-            return send_error($e->getMessage(), $e->getCode());
+          }
+          if ($inventory && $inventory->stock_count >= $itemData['quantity']) {
+            $inventory->stock_count -= $itemData['quantity'];
+            $inventory->save();
+          } else {
+            // Rollback the transaction and return an error response
+            DB::rollBack();
+            return response()->json(['message' => 'Insufficient stock for the product'], 400);
+          }
         }
+      }
+
+
+
+      // Update the order's total
+      // $order->total = $totalOrderPrice;
+      // $order->save();
+
+      // Commit the database transaction
+      DB::commit();
+
+      // Return a success response or redirect as needed
+      return response()->json(['message' => 'Order created successfully']);
+    } catch (Exception $e) {
+      // If an error occurs, rollback the transaction and handle the error
+      DB::rollBack();
+
+      return response()->json(['message' => 'Order creation failed'], 500);
     }
+    return ['why' => 'code should not reach here'];
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreOrderRequest $request)
-    {
+    // Old method
+    //        dd($validated);
+    try {
+      $discount = 0;
+      $tax = 0;
+      $order = Order::create([
+        'customer_id' => $request->customer_id,
+        'total' => 0,
+        'discount' => $discount,
+        'tax' => $tax,
+        'note' => $request->note,
+        'status' => $request->status,
+      ]);
+      //....................... Order Item Create ....................
 
-        $validated = $request->validated();
+      $product = Product::where('id', $request->product_id)->get();
+      $service = Service::where('id', $request->service_id)->get();
 
-        //        dd($validated);
-        try {
-            $discount = 0;
-            $tax = 0;
-            $order = Order::create([
-                'customer_id' => $request->customer_id,
-                'total' => 0,
-                'discount' => $discount,
-                'tax' => $tax,
-                'note' => $request->note,
-                'status' => $request->status,
-            ]);
-            //....................... Order Item Create ....................
+      $orderItemCreate = [
+        [
+          'order_id' => $order->id,
+          'service_id' => $request->service_id,
+          'product_id' => $request->product_id,
+          'quantity' => $request->quantity,
+        ]
+      ];
 
-            $product = Product::where('id', $request->product_id)->get();
-            $service = Service::where('id', $request->service_id)->get();
+      foreach ($orderItemCreate as $itemData) {
+        // Initialize the prices to zero
+        $productPrice = 0;
+        $servicePrice = 0;
 
-            $orderItemCreate = [
-                [
-                    'order_id' => $order->id,
-                    'service_id' => $request->service_id,
-                    'product_id' => $request->product_id,
-                    'quantity' => $request->quantity,
-                ]
-            ];
-
-            foreach ($orderItemCreate as $itemData) {
-                // Initialize the prices to zero
-                $productPrice = 0;
-                $servicePrice = 0;
-
-                // Check if 'product_id' is not null and exists
-                if (!is_null($itemData['product_id'])) {
-                    $product = Product::find($itemData['product_id']);
-                    if ($product) {
-                        $productPrice = $product->price;
-                    }
-                }
-
-                // Check if 'service_id' is not null and exists
-                if (!is_null($itemData['service_id'])) {
-                    $service = Service::find($itemData['service_id']);
-                    if ($service) {
-                        $servicePrice = $service->price;
-                    }
-                }
-                $orderItem = $order->orderItems()->create($itemData);
-                $order->increment('total', $productPrice * $itemData['quantity'] + $servicePrice);
-            }
-            //....................... Order Item Create ends....................
-
-            $context = [
-                'order' => $order,
-
-            ];
-            return send_response('Order Create Successfully', OrderResource::collection($context));
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
+        // Check if 'product_id' is not null and exists
+        if (!is_null($itemData['product_id'])) {
+          $product = Product::find($itemData['product_id']);
+          if ($product) {
+            $productPrice = $product->price;
+          }
         }
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateOrderRequest $request, String $id)
-    {
-        $validated = $request->validated();
-        try {
-            $order = Order::find($id);
-
-            // $order->customerId = $request->customerId;
-            $order->customer_id = $request->customer_id;
-            $order->total = $request->total;
-            $order->discount = $request->discount;
-            $order->tax = $request->tax;
-            $order->note = $request->note;
-            $order->status = $request->status;
-
-            $order->save();
-
-            $context = [
-                'order' => $order,
-            ];
-            return send_response("Order Update successfully !", $context);
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
+        // Check if 'service_id' is not null and exists
+        if (!is_null($itemData['service_id'])) {
+          $service = Service::find($itemData['service_id']);
+          if ($service) {
+            $servicePrice = $service->price;
+          }
         }
-    }
+        $orderItem = $order->orderItems()->create($itemData);
+        $order->increment('total', $productPrice * $itemData['quantity'] + $servicePrice);
+      }
+      //....................... Order Item Create ends....................
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(String $id)
-    {
-        try {
-            $orders = Order::find($id);
-            if ($orders) {
-                $orders->delete();
-                return send_response('Order Deleted successfully', []);
-            } else {
-                return send_error('Order Not Found !!!');
-            }
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
+      $context = [
+        'order' => $order,
+
+      ];
+      return send_response('Order Create Successfully', OrderResource::collection($context));
+    } catch (Exception $e) {
+      return send_error($e->getMessage(), $e->getCode());
     }
+  }
+
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(UpdateOrderRequest $request, String $id)
+  {
+    $validated = $request->validated();
+    try {
+      $order = Order::find($id);
+
+      // $order->customerId = $request->customerId;
+      $order->customer_id = $request->customer_id;
+      $order->total = $request->total;
+      $order->discount = $request->discount;
+      $order->tax = $request->tax;
+      $order->note = $request->note;
+      $order->status = $request->status;
+
+      $order->save();
+
+      $context = [
+        'order' => $order,
+      ];
+      return send_response("Order Update successfully !", $context);
+    } catch (Exception $e) {
+      return send_error($e->getMessage(), $e->getCode());
+    }
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(String $id)
+  {
+    try {
+      $orders = Order::find($id);
+      if ($orders) {
+        $orders->delete();
+        return send_response('Order Deleted successfully', []);
+      } else {
+        return send_error('Order Not Found !!!');
+      }
+    } catch (Exception $e) {
+      return send_error($e->getMessage(), $e->getCode());
+    }
+  }
 }
 
 

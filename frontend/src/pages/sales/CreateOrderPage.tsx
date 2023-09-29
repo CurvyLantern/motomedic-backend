@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/storeConnectors";
 import axiosClient from "@/lib/axios";
 import {
   OrderProduct,
-  updateCustomerOrderProduct,
+  addCustomerOrderProduct,
 } from "@/store/slices/CustomerSlice";
 import { faker } from "@faker-js/faker";
 import {
@@ -113,7 +113,8 @@ const LeftSide = () => {
         display: "flex",
         flexDirection: "column",
         gap: theme.spacing.xs,
-      }}>
+      }}
+    >
       <Group align="initial">
         <TextInput
           icon={<TbSearch size="1.1rem" />}
@@ -124,7 +125,8 @@ const LeftSide = () => {
               size={32}
               radius="xl"
               color={theme.primaryColor}
-              variant="filled">
+              variant="filled"
+            >
               {theme.dir === "ltr" ? (
                 <TbArrowRight size="1.1rem" />
               ) : (
@@ -179,7 +181,8 @@ const LeftSide = () => {
               height: "100%",
               display: "flex",
               overflow: "hidden",
-            })}>
+            })}
+          >
             <ScrollArea>
               <OrderView />
             </ScrollArea>
@@ -204,7 +207,8 @@ const OrderView = () => {
         { minWidth: "xs", cols: 2 },
         { minWidth: "sm", cols: 3 },
         { minWidth: "md", cols: 4 },
-      ]}>
+      ]}
+    >
       {isArr
         ? products.map((product) => {
             return (
@@ -246,23 +250,17 @@ const RightSide = () => {
         display: "flex",
         flexDirection: "column",
         gap: theme.spacing.xs,
-      }}>
+      }}
+    >
       <Stack spacing={2}>
         {isArr
           ? productOrders.map((po) => {
-              return (
-                <OrderItem
-                  key={po.id}
-                  orderProduct={po}
-                />
-              );
+              return <OrderItem key={po.id} orderProduct={po} />;
             })
           : "no orders"}
       </Stack>
       <Box mt={"auto"}>
-        <Table
-          verticalSpacing="xs"
-          fontSize="xs">
+        <Table verticalSpacing="xs" fontSize="xs">
           <tbody>
             <tr>
               <td>Sub Total</td>
@@ -278,9 +276,7 @@ const RightSide = () => {
             </tr>
           </tbody>
         </Table>
-        <SimpleGrid
-          cols={1}
-          breakpoints={[{ minWidth: "lg", cols: 3 }]}>
+        <SimpleGrid cols={1} breakpoints={[{ minWidth: "lg", cols: 3 }]}>
           <NumberInput placeholder="discount" />
           <NumberInput placeholder="tax" />
           <Button>Place Order</Button>
@@ -293,25 +289,18 @@ const RightSide = () => {
 const OrderItem = ({ orderProduct }: { orderProduct: OrderProduct }) => {
   const dispatch = useAppDispatch();
   const onCountChange = (count: number) => {
-    dispatch(updateCustomerOrderProduct({ ...orderProduct, count }));
+    dispatch(addCustomerOrderProduct({ ...orderProduct, count }));
   };
   console.log(orderProduct, "order");
   return (
     <Paper shadow="xs">
-      <Group
-        align="center"
-        noWrap>
+      <Group align="center" noWrap>
         <StackInput onCountChange={onCountChange} />
-        <Box
-          w={30}
-          h={30}
-          bg={"green"}>
+        <Box w={30} h={30} bg={"green"}>
           <Image src="asd"></Image>
         </Box>
         <Group sx={{ flex: 1 }}>
-          <Text
-            fw={600}
-            size="md">
+          <Text fw={600} size="md">
             {orderProduct.product_name}
           </Text>
           <Text size="md">unit : {orderProduct.count}</Text>
@@ -342,7 +331,8 @@ const StackInput = ({
       <ActionIcon
         size={20}
         variant="default"
-        onClick={() => handlers.current?.decrement()}>
+        onClick={() => handlers.current?.decrement()}
+      >
         –
       </ActionIcon>
 
@@ -361,7 +351,8 @@ const StackInput = ({
       <ActionIcon
         size={20}
         variant="default"
-        onClick={() => handlers.current?.increment()}>
+        onClick={() => handlers.current?.increment()}
+      >
         +
       </ActionIcon>
     </Stack>

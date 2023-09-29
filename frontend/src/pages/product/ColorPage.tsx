@@ -1,16 +1,16 @@
 import axiosClient from "@/lib/axios";
 import {
-  Box,
-  Button,
-  ColorInput,
-  Group,
-  SimpleGrid,
-  Stack,
-  Table,
-  Tabs,
-  Text,
-  TextInput,
-  createStyles,
+    Box,
+    Button,
+    ColorInput,
+    Group,
+    SimpleGrid,
+    Stack,
+    Table,
+    Tabs,
+    Text,
+    TextInput,
+    createStyles,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useForm, zodResolver } from "@mantine/form";
@@ -22,10 +22,11 @@ import { z } from "zod";
 import BaseInputs, { fieldTypes } from "@/components/inputs/BaseInputs";
 import BasicSection from "@/components/sections/BasicSection";
 import { ProductFieldInputType } from "@/types/defaultTypes";
+import { qc } from "@/providers/QueryProvider";
 
 type MyColor = {
     name: string;
-    code: string;
+    hexcode: string;
     id: string;
 };
 
@@ -34,7 +35,7 @@ const useTableStyles = createStyles({
         textTransform: "uppercase",
     },
 });
-const url = "v1/colors";
+const url = "colors";
 const fields: {
     data: string;
     label: string;
@@ -50,7 +51,7 @@ const fields: {
     {
         data: "",
         label: "color",
-        name: "code",
+        name: "hexcode",
         type: fieldTypes.colorInput,
     },
 ];
@@ -76,12 +77,12 @@ const CreateColors = () => {
     const form = useForm({
         initialValues: {
             name: "",
-            code: "",
+            hexcode: "",
         },
 
         validate: {
             name: () => null,
-            code: () => null,
+            hexcode: () => null,
         },
     });
     return (
@@ -97,6 +98,8 @@ const CreateColors = () => {
                         message: "",
                         color: "green",
                     });
+
+                    qc.invalidateQueries(["colors"]);
                 })}
             >
                 <Stack maw={500}>
@@ -119,8 +122,8 @@ const ViewColors = () => {
     const { classes } = useTableStyles();
     const { data: colors, refetch } = useQuery<Array<MyColor>>({
         queryKey: ["colors"],
-        queryFn: async () => {
-            return axiosClient.v1.api.get(url).then((res) => res.data.data);
+        queryFn: () => {
+            return axiosClient.v1.api.get(url).then((res) => res.data);
         },
     });
     const mutation = useMutation({
@@ -128,7 +131,7 @@ const ViewColors = () => {
             return axiosClient.v1.api
                 .put(`${url}/${color.id}`, {
                     name: color.name,
-                    code: color.code,
+                    hexcode: color.hexcode,
                 })
                 .then((res) => {
                     console.log(res.data);
@@ -149,7 +152,7 @@ const ViewColors = () => {
     const tRows = colors
         ?.map((c) => ({
             ...c,
-            code: c.code[0] === "#" ? c.code.slice(1) : c.code,
+            code: c.hexcode[0] === "#" ? c.hexcode.slice(1) : c.hexcode,
         }))
         .map((colorItem) => {
             const color = colorFn(`#${colorItem.code}`);
@@ -281,79 +284,72 @@ const DeleteColorAction: React.FC<DeleteColorType> = ({ onDelete, color }) => {
 };
 
 type EditColorModalType = {
-  color: MyColor;
-  onEdit: (clr: MyColor) => void;
+    color: MyColor;
+    onEdit: (clr: MyColor) => void;
 };
 const EditColorModal: React.FC<EditColorModalType> = ({ onEdit, color }) => {
-  const show = () =>
-    modals.open({
-      centered: true,
-      title: "Edit This Color",
-      children: (
-        <>
-          <EditColor
-            onEdit={onEdit}
-            color={color}
-          />
-        </>
-      ),
-    });
+    const show = () =>
+        modals.open({
+            centered: true,
+            title: "Edit This Color",
+            children: (
+                <>
+                    <EditColor onEdit={onEdit} color={color} />
+                </>
+            ),
+        });
 
-  return (
-    <Button
-      onClick={show}
-      size="xs"
-      compact
-      w={30}
-      h={30}
-      radius={"100%"}>
-      <TbEdit size={20} />
-    </Button>
-  );
+    return (
+        <Button onClick={show} size="xs" compact w={30} h={30} radius={"100%"}>
+            <TbEdit size={20} />
+        </Button>
+    );
 };
 type EditColorType = {
-  color: MyColor;
-  onEdit: (clr: MyColor) => void;
+    color: MyColor;
+    onEdit: (clr: MyColor) => void;
 };
 const EditColor: React.FC<EditColorType> = ({ onEdit, color }) => {
-  const form = useForm({
-    initialValues: {
-      name: color.name,
-      code: `#${color.code}`,
-    },
-    validate: zodResolver(
-      z.object({
-        name: z.string(),
-        code: z.string(),
-      })
-    ),
-  });
-  return (
-    <form
-      onSubmit={form.onSubmit((values) => {
-        onEdit({ id: color.id, code: values.code, name: values.name });
-      })}>
-      <Stack>
-        {/*
+    const form = useForm({
+        initialValues: {
+            name: color.name,
+            code: `${color.hexcode}`,
+        },
+        validate: zodResolver(
+            z.object({
+                name: z.string(),
+                code: z.string(),
+            })
+        ),
+    });
+    return (
+        <form
+            onSubmit={form.onSubmit((values) => {
+                onEdit({
+                    id: color.id,
+                    hexcode: values.code,
+                    name: values.name,
+                });
+            })}
+        >
+            <Stack>
+                {/*
                     name
                     color setter
                     action
                 */}
-        <TextInput
-          {...form.getInputProps("name")}
-          label="Color Name"
-        />
-        <ColorInput
-          placeholder="Pick color"
-          label="Your favorite color"
-          {...form.getInputProps("code")}
-        />
-        <div>
-          <Button type="submit">Confirm</Button>
-        </div>
-      </Stack>
-    </form>
-  );
+                <TextInput {...form.getInputProps("name")} label="Color Name" />
+                <ColorInput
+                    placeholder="Pick color"
+                    label="Your favorite color"
+                    {...form.getInputProps("code")}
+                />
+                <div>
+                    <Button type="submit">Confirm</Button>
+                </div>
+            </Stack>
+        </form>
+    );
 };
 
 export default ColorPage;

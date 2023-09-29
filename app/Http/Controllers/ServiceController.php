@@ -11,107 +11,106 @@ use Illuminate\Support\Str;
 
 class ServiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $service = Service::orderBy('id', 'asc')->paginate(5);
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    $service = Service::orderBy('id', 'asc')->paginate(5);
 
-        if ($service) {
-            return ServiceResource::collection($service);
-        } else {
-            return send_error('Data fetching task failed !!');
-        }
+    if ($service) {
+      return ServiceResource::collection($service);
+    } else {
+      return send_error('Data fetching task failed !!');
     }
+  }
 
-    /**
-     * Display the specified resource.
-     * @param  \App\Models\Service  $service
-     */
-    public function show($id)
-    {
-        //
+  /**
+   * Display the specified resource.
+   * @param  \App\Models\Service  $service
+   */
+  public function show($id)
+  {
+    //
 
-        $service = Service::find($id);
+    $service = Service::find($id);
 
-        if ($service) {
+    if ($service) {
 
-            $context =[
-                'service' => $service,
-            ];
-            return ServiceResource::collection($context);
-        } else {
-            return send_error("Service Data Not Found ");
-        }
+      $context = [
+        'service' => $service,
+      ];
+      return ServiceResource::collection($context);
+    } else {
+      return send_error("Service Data Not Found ");
     }
+  }
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function store(StoreServiceRequest $request)
-    {
-        $validated = $request->validated();
-        try {
-            $service = Service::create([
-                'name' => $request->name,
-                'slug' =>  Str::slug($request->name, '-'),
-                'description' => $request->description,
-                'price' => $request->price,
-                'duration' => $request->duration,
-                'note' => $request->note,
-                'mechanic_id' => $request->mechanic_id,
-            ]);
-            return send_response("Service create successfull", new ServiceResource($service));
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
+  /**
+   * Show the form for creating a new resource.
+   */
+  public function store(StoreServiceRequest $request)
+  {
+    $validated = $request->validated();
+    try {
+      $service = Service::create([
+        'name' => $validated["name"],
+        'description' => $validated["description"],
+        'price' => $validated["price"],
+        'duration' => $validated["duration"],
+        'note' => $validated["note"],
+        'mechanic_id' => $validated["mechanic_id"],
+      ]);
+      return send_response("Service create successfull", new ServiceResource($service));
+    } catch (Exception $e) {
+      return send_error($e->getMessage(), $e->getCode());
     }
+  }
 
 
 
-    /**
-     * Update the specified resource in storage.
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Service  $service
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(StoreServiceRequest $request, $id)
-    {
-        $validated = $request->validated();
-        try {
+  /**
+   * Update the specified resource in storage.
+   * @param  \Illuminate\Http\Request  $request
+   * @param  \App\Models\Service  $service
+   * @return \Illuminate\Http\JsonResponse
+   */
+  public function update(StoreServiceRequest $request, $id)
+  {
+    $validated = $request->validated();
+    try {
 
-            $service = Service::find($id);
-            if ($service) {
+      $service = Service::find($id);
+      if ($service) {
 
-                $service->name = $request->name;
-                $service->slug = Str::slug($request->serviceName, '-');
-                $service->description = $request->description;
-                $service->price = $request->price;
-                $service->duration = $request->duration;
-                $service->note = $request->note;
-                $service->mechanic_id = $request->mechanic_id;
-                $service->save();
-                return send_response("Service Update successfully !", new ServiceResource($service));
-            } else {
-                return send_response('No Service found !!', []);
-            }
-        } catch (Exception $e) {
-            return send_error("Service data update failed !!!", $e->getMessage(), $e->getCode());
-        }
+        $service->name = $request->name;
+        $service->slug = Str::slug($request->serviceName, '-');
+        $service->description = $request->description;
+        $service->price = $request->price;
+        $service->duration = $request->duration;
+        $service->note = $request->note;
+        $service->mechanic_id = $request->mechanic_id;
+        $service->save();
+        return send_response("Service Update successfully !", new ServiceResource($service));
+      } else {
+        return send_response('No Service found !!', []);
+      }
+    } catch (Exception $e) {
+      return send_error("Service data update failed !!!", $e->getMessage(), $e->getCode());
     }
+  }
 
-    public function destroy($id)
-    {
-        try {
-            $service = Service::find($id);
-            if ($service) {
-                $service->delete();
-            }
-            return send_response("service delete successfully !", []);
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
+  public function destroy($id)
+  {
+    try {
+      $service = Service::find($id);
+      if ($service) {
+        $service->delete();
+      }
+      return send_response("service delete successfully !", []);
+    } catch (Exception $e) {
+      return send_error($e->getMessage(), $e->getCode());
     }
+  }
 }

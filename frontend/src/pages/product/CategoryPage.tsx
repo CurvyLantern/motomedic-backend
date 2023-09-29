@@ -70,7 +70,7 @@ const CategoryPage = () => {
 };
 
 const ViewCategories = () => {
-    const { categories } = useCategoryQuery();
+    const categories = useCategoryQuery();
     console.log(categories, "categories from db ");
 
     const [isDeletingId, setIsDeletingId] = useState<string | number>();

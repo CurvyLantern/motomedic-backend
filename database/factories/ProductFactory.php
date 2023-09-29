@@ -27,7 +27,7 @@ class ProductFactory extends Factory
             'slug' => Str::slug($productName, '-'),
             'category_id' => Category::select('id')->inRandomOrder()->first()->id,
             'brand_id' => Brand::select('id')->inRandomOrder()->first()->id,
-            'sku' => fake()->word,
+            'sku' => 'SKU-' . fake()->unique()->randomNumber(5),
             'model' => fake()->word,
             'color_id' => Color::select('id')->inRandomOrder()->first()->id,
             'material' => fake()->word,

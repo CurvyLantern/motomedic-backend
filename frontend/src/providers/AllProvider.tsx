@@ -1,3 +1,4 @@
+import { CompWithChildren } from "@/types/defaultTypes";
 import QueryProvider from "./QueryProvider";
 import StoreProvider from "./StoreProvider";
 import ThemeProvider from "./ThemeProvider";
