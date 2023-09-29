@@ -554,9 +554,9 @@
                </div>
                <div class="col">
                    <div class="form-group">
-                       <label for="product_id">Select a Service :</label>
+                       <label for="product_id">Select a customer :</label>
                        <select class="form-select" id="service_id" name="customer_id">
-                           <option value="">No Service </option>
+                           <option value=""> customer  </option>
                            @foreach ($context["customers"] as $customer)
                                <option value="{{ $customer->id }}">{{ $customer->name }}</option>
                            @endforeach
@@ -568,9 +568,9 @@
            <div class="row">
                <div class="col">
                    <div class="form-group">
-                       <label for="product_id">Select a Product:</label>
+                       <label for="product_id">Select a mechanic </label>
                        <select class="form-select" id="mechanic_id" name="mechanic_id">
-                           <option value="">No Product </option>
+                           <option value="">No mechanics </option>
                            @foreach ($context["mechanics"] as $mechanic)
                                <option value="{{ $mechanic->id }}">{{ $mechanic->name }}</option>
                            @endforeach
@@ -580,7 +580,7 @@
                 <div class="col">
                    <div class="form-group">
                        <label for="selectMultiple" class="form-label">Select a Product:</label>
-                       <select class="selectpicker" value="" multiple data-live-search="true" name="product_id[]">
+                       <select class="selectpicker" value="" multiple data-live-search="true" name="items[]">
                            <option value="">No Product </option>
                            @foreach ($context["products"] as $product)
                                <option value="{{ $product->id }}">{{ $product->name }}</option>
@@ -605,12 +605,7 @@
                        <input type="text" class="form-control border border-sm" name="problem_details">
                    </div>
                </div>
-               <div class="col">
-                   <div class="form-group">
-                       <label> items </label>
-                       <input type="text" class="form-control border border-sm" name="items">
-                   </div>
-               </div>
+
                <div class="col">
                    <div class="form-group">
                        <label for="product_id">Status:</label>

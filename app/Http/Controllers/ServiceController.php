@@ -87,12 +87,17 @@ class ServiceController extends Controller
 
   public function generateJobNumber()
   {
-    // Define your prefix and any formatting you need
-    $prefix = 'moto-';
-    $serialNumber = mt_rand(1000, 9999); // Generate a random 4-digit number // SaaS model
 
-    // Combine the prefix and serial number
-    $jobNumber = $prefix . $serialNumber;
+    $maxNumericPart = Service::selectRaw("MAX(CAST(SUBSTRING(job_number, 6) AS UNSIGNED)) as maxNumericPart")
+      ->whereRaw("job_number LIKE 'moto-%'")
+      ->first();
+
+    // Extract the maximum numeric part and increment by 1
+    $newNumericPart = $maxNumericPart->maxNumericPart + 1;
+
+    // Add the prefix back
+    $prefix = 'moto-';
+    $jobNumber = $prefix . $newNumericPart;
 
     return $jobNumber;
   }
@@ -110,12 +115,13 @@ class ServiceController extends Controller
       $validated['type'] = 'service';
       $validated['job_number'] = $this->generateJobNumber();
       $validated['elapsed_time'] = Carbon::now()->format('Ymd_His');
+      $validated['items'] = json_encode($validated['items']);;
 
       $service = Service::create($validated);
 
 
 
-      return send_response('service Create successfull' , $service);
+      return send_response('service Create successfull' , new ServiceResource($service));
 
     }catch (Exception $e) {
       return send_error($e->getMessage(), $e->getCode());
@@ -126,7 +132,7 @@ class ServiceController extends Controller
 //    try {
 //      $service = Service::create([
 //        'name' => $validated["name"],
-//        'sku' => Str::slug($validated['name'], '-'),
+//        'slug' => Str::slug($validated['name'], '-'),
 //        'description' => $validated["description"],
 //        'price' => $validated["price"],
 //        'duration' => $validated["duration"],
@@ -145,7 +151,7 @@ class ServiceController extends Controller
 ////        'note',
 ////        'status',
 //      ]);
-//      return send_response("Service create successfull", new ServiceResource($service));
+//      return send_response("Service create successfully", new ServiceResource($service));
 //    } catch (Exception $e) {
 //      return send_error($e->getMessage(), $e->getCode());
 //    }
@@ -167,13 +173,17 @@ class ServiceController extends Controller
       $service = Service::find($id);
       if ($service) {
 
-        $service->name = $request->name;
+        $service->name = $validated['name'];
         $service->slug = Str::slug($request->serviceName, '-');
-        $service->description = $request->description;
-        $service->price = $request->price;
-        $service->duration = $request->duration;
-        $service->note = $request->note;
-        $service->mechanic_id = $request->mechanic_id;
+        $service->service_type = $validated['service_type'];
+        $service->customer_id = $validated['customer_id'];
+        $service->problem_details = $validated['problem_details'];
+        $service->mechanic_id = $validated['mechanic_id'];
+        $service->price = $validated['price'];
+        $service->items = $validated['items'];
+        $service->elapsed_time = $validated['elapsed_time'];
+        $service->note = $validated['note'];
+        $service->status = $validated['status'];
         $service->save();
         return send_response("Service Update successfully !", new ServiceResource($service));
       } else {
