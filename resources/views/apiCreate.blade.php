@@ -10,7 +10,23 @@
           integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <title> API Create </title>
 
-    <style>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap JS and Popper.js (required for dropdown functionality) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
+
+
+
+  <style>
         @import url('https://fonts.googleapis.com/css2?family=lexend:wght@300&display=swap');
 
         body {
@@ -44,6 +60,7 @@
 </head>
 
 <body class="" style="background-color: #f1f1f1;">
+
 
 {{-- <section class="bg-white container border p-2 m-auto mt-4 border rounded"> --}}
 {{--    <h3> --}}
@@ -399,110 +416,228 @@
 
 </section> --}}
 
+{{-- <section class="bg-white container border p-2 m-auto mt-4 border rounded">--}}
+{{--<h3 class="text-center p-2"> Order Create </h3>--}}
+
+{{--<form class="p-4 " action="{{ url('api/v2/orders/create') }}" method="post">--}}
+{{--    {{ csrf_field() }}--}}
+
+{{--    <fieldset class="gap-3">--}}
+{{--        <div class="row">--}}
+{{--            <div class="col">--}}
+{{--                <div class="form-group">--}}
+{{--                    <label for="product_id">Select a Customer :</label>--}}
+{{--                    <select class="form-select" id="customer_id" name="customer_id">--}}
+{{--                        @foreach ($context["customers"] as $customer)--}}
+{{--                            <option value="{{ $customer->id }}">{{ $customer->name }}</option>--}}
+{{--                        @endforeach--}}
+{{--                    </select>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--            <div class="col">--}}
+{{--                <div class="form-group">--}}
+{{--                    <label for="product_id">Select a Service :</label>--}}
+{{--                    <select class="form-select" id="service_id" name="service_id">--}}
+{{--                        <option value="">No Service </option>--}}
+{{--                        @foreach ($context["services"] as $service)--}}
+{{--                            <option value="{{ $service->id }}">{{ $service->name }}</option>--}}
+{{--                        @endforeach--}}
+{{--                    </select>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+
+{{--        <div class="row">--}}
+{{--            <div class="col">--}}
+{{--                <div class="form-group">--}}
+{{--                    <label for="product_id">Select a Product:</label>--}}
+{{--                    <select class="form-select" id="product_id" name="product_id">--}}
+{{--                        <option value="">No Product </option>--}}
+{{--                        @foreach ($context["products"] as $product)--}}
+{{--                            <option value="{{ $product->id }}">{{ $product->name }}</option>--}}
+{{--                        @endforeach--}}
+{{--                    </select>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--            --}}{{-- <div class="col">--}}
+{{--                <div class="form-group">--}}
+{{--                    <label for="product_id">Select a Product:</label>--}}
+{{--                    <select class="form-select" id="product_id" name="product_id">--}}
+{{--                        <option value="">No Product </option>--}}
+{{--                        @foreach ($context["products"] as $product)--}}
+{{--                            <option value="{{ $product->id }}">{{ $product->name }}</option>--}}
+{{--                        @endforeach--}}
+{{--                    </select>--}}
+{{--                </div>--}}
+{{--            </div> --}}
+
+{{--            <div class="col">--}}
+{{--                <div class="form-group">--}}
+{{--                    <label> Quantity </label>--}}
+{{--                    <input type="text" class="form-control border border-sm" name="quantity">--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+
+{{--        <div class="row">--}}
+{{--            <div class="col">--}}
+{{--                <div class="form-group">--}}
+{{--                    <label> Discount </label>--}}
+{{--                    <input type="text" class="form-control border border-sm" name="discount">--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--            <div class="col">--}}
+{{--                <div class="form-group">--}}
+{{--                    <label> Tax </label>--}}
+{{--                    <input type="text" class="form-control border border-sm" name="tax">--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--            <div class="col">--}}
+{{--                <div class="form-group">--}}
+{{--                    <label for="product_id">Status:</label>--}}
+{{--                    <select class="form-select" id="status" name="status">--}}
+{{--                        <option value="Onhold">Onhold</option>--}}
+{{--                        <option value="Processing">Processing</option>--}}
+{{--                        <option value="Completed">Completed</option>--}}
+{{--                    </select>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--        <div class="row my-4">--}}
+{{--            <div class="input-group">--}}
+{{--                <span class="input-group-text">Order Note </span>--}}
+{{--                <textarea class="form-control border border-sm " name="note" placeholder="write any order note"></textarea>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+
+{{--        <div class="row">--}}
+{{--            <button type="submit" class="btn btn-primary m-4 mx-auto">Submit</button>--}}
+{{--        </div>--}}
+
+{{--    </fieldset>--}}
+{{--</form>--}}
+
+{{--</section>--}}
+
  <section class="bg-white container border p-2 m-auto mt-4 border rounded">
-<h3 class="text-center p-2"> Order Create </h3>
+<h3 class="text-center p-2"> Service Create for the Customer </h3>
 
-<form class="p-4 " action="{{ url('api/v2/orders/create') }}" method="post">
-    {{ csrf_field() }}
+   <form class="p-4 " action="{{ url('api/v2/service/create') }}" method="post">
+       {{ csrf_field() }}
 
-    <fieldset class="gap-3">
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label for="product_id">Select a Customer :</label>
-                    <select class="form-select" id="customer_id" name="customer_id">
-                        @foreach ($context["customers"] as $customer)
-                            <option value="{{ $customer->id }}">{{ $customer->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <label for="product_id">Select a Service :</label>
-                    <select class="form-select" id="service_id" name="service_id">
-                        <option value="">No Service </option>
-                        @foreach ($context["services"] as $service)
-                            <option value="{{ $service->id }}">{{ $service->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-        </div>
+       <fieldset class="gap-3">
+         <div class="row">
+           <div class="col">
+             <div class="form-group">
+               <label> Service name </label>
+               <input type="text" class="form-control border border-sm" name="name">
+             </div>
+           </div>
+           <div class="col">
+             <div class="form-group">
+               <label> job number </label>
+               <input disabled type="text" class="form-control border border-sm" placeholder="will generate automatically" name="job_number">
+             </div>
+           </div>
+         </div>
 
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label for="product_id">Select a Product:</label>
-                    <select class="form-select" id="product_id" name="product_id">
-                        <option value="">No Product </option>
-                        @foreach ($context["products"] as $product)
-                            <option value="{{ $product->id }}">{{ $product->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            {{-- <div class="col">
-                <div class="form-group">
-                    <label for="product_id">Select a Product:</label>
-                    <select class="form-select" id="product_id" name="product_id">
-                        <option value="">No Product </option>
-                        @foreach ($context["products"] as $product)
-                            <option value="{{ $product->id }}">{{ $product->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div> --}}
+           <div class="row">
+               <div class="col">
+                   <div class="form-group">
+                       <label for="product_id">service_type </label>
+                       <select class="form-select" id="service_type" name="service_type">
+                               <option value="normal"> Normal </option>
+                               <option value="business"> Business </option>
+                               <option value="corporate"> Corporate </option>
+                       </select>
+                   </div>
+               </div>
+               <div class="col">
+                   <div class="form-group">
+                       <label for="product_id">Select a Service :</label>
+                       <select class="form-select" id="service_id" name="customer_id">
+                           <option value="">No Service </option>
+                           @foreach ($context["customers"] as $customer)
+                               <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                           @endforeach
+                       </select>
+                   </div>
+               </div>
+           </div>
 
-            <div class="col">
-                <div class="form-group">
-                    <label> Quantity </label>
-                    <input type="text" class="form-control border border-sm" name="quantity">
-                </div>
-            </div>
-        </div>
+           <div class="row">
+               <div class="col">
+                   <div class="form-group">
+                       <label for="product_id">Select a Product:</label>
+                       <select class="form-select" id="mechanic_id" name="mechanic_id">
+                           <option value="">No Product </option>
+                           @foreach ($context["mechanics"] as $mechanic)
+                               <option value="{{ $mechanic->id }}">{{ $mechanic->name }}</option>
+                           @endforeach
+                       </select>
+                   </div>
+               </div>
+                <div class="col">
+                   <div class="form-group">
+                       <label for="selectMultiple" class="form-label">Select a Product:</label>
+                       <select class="selectpicker" value="" multiple data-live-search="true" name="product_id[]">
+                           <option value="">No Product </option>
+                           @foreach ($context["products"] as $product)
+                               <option value="{{ $product->id }}">{{ $product->name }}</option>
+                           @endforeach
+                       </select>
+                   </div>
+               </div>
 
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label> Discount </label>
-                    <input type="text" class="form-control border border-sm" name="discount">
-                </div>
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <label> Tax </label>
-                    <input type="text" class="form-control border border-sm" name="tax">
-                </div>
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <label for="product_id">Status:</label>
-                    <select class="form-select" id="status" name="status">
-                        <option value="Onhold">Onhold</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Completed">Completed</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="row my-4">
-            <div class="input-group">
-                <span class="input-group-text">Order Note </span>
-                <textarea class="form-control border border-sm " name="note" placeholder="write any order note"></textarea>
-            </div>
-        </div>
-
-        <div class="row">
-            <button type="submit" class="btn btn-primary m-4 mx-auto">Submit</button>
-        </div>
-
-    </fieldset>
-</form>
-
-</section>
+               <div class="col">
+                   <div class="form-group">
+                       <label> price </label>
+                       <input type="text" class="form-control border border-sm" name="price">
+                   </div>
+               </div>
+           </div>
 
 
+           <div class="row">
+               <div class="col">
+                   <div class="form-group">
+                       <label> problem_details </label>
+                       <input type="text" class="form-control border border-sm" name="problem_details">
+                   </div>
+               </div>
+               <div class="col">
+                   <div class="form-group">
+                       <label> items </label>
+                       <input type="text" class="form-control border border-sm" name="items">
+                   </div>
+               </div>
+               <div class="col">
+                   <div class="form-group">
+                       <label for="product_id">Status:</label>
+                       <select class="form-select" id="status" name="status">
+                           <option value="start">start</option>
+                           <option value="progressing">progressing</option>
+                           <option value="running">running</option>
+                           <option value="delayed">delayed</option>
+                           <option value="cancelled">cancelled</option>
+                       </select>
+                   </div>
+               </div>
+           </div>
+           <div class="row my-4">
+               <div class="input-group">
+                   <span class="input-group-text">Order Note </span>
+                   <textarea class="form-control border border-sm " name="note" placeholder="write any order note"></textarea>
+               </div>
+           </div>
+
+           <div class="row">
+               <button type="submit" class="btn btn-primary m-4 mx-auto">Submit</button>
+           </div>
+
+       </fieldset>
+   </form>
+ </section>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
 </script>

@@ -25,16 +25,21 @@ return new class extends Migration
          Schema::create('services', function (Blueprint $table) {
              $table->id();
              $table->string('name');
-             $table->string('slug');
-             $table->text('description')->nullable();
-             $table->float('price');
-             $table->string('duration');
-             $table->text('note')->nullable();
-
+             $table->string('slug')->nullable();
+             $table->string('type')->default('service');
+             $table->string('service_type')->nullable();
+             $table->string('job_number')->nullable();
+             $table->unsignedBigInteger('customer_id');
+             $table->text('problem_details')->nullable();
              $table->unsignedBigInteger('mechanic_id');
-             $table->foreign('mechanic_id')->references('id')->on('mechanics')->onUpdate('cascade');
+             $table->float('price');
+             $table->json('items')->nullable();
+             $table->string('elapsed_time');
+             $table->text('note')->nullable();
+             $table->enum('status', ['start','progressing', 'running','delayed','cancelled'])->default('start');
 
-             $table->boolean('status')->default(true);
+             $table->foreign('mechanic_id')->references('id')->on('mechanics')->onUpdate('cascade');
+             $table->foreign('customer_id')->references('id')->on('mechanics')->onUpdate('cascade');
              $table->timestamps();
          });
 
