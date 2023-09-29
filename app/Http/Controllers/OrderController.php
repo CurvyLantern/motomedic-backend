@@ -183,67 +183,6 @@ class OrderController extends Controller
       return response()->json(['message' => 'Order creation failed'], 500);
     }
     return ['why' => 'code should not reach here'];
-
-    // Old method
-    //        dd($validated);
-    try {
-      $discount = 0;
-      $tax = 0;
-      $order = Order::create([
-        'customer_id' => $request->customer_id,
-        'total' => 0,
-        'discount' => $discount,
-        'tax' => $tax,
-        'note' => $request->note,
-        'status' => $request->status,
-      ]);
-      //....................... Order Item Create ....................
-
-      $product = Product::where('id', $request->product_id)->get();
-      $service = Service::where('id', $request->service_id)->get();
-
-      $orderItemCreate = [
-        [
-          'order_id' => $order->id,
-          'service_id' => $request->service_id,
-          'product_id' => $request->product_id,
-          'quantity' => $request->quantity,
-        ]
-      ];
-
-      foreach ($orderItemCreate as $itemData) {
-        // Initialize the prices to zero
-        $productPrice = 0;
-        $servicePrice = 0;
-
-        // Check if 'product_id' is not null and exists
-        if (!is_null($itemData['product_id'])) {
-          $product = Product::find($itemData['product_id']);
-          if ($product) {
-            $productPrice = $product->price;
-          }
-        }
-
-        // Check if 'service_id' is not null and exists
-        if (!is_null($itemData['service_id'])) {
-          $service = Service::find($itemData['service_id']);
-          if ($service) {
-            $servicePrice = $service->price;
-          }
-        }
-        $orderItem = $order->orderItems()->create($itemData);
-        $order->increment('total', $productPrice * $itemData['quantity'] + $servicePrice);
-      }
-      //....................... Order Item Create ends....................
-
-      $context = [
-        'order' => $order,
-
-      ];
-      return send_response('Order Create Successfully', OrderResource::collection($context));
-    } catch (Exception $e) {
-      return send_error($e->getMessage(), $e->getCode());
-    }
   }
 
   /**

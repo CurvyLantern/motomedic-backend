@@ -18,6 +18,7 @@ use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductVariationController;
+use App\Http\Controllers\SellerController;
 use App\Http\Resources\UserResource;
 use PhpParser\Node\Scalar\MagicConst\Dir;
 
