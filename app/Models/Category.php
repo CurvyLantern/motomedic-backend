@@ -22,7 +22,7 @@ class Category extends Model
     public static function allWithChildren()
     {
         $data = static::with('children')->whereNull('parent_category_id')->get();
-        return CategoryResource::collection($data);
+        return CategoryResource::collection($data)->all();
     }
 
 

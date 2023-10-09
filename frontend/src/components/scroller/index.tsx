@@ -1,3 +1,4 @@
+import { CompWithChildren } from "@/types/defaultTypes";
 import { Box } from "@mantine/core";
 
 export const ScrollWrapper: CompWithChildren = ({ children }) => {
@@ -8,7 +9,8 @@ export const ScrollWrapper: CompWithChildren = ({ children }) => {
         flex: 1,
         position: "relative",
         overflow: "hidden",
-      })}>
+      })}
+    >
       <Box
         sx={() => ({
           position: "absolute",
@@ -17,7 +19,8 @@ export const ScrollWrapper: CompWithChildren = ({ children }) => {
           flexDirection: "column",
           // flex: 1,
           borderRadius: "10px",
-        })}>
+        })}
+      >
         {children}
       </Box>
     </Box>

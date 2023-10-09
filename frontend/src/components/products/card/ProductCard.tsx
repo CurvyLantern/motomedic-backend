@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/storeConnectors";
-import { updateCustomerOrderProduct } from "@/store/slices/CustomerSlice";
+import { addCustomerOrderProduct } from "@/store/slices/CustomerSlice";
+import { Product } from "@/types/defaultTypes";
 import {
   Card,
   Image,
@@ -11,12 +12,7 @@ import {
   Button,
   rem,
 } from "@mantine/core";
-import {
-  IconGasStation,
-  IconGauge,
-  IconManualGearbox,
-  IconUsers,
-} from "@tabler/icons-react";
+import { TbGasStation } from "react-icons/tb";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -71,25 +67,11 @@ export function ProductCard({ withDetails, count, product }: ProductCardProps) {
 
   const discountPrefix = product.discount_type === "fixed" ? "৳" : "%";
   const mockdata = [
-    { label: "Size", content: product.size, icon: IconUsers },
-    {
-      label: "Compatibility",
-      content: product.compatibility,
-      icon: IconGauge,
-    },
-    {
-      label: "Condition",
-      content: product.condition,
-      icon: IconManualGearbox,
-    },
-    { label: "Weight", content: product.weight, icon: IconGasStation },
+    { label: "Weight", content: product.weight, icon: TbGasStation },
   ];
   const features = mockdata.map((feature) => (
     <Center key={feature.label}>
-      <feature.icon
-        size=".5rem"
-        className={classes.icon}
-      />
+      <feature.icon size=".5rem" className={classes.icon} />
       <Text size="xs">
         {feature.label} - {feature.content}
       </Text>
@@ -100,17 +82,17 @@ export function ProductCard({ withDetails, count, product }: ProductCardProps) {
   const dispatch = useAppDispatch();
   const onOrder = () => {
     console.log(" hello ");
-    dispatch(updateCustomerOrderProduct({ ...product, count: count ?? 0 }));
+    dispatch(addCustomerOrderProduct({ ...product, count: count ?? 0 }));
   };
 
   return (
-    <Card
-      withBorder
-      radius="md"
-      className={classes.card}>
+    <Card withBorder radius="md" className={classes.card}>
       <Card.Section className={classes.imageSection}>
         <Image
-          src={product.primary_img ?? "https://i.imgur.com/ZL52Q2D.png"}
+          src={
+            (product.image as unknown as string) ??
+            "https://i.imgur.com/ZL52Q2D.png"
+          }
           alt="Tesla Model S"
         />
       </Card.Section>
@@ -120,14 +102,13 @@ export function ProductCard({ withDetails, count, product }: ProductCardProps) {
         mt="md"
         sx={{
           flex: 1,
-        }}>
+        }}
+      >
         <div>
-          <Text fw={500}>{product.product_name}</Text>
+          <Text fw={500}>{product.name}</Text>
           {withDetails ? (
-            <Text
-              fz="xs"
-              c="dimmed">
-              {product.short_descriptions}
+            <Text fz="xs" c="dimmed">
+              {product.description}
             </Text>
           ) : null}
         </div>
@@ -137,19 +118,12 @@ export function ProductCard({ withDetails, count, product }: ProductCardProps) {
       </Group>
 
       {withDetails ? (
-        <Card.Section
-          className={classes.section}
-          mt="md">
-          <Text
-            fz="sm"
-            c="dimmed"
-            className={classes.label}>
+        <Card.Section className={classes.section} mt="md">
+          <Text fz="sm" c="dimmed" className={classes.label}>
             Basic configuration
           </Text>
 
-          <Group
-            spacing={8}
-            mb={-8}>
+          <Group spacing={8} mb={-8}>
             {features}
           </Group>
         </Card.Section>
@@ -158,19 +132,13 @@ export function ProductCard({ withDetails, count, product }: ProductCardProps) {
       <Card.Section className={classes.section}>
         <Group spacing={10}>
           <div>
-            <Text
-              fz="lg"
-              fw={700}
-              sx={{ lineHeight: 1 }}>
+            <Text fz="lg" fw={700} sx={{ lineHeight: 1 }}>
               {"৳ "}
               {product.price ?? "168.00"}
             </Text>
           </div>
 
-          <Button
-            radius="xl"
-            style={{ flex: 1 }}
-            onClick={onOrder}>
+          <Button radius="xl" style={{ flex: 1 }} onClick={onOrder}>
             Order
           </Button>
         </Group>

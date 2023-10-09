@@ -1,4 +1,5 @@
 import BrandLogo from "@/assets/logo/motomedic-logo.png";
+import { logout, useAuth } from "@/hooks/auth";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeConnectors";
 import { toggleNavState } from "@/store/slices/AppConfigSlice";
 import {
@@ -6,7 +7,6 @@ import {
   Avatar,
   Box,
   Burger,
-  Button,
   Group,
   Header,
   Image,
@@ -16,21 +16,20 @@ import {
   Text,
   UnstyledButton,
   createStyles,
-  rem,
   useMantineTheme,
 } from "@mantine/core";
-import {
-  IconHeart,
-  IconLogout,
-  IconMessage,
-  IconSettings,
-  IconStar,
-} from "@tabler/icons-react";
 import { useState } from "react";
-import { TbBell, TbChevronDown } from "react-icons/tb";
+import {
+  TbBell,
+  TbChevronDown,
+  TbHeart,
+  TbLogout,
+  TbMessage,
+  TbSettings,
+  TbStar,
+} from "react-icons/tb";
 import { Link } from "react-router-dom";
 import { useBasicHeaderStyles } from "./basicHeader.styles";
-import { logout, useAuth } from "@/hooks/auth";
 export const BasicHeader = () => {
   const { navHidden, drawerOpened } = useAppSelector(
     (state) => state.appConfig
@@ -40,10 +39,7 @@ export const BasicHeader = () => {
   const { classes } = useBasicHeaderStyles();
   const burgerOpened = !navHidden;
   return (
-    <Header
-      withBorder={false}
-      className={classes.header}
-      height={70}>
+    <Header withBorder={false} className={classes.header} height={70}>
       {/* largerThan="sm" styles={{ display: "none" }} */}
 
       <Burger
@@ -53,14 +49,9 @@ export const BasicHeader = () => {
         size="sm"
         mx="xl"
       />
-      <Anchor
-        sx={{ display: "flex" }}
-        component={Link}
-        to="/">
+      <Anchor sx={{ display: "flex" }} component={Link} to="/">
         <Box sx={{ width: 100, overflow: "hidden" }}>
-          <Image
-            src={BrandLogo}
-            sx={{ width: "100%" }}></Image>
+          <Image src={BrandLogo} sx={{ width: "100%" }}></Image>
         </Box>
         {/* <Title
             size="h2"
@@ -81,11 +72,7 @@ export const BasicHeader = () => {
           ml="auto"
         /> */}
 
-      <Group
-        noWrap
-        h={"100%"}
-        ml={"auto"}
-        mr={"xl"}>
+      <Group noWrap h={"100%"} ml={"auto"} mr={"xl"}>
         <AuthenticatedNotification />
         <AuthenticatedProfile />
       </Group>
@@ -106,7 +93,8 @@ const AuthenticatedNotification = () => {
       }}
       width={260}
       position="bottom"
-      withinPortal>
+      withinPortal
+    >
       <Popover.Target>
         <UnstyledButton
           sx={(t) => ({
@@ -116,7 +104,8 @@ const AuthenticatedNotification = () => {
             display: "inline-flex",
             background: "#ffffff66",
             position: "relative",
-          })}>
+          })}
+        >
           <TbBell size={20} />
           <Box
             sx={(t) => ({
@@ -127,7 +116,8 @@ const AuthenticatedNotification = () => {
               position: "absolute",
               top: "0",
               right: "0",
-            })}></Box>
+            })}
+          ></Box>
         </UnstyledButton>
       </Popover.Target>
       <Popover.Dropdown>
@@ -185,16 +175,13 @@ const AuthenticatedNotification = () => {
           })}
           unstyled
           value={selectedTab}
-          onTabChange={setSelectedTab}>
+          onTabChange={setSelectedTab}
+        >
           <Tabs.List sx={{ display: "flex" }}>
-            <Tabs.Tab
-              value="orders"
-              sx={{ flex: 1 }}>
+            <Tabs.Tab value="orders" sx={{ flex: 1 }}>
               Orders
             </Tabs.Tab>
-            <Tabs.Tab
-              value="invoice"
-              sx={{ flex: 1 }}>
+            <Tabs.Tab value="invoice" sx={{ flex: 1 }}>
               Invoice
             </Tabs.Tab>
           </Tabs.List>
@@ -239,7 +226,8 @@ const AuthenticatedProfile = () => {
       transitionProps={{ transition: "pop-top-right" }}
       onClose={() => setUserMenuOpened(false)}
       onOpen={() => setUserMenuOpened(true)}
-      withinPortal>
+      withinPortal
+    >
       <Menu.Target>
         <UnstyledButton
           onFocus={() => {
@@ -268,17 +256,13 @@ const AuthenticatedProfile = () => {
               backgroundColor: theme.other.colors.primaryDark.foreground,
               color: theme.other.colors.primaryDark.background,
             },
-          })}>
+          })}
+        >
           <Group>
-            <Avatar
-              src={""}
-              radius="xl"
-            />
+            <Avatar src={""} radius="xl" />
 
             <div style={{ flex: 1 }}>
-              <Text
-                size="sm"
-                weight={500}>
+              <Text size="sm" weight={500}>
                 {user.name}
               </Text>
 
@@ -290,45 +274,22 @@ const AuthenticatedProfile = () => {
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
-        <Menu.Item
-          icon={
-            <IconHeart
-              size="0.9rem"
-              color={theme.colors.red[6]}
-              stroke={1.5}
-            />
-          }>
+        <Menu.Item icon={<TbHeart size="0.9rem" color={theme.colors.red[6]} />}>
           Your orders
         </Menu.Item>
         <Menu.Item
-          icon={
-            <IconStar
-              size="0.9rem"
-              color={theme.colors.yellow[6]}
-              stroke={1.5}
-            />
-          }>
+          icon={<TbStar size="0.9rem" color={theme.colors.yellow[6]} />}
+        >
           Your Invoices
         </Menu.Item>
         <Menu.Item
-          icon={
-            <IconMessage
-              size="0.9rem"
-              color={theme.colors.blue[6]}
-              stroke={1.5}
-            />
-          }>
+          icon={<TbMessage size="0.9rem" color={theme.colors.blue[6]} />}
+        >
           Profile
         </Menu.Item>
 
         <Menu.Label>Settings</Menu.Label>
-        <Menu.Item
-          icon={
-            <IconSettings
-              size="0.9rem"
-              stroke={1.5}
-            />
-          }>
+        <Menu.Item icon={<TbSettings size="0.9rem" />}>
           Account settings
         </Menu.Item>
 
@@ -337,12 +298,8 @@ const AuthenticatedProfile = () => {
             const d = await logout();
             console.log(d, "from logout");
           }}
-          icon={
-            <IconLogout
-              size="0.9rem"
-              stroke={1.5}
-            />
-          }>
+          icon={<TbLogout size="0.9rem" />}
+        >
           Logout
         </Menu.Item>
       </Menu.Dropdown>

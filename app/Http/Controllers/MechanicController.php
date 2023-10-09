@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Exception;
 use App\Http\Resources\MechanicResource;
 use App\Models\Mechanic;
@@ -9,101 +10,66 @@ use App\Http\Requests\UpdateMechanicRequest;
 
 class MechanicController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $mechanics = Mechanic::orderBy('id', 'asc')->paginate(15);
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    $mechanics = Mechanic::orderBy('id', 'asc')->get();
 
-        return MechanicResource::collection($mechanics);
+    return MechanicResource::collection($mechanics);
+  }
+
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(StoreMechanicRequest $request)
+  {
+    $validated = $request->validated();
+    try {
+
+      $mechanic = Mechanic::create($validated);
+
+      return response()->json(['message' => 'Mechanic created successfully', 'mechanic' => $mechanic]);
+    } catch (Exception $e) {
+      return send_error($e->getMessage(), $e->getCode());
     }
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreMechanicRequest $request)
-    {
-        $validated = $request->validated();
-        try {
-            // Create an admin record associated with the user
-            $mechanic = Mechanic::create([
-                'name' => $validated->name,
-                'email' => $validated->email,
-                'phone' => $validated->phone,
-                'address' => $validated->address,
-            ]);
+  /**
+   * Display the specified resource.
+   */
+  public function show(String $id)
+  {
+    $mechanic = Mechanic::findOrFail($id);
 
-            return send_response('Mechanic create Success !', $mechanic);
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
-    }
+    return response()->json(['mechanic' => $mechanic]);
+  }
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(UpdateMechanicRequest $request, String $id)
+  {
+    $validated = $request->validated();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(String $id)
-    {
-        try {
-//            $mechanic = Mechanic::find($id)->first();
-            $mechanic = Mechanic::whereId($id)->firstOrFail();
-            if ($mechanic) {
-                $context = [
-                    'mechanic' => $mechanic,
-                ];
-                return MechanicResource::collection($context);
-            } else {
-                return send_error('mechanic not found !', []);
-            }
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
-    }
+    $mechanic = Mechanic::findOrFail($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateMechanicRequest $request, Mechanic $mechanic,String $id)
-    {
-        $validated = $request->validated();
-        try {
+    // Validate the fields in the request
 
-            $mechanic = Mechanic::find($id);
+    // Use fill to update the mechanic model with validated data
+    $mechanic->fill($validated)->save();
 
-            $mechanic->name = $validated->name;
-            $mechanic->email = $validated->email;
-            $mechanic->phone = $validated->phone;
-            $mechanic->address = $validated->address;
-            $mechanic->status = $validated->status;
+    return response()->json(['message' => 'Mechanic updated successfully', 'mechanic' => $mechanic]);
+  }
 
-            $mechanic->save();
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy($id)
+  {
+    $mechanic = Mechanic::findOrFail($id);
+    $mechanic->delete();
 
-            $context = [
-                'mechanic' => $mechanic,
-            ];
-
-            return MechanicResource::collection($context);
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(String $id)
-    {
-        try {
-            $mechanic = Mechanic::find($id);
-            if ($mechanic) {
-                $mechanic->delete();
-            } else {
-                return send_response('Mechanic Not Found !', []);
-            }
-            return send_response('Mechanic Deleted successfully', []);
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
-    }
+    return response()->json(['message' => 'Mechanic deleted successfully']);
+  }
 }

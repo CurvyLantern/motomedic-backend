@@ -1,4 +1,5 @@
 import { useTheme } from "@/styles/theme";
+import { CompWithChildren } from "@/types/defaultTypes";
 import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
@@ -46,13 +47,21 @@ const ThemeProvider: CompWithChildren = ({ children }) => {
               },
             }),
           },
+          Input: {
+            styles: () => ({
+              input: {
+                fontWeight: 500,
+              },
+            }),
+          },
           NumberInput: {
             defaultProps: {
               type: "number",
             },
           },
         },
-      }}>
+      }}
+    >
       <ModalsProvider>
         <Notifications />
         {children}

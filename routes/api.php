@@ -15,7 +15,10 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductAttributeController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\AttributeValueController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductVariationController;
+use App\Http\Controllers\SellerController;
 use App\Http\Resources\UserResource;
 use PhpParser\Node\Scalar\MagicConst\Dir;
 
@@ -31,27 +34,46 @@ use PhpParser\Node\Scalar\MagicConst\Dir;
 */
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::prefix('v1')->group(function () {
-        Route::get('user', function (Request $request) {
-            $user =  $request->user();
+  Route::prefix('v1')->group(function () {
+    Route::get('user', function (Request $request) {
+      $user =  $request->user();
 
-            return new UserResource($user);
-        });
-
-        Route::apiResource('colors', ColorController::class);
-        Route::apiResource('brands', BrandController::class);
-        Route::apiResource('attributes', AttributeController::class);
-        Route::apiResource('categories', CategoryController::class)->names([
-            'index' => 'category.index'
-        ]);
-        Route::apiResource('colors', ColorController::class);
-        Route::get('products/createInfos', [ProductController::class, 'createInfos'])->name('products.createInfos');
-
-        // Route::apiResources([
-        //     'categories' => CategoryController::class,
-        //     'brands' => BrandController::class
-        // ]);
+      return new UserResource($user);
     });
+
+    Route::apiResource('customers', CustomerController::class);
+    Route::apiResource('colors', ColorController::class);
+    Route::apiResource('brands', BrandController::class);
+    Route::apiResource('attributes', AttributeController::class);
+    Route::apiResource('attributeValues', AttributeValueController::class);
+    Route::apiResource('categories', CategoryController::class)->names([
+      'index' => 'category.index'
+    ]);
+    Route::apiResource('colors', ColorController::class);
+    Route::apiResource('inventories', InventoryController::class);
+    Route::apiResource('invoices', InvoiceController::class);
+
+
+    Route::get('products/all', [ProductController::class, 'allProducts'])->name('product.allProducts');
+    Route::post('products/search', [ProductController::class, 'search'])->name('product.search');
+    Route::get('products/createInfos', [ProductController::class, 'createInfos'])->name('products.createInfos');
+
+    Route::apiResource('products', ProductController::class);
+
+
+    Route::apiResource('mechanics', MechanicController::class);
+    Route::apiResource('sellers', SellerController::class);
+    Route::apiResource('services', ServiceController::class);
+
+
+
+    Route::apiResource('orders', OrderController::class);
+
+    // Route::apiResources([
+    //     'categories' => CategoryController::class,
+    //     'brands' => BrandController::class
+    // ]);
+  });
 });
 
 
@@ -185,23 +207,30 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::prefix('v2')->group(function () {
 
 
-    // final api routes .............
-    Route::apiResource('brands', BrandController::class);
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('customers', CustomerController::class);
-    Route::apiResource('mechanics', MechanicController::class);
-    Route::apiResource('services', ServiceController::class);
-
-    Route::apiResource('orders', OrderController::class);
+  // final api routes .............
+  Route::apiResource('brands', BrandController::class);
+  Route::apiResource('categories', CategoryController::class);
+  Route::apiResource('customers', CustomerController::class);
 
 
+  //  Route::apiResource('services', ServiceController::class);
+  Route::post('service/create', [ServiceController::class, 'store']);
 
-    // Test api routes ...............
 
-    Route::post('brands/create', [BrandController::class, 'store'])->name('create.request');
-    Route::post('brands/create', [BrandController::class, 'store'])->name('create.request');
+  //    Route::apiResource('orders', OrderController::class);
+  // Route::post('orders/create', [OrderController::class, 'store']);
 
-    //    Route::get('brand/create',[BrandController::class,'store'])->name('brand.create');
+  Route::get('apitest', [ServiceController::class, 'apiTest'])->name('api.test');
+  Route::get('apicreate', [ServiceController::class, 'apiCreatePage'])->name('api.create');
+
+
+
+  // Test api routes ...............
+
+  Route::post('brands/create', [BrandController::class, 'store'])->name('create.request');
+
+
+  //    Route::get('brand/create',[BrandController::class,'store'])->name('brand.create');
 
 
 });

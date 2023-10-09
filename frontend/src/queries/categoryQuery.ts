@@ -5,33 +5,31 @@ import { useQuery } from "@tanstack/react-query";
 
 const url = "categories";
 export const useCategoryQuery = () => {
-    const { data } = useQuery<
-        | { data: Array<CategoryWithSubCateogry> }
-        | Array<CategoryWithSubCateogry>
-    >({
+    const { data: categories } = useQuery<Array<CategoryWithSubCateogry>>({
         queryKey: ["get/categories"],
         queryFn: () => {
             return axiosClient.v1.api.get(url).then((res) => res.data);
         },
     });
 
-    let categories: CategoryWithSubCateogry[] | null = null;
+    // let categories: CategoryWithSubCateogry[] | null = null;
 
-    if (data) {
-        if (Array.isArray(data)) {
-            categories = data;
-        } else if (
-            data.data &&
-            Array.isArray(data.data) &&
-            data.data.length > 0
-        ) {
-            categories = data.data;
-        }
-    }
+    // if (data) {
+    //     if (Array.isArray(data)) {
+    //         categories = data;
+    //     } else if (
+    //         data.data &&
+    //         Array.isArray(data.data) &&
+    //         data.data.length > 0
+    //     ) {
+    //         categories = data.data;
+    //     }
+    // }
 
-    return {
-        categories,
-    };
+    return categories;
+};
+export const invalidateCateogryQuery = () => {
+    qc.invalidateQueries(["get/categories"]);
 };
 export const editCategory = async (category: Category) => {
     return axiosClient.v1.api

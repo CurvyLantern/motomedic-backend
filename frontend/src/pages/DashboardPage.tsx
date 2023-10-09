@@ -1,13 +1,13 @@
-import { Group, SimpleGrid, Stack, Tabs, Grid } from "@mantine/core";
+import { Grid, SimpleGrid, Stack, Tabs } from "@mantine/core";
 
-import { TbPhoto, TbMessageCircle, TbSettings } from "react-icons/tb";
-import { Image, AspectRatio } from "@mantine/core";
 import primaryBannerImg from "@/assets/banners/banner1.jpg";
 import BannerImgSmall from "@/assets/banners/motomedic-banner.jpg";
 import { OrderSummaryChart } from "@/components/charts/OrderSummaryChat";
 import { OverviewChart } from "@/components/charts/OverviewChart";
 import { ProductSellChart } from "@/components/charts/ProductSellChart";
 import { StatsCell } from "@/components/stats/StatsCell";
+import { Image } from "@mantine/core";
+import { TbPhoto, TbSettings } from "react-icons/tb";
 const mock = {
   data: [
     {
@@ -37,25 +37,17 @@ const DashboardPage = () => {
   return (
     <>
       <Stack spacing="xl">
-        <Tabs
-          variant="outline"
-          defaultValue="reports">
+        <Tabs variant="outline" defaultValue="reports">
           <Tabs.List>
-            <Tabs.Tab
-              value="reports"
-              icon={<TbPhoto size="0.8rem" />}>
+            <Tabs.Tab value="reports" icon={<TbPhoto size="0.8rem" />}>
               Overview
             </Tabs.Tab>
-            <Tabs.Tab
-              value="overview"
-              icon={<TbSettings size="0.8rem" />}>
+            <Tabs.Tab value="overview" icon={<TbSettings size="0.8rem" />}>
               Reports
             </Tabs.Tab>
           </Tabs.List>
 
-          <Tabs.Panel
-            value="reports"
-            pt="xs">
+          <Tabs.Panel value="reports" pt="xs">
             <Stack>
               <Grid>
                 <Grid.Col
@@ -66,7 +58,8 @@ const DashboardPage = () => {
                   order={1}
                   sx={{
                     display: "flex",
-                  }}>
+                  }}
+                >
                   <SimpleGrid
                     sx={{
                       flex: 1,
@@ -81,7 +74,8 @@ const DashboardPage = () => {
                         cols: 2,
                         minWidth: "lg",
                       },
-                    ]}>
+                    ]}
+                  >
                     {mock.data.map((d, dIdx) => {
                       return (
                         <StatsCell
@@ -94,12 +88,7 @@ const DashboardPage = () => {
                     })}
                   </SimpleGrid>
                 </Grid.Col>
-                <Grid.Col
-                  span={12}
-                  md={6}
-                  lg={5}
-                  order={0}
-                  orderLg={1}>
+                <Grid.Col span={12} md={6} lg={5} order={0} orderLg={1}>
                   <Image
                     fit="contain"
                     sx={{
@@ -112,17 +101,13 @@ const DashboardPage = () => {
                 </Grid.Col>
               </Grid>
 
-              <SimpleGrid
-                cols={1}
-                breakpoints={[{ minWidth: "md", cols: 2 }]}>
+              <SimpleGrid cols={1} breakpoints={[{ minWidth: "md", cols: 2 }]}>
                 <ProductSellChart />
                 <OrderSummaryChart />
               </SimpleGrid>
             </Stack>
           </Tabs.Panel>
-          <Tabs.Panel
-            value="overview"
-            pt="xs">
+          <Tabs.Panel value="overview" pt="xs">
             <Stack>
               <OverviewChart />
             </Stack>

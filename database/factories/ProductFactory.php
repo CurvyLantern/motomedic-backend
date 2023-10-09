@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Color;
 use Illuminate\Support\Str;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,33 +23,18 @@ class ProductFactory extends Factory
     {
         $productName = fake()->words(3, true);
         return [
-            'productName' => $productName,
+            'name' => $productName,
             'slug' => Str::slug($productName, '-'),
-            'categoryId' => rand(1, 10),
-            'brandId' => rand(1, 5),
+            'category_id' => Category::select('id')->inRandomOrder()->first()->id,
+            'brand_id' => Brand::select('id')->inRandomOrder()->first()->id,
+            'sku' => 'SKU-' . fake()->unique()->randomNumber(5),
             'model' => fake()->word,
-            'color' => fake()->colorName,
-            'productType' => fake()->randomElement(['simpleProduct', 'variationProduct']),
+            'color_id' => Color::select('id')->inRandomOrder()->first()->id,
             'material' => fake()->word,
-            'size' => fake()->word,
-            'year' => fake()->year,
-            'compitibility' => fake()->word,
-            'condition' => fake()->word,
-            'manufacturer' => fake()->company,
             'weight' => fake()->randomFloat(2, 0.1, 100),
-            'quantity' => fake()->numberBetween(1, 100),
             'price' => fake()->randomFloat(2, 10, 500),
-            'discount' => fake()->numberBetween(0, 50),
-            'discountType' => fake()->randomElement(['percentage', 'fixed']),
-            'primaryImg' => fake()->imageUrl(),
-            // 'thumbImgId' => fake()->numberBetween(1,20),
-            'shortDescriptions' => fake()->sentence,
-            'longDescriptions' => fake()->paragraph,
-            'installationMethod' => fake()->sentence,
-            'note' => fake()->sentence,
-            'warranty' => fake()->sentence,
-            'rating' => fake()->randomFloat(1, 0, 5),
-            'availability' => fake()->randomElement([true, false]),
+            'description' => fake()->sentence(),
+            'warranty' => fake()->randomNumber(),
             'status' => fake()->boolean(),
         ];
     }

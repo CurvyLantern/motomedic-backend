@@ -7,5 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mechanic extends Model
 {
-    use HasFactory;
+  use HasFactory;
+
+  protected $fillable = ['name', 'email', 'phone', 'address', 'status'];
+
+  // Define any relationships if needed
 }

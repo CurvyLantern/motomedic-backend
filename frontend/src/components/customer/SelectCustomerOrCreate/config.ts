@@ -1,45 +1,34 @@
+import { fieldTypes } from "@/components/inputs/BaseInputs";
+
 export const userConfig = {
   userName: {
     label: "Name of customer",
     ph: "Please enter customer name",
-    fieldType: "text",
+    fieldType: fieldTypes.text,
     required: true,
   },
   userPhone: {
     label: "Phone Number",
     ph: "Please enter customer name",
-
-    fieldType: "number",
+    fieldType: fieldTypes.number,
     required: true,
   },
   userEmail: {
     label: "Email of customer",
     ph: "Please enter customer name",
-    fieldType: "email",
+    fieldType: fieldTypes.email,
     required: false,
   },
   bikeInfo: {
     ph: "Please enter customer name",
     label: "Bike Info",
-    fieldType: "textbox",
-    required: true,
-  },
-  checkCustomer: {
-    ph: "Please enter customer name",
-    label: "Find Customer",
-    fieldType: "select",
+    fieldType: fieldTypes.textarea,
     required: false,
-    options: [
-      { value: "lavlu", label: "Lavlu Mia" },
-      { value: "mohsin", label: "Mohsin Mia 420" },
-      { value: "chakladar", label: "Chakladar 69" },
-      { value: "ronju", label: "Ronju Komlachor" },
-    ],
   },
   userAddress: {
     ph: "Please enter customer name",
     label: "Address of customer",
-    fieldType: "textbox",
-    required: true,
+    fieldType: fieldTypes.textarea,
+    required: false,
   },
 };

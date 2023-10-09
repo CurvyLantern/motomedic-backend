@@ -23,7 +23,7 @@ class StoreColorRequest extends FormRequest
     {
         return  [
             'name' => 'required',
-            'code' => 'required'
+            'hexcode' => 'required'
         ];
     }
 }

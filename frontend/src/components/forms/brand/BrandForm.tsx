@@ -1,5 +1,6 @@
 import useCustomForm from "@/hooks/useCustomForm";
 import axiosClient from "@/lib/axios";
+import { Brand } from "@/types/defaultTypes";
 import dataToFormData from "@/utils/dataToFormdata";
 import {
     Button,
@@ -27,7 +28,7 @@ export const BrandForm = ({
     onCancel = () => {},
     submitUrl = "",
 }: BrandFormProps) => {
-    const form = useCustomForm<Brand>({
+    const form = useCustomForm({
         initialValues: {
             name: brand?.name ? brand.name : "My Cool Brand",
             description: brand?.description
@@ -58,12 +59,13 @@ export const BrandForm = ({
             })
             .then((res) => {
                 const data = res.data;
-                console.log({ data });
                 form.reset();
                 onSuccess();
+                return data;
             })
             .catch((error) => {
                 const axiosError = error as AxiosError;
+                // @ts-expect-error data is defined but not typed
                 form.setErrors(axiosError.data.errors);
                 throw axiosError;
             });

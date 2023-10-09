@@ -9,64 +9,64 @@ export const useTheme = ({
 
   /** import('@mantine/core').MantineThemeOverride */
   const globalTheme: MantineThemeOverride = {
-      colorScheme,
-      fontFamily: "MontSerrat",
-      fontFamilyMonospace: "Disket Mono, Quicksand, monospace",
-      headings: {
-          fontFamily: "Quicksand",
-          fontWeight: 600,
-      },
-      shadows: {
-          card: "0 0 5px #22223b33",
-      },
-      other: {
-          radius: {
-              primary: "10px",
-          },
-          colors: {
-              main: {
-                  // f1f1f1
-                  background: "#f3f3f3",
-                  foreground: "#000",
-              },
-              card: {
-                  background: "#fefefe",
-                  foreground: "#22223b",
-              },
-              primary: {
-                  background: "#015190",
-                  foreground: "#ffffff",
-              },
-              primaryDark: {
-                  background: "#000024",
-                  foreground: "#ffffff",
-              },
-              secondary: {
-                  // background: "#457B9D",
-                  background: "#00bbf9",
-                  foreground: "#ffffff",
-              },
-              accent: {
-                  background: "#E63946",
-                  foreground: "#F1FAEE",
-              },
-          },
-      },
-      loader: "dots",
-      defaultRadius: "primary",
+    colorScheme,
+    fontFamily: "Rubik",
+    fontFamilyMonospace: "Disket Mono, Quicksand, monospace",
+    headings: {
+      fontFamily: "Montserrat",
+      fontWeight: 600,
+    },
+    shadows: {
+      card: "0 0 5px #22223b33",
+    },
+    other: {
       radius: {
-          primary: ".3rem",
+        primary: "10px",
       },
-      globalStyles: () => ({
-          "*, *::before, *::after": {
-              boxSizing: "border-box",
-          },
-          "html,body,#root": {
-              height: "100%",
-              minHeight: "100%",
-              maxHeight: "100%",
-          },
-      }),
+      colors: {
+        main: {
+          // f1f1f1
+          background: "#f3f3f3",
+          foreground: "#000",
+        },
+        card: {
+          background: "#fefefe",
+          foreground: "#22223b",
+        },
+        primary: {
+          background: "#015190",
+          foreground: "#ffffff",
+        },
+        primaryDark: {
+          background: "#000024",
+          foreground: "#ffffff",
+        },
+        secondary: {
+          // background: "#457B9D",
+          background: "#00bbf9",
+          foreground: "#ffffff",
+        },
+        accent: {
+          background: "#E63946",
+          foreground: "#F1FAEE",
+        },
+      },
+    },
+    loader: "dots",
+    defaultRadius: "primary",
+    radius: {
+      primary: ".3rem",
+    },
+    globalStyles: () => ({
+      "*, *::before, *::after": {
+        boxSizing: "border-box",
+      },
+      "html,body,#root": {
+        height: "100%",
+        minHeight: "100%",
+        maxHeight: "100%",
+      },
+    }),
   } as const;
 
   return globalTheme;

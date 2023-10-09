@@ -32,19 +32,11 @@ class ColorController extends Controller
     public function store(StoreColorRequest $request)
     {
         $validated = $request->validated();
-        // dd($validated);
+
 
         try {
-            $color = Color::create([
-
-                "name" => $request->brandName,
-                "name" => $request->brandName,
-            ]);
-
-            $context = [
-                'color' => $color,
-            ];
-            return send_response('Color create successfull !', $context);
+            $color = Color::create($validated);
+            return new ColorResource($color);
         } catch (Exception $e) {
             return send_error($e->getMessage(), $e->getCode());
         }
