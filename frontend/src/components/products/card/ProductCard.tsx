@@ -12,12 +12,7 @@ import {
   Button,
   rem,
 } from "@mantine/core";
-import {
-  IconGasStation,
-  IconGauge,
-  IconManualGearbox,
-  IconUsers,
-} from "@tabler/icons-react";
+import { TbGasStation } from "react-icons/tb";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -72,7 +67,7 @@ export function ProductCard({ withDetails, count, product }: ProductCardProps) {
 
   const discountPrefix = product.discount_type === "fixed" ? "৳" : "%";
   const mockdata = [
-    { label: "Weight", content: product.weight, icon: IconGasStation },
+    { label: "Weight", content: product.weight, icon: TbGasStation },
   ];
   const features = mockdata.map((feature) => (
     <Center key={feature.label}>

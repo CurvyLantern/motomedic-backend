@@ -1,13 +1,10 @@
+import { isAuthenticated } from "@/hooks/auth";
 import { BasicHeader } from "@/layouts/headers/BasicHeader";
-import { qc } from "@/providers/QueryProvider";
-import { userQuery } from "@/queries/userQuery";
 import { AppShell } from "@mantine/core";
 import { Outlet, redirect } from "react-router-dom";
 import { BodyWrapper } from "./body/BodyWrapper";
 import { ContentWrapper } from "./body/ContentWrapper";
 import BasicNavbar from "./navbar/BasicNavbar";
-import { fetchUser } from "@/fetchers/fetchUser";
-import { isAuthenticated } from "@/hooks/auth";
 
 export const authenticatedLoader = async () => {
   try {
@@ -37,7 +34,8 @@ const AuthenticatedLayout = () => {
           paddingRight: "var(--mantine-aside-width, 0px)",
           paddingBottom: "var(--mantine-footer-height, 0px)",
         },
-      })}>
+      })}
+    >
       <BodyWrapper>
         <BasicNavbar />
         <ContentWrapper>

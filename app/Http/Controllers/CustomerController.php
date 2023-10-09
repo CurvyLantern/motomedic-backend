@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserDetail;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use App\Http\Resources\CustomerCollection;
 use App\Http\Resources\CustomerResource;
 use PhpParser\Node\Scalar\String_;
 
@@ -20,7 +21,7 @@ class CustomerController extends Controller
   public function index()
   {
     $customers = Customer::orderBy('created_at', 'desc')->get();
-    return CustomerResource::collection($customers)->all();
+    return CustomerResource::collection($customers);
   }
 
   /**

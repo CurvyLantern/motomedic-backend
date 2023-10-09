@@ -44,9 +44,16 @@ const WithCustomerLayout: CompWithChildren = ({ children }) => {
           width: "100%",
           zIndex: 10,
           opacity: 0.7,
+          pointerEvents: "none",
         }}
       >
-        <Button onClick={toggle} variant="gradient">
+        <Button
+          sx={{
+            pointerEvents: "initial",
+          }}
+          onClick={toggle}
+          variant="gradient"
+        >
           Select User
         </Button>
       </Center>

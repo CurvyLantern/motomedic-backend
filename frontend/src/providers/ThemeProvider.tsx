@@ -47,6 +47,13 @@ const ThemeProvider: CompWithChildren = ({ children }) => {
               },
             }),
           },
+          Input: {
+            styles: () => ({
+              input: {
+                fontWeight: 500,
+              },
+            }),
+          },
           NumberInput: {
             defaultProps: {
               type: "number",

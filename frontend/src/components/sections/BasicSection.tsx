@@ -23,26 +23,31 @@ const BasicSection = ({
         color: theme.other.colors.card.foreground,
         height: "100%",
         position: "relative",
+        display: "flex",
+        flexDirection: "column",
       })}
       {...props}
     >
-      <Group align="center">
-        {title ? (
-          <Text
-            component="p"
-            py={"xs"}
-            sx={(theme) => ({
-              fontWeight: 600,
-              fontSize: theme.fontSizes.lg,
-              color: theme.other.colors.card.foreground,
-            })}
-          >
-            {title}
-          </Text>
-        ) : null}
+      {headerLeftElement || title ? (
+        <Group align="center">
+          {title ? (
+            <Text
+              component="p"
+              py={"xs"}
+              sx={(theme) => ({
+                fontWeight: 600,
+                fontSize: theme.fontSizes.lg,
+                color: theme.other.colors.card.foreground,
+              })}
+            >
+              {title}
+            </Text>
+          ) : null}
 
-        <Box ml={"auto"}>{headerLeftElement}</Box>
-      </Group>
+          <Box ml={"auto"}>{headerLeftElement}</Box>
+        </Group>
+      ) : null}
+
       <Box sx={{ flex: 1 }}>{children}</Box>
     </Paper>
   );

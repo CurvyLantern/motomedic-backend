@@ -9,10 +9,12 @@ use App\Models\Customer;
 use App\Models\Service;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Http\Resources\OrderCollection;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use App\Models\OrderItem;
 use App\Models\ProductVariation;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
@@ -53,22 +55,48 @@ class OrderController extends Controller
   }
 
 
-
+  // $orders = Order::where('status', $statusFromQuery)
+  //   ->with('customer')
+  //   ->with(['orderItems' => function ($query) {
+  //     $query->where('type', 'product')->with('product');
+  //     $query->orWhere('type', 'service')->with('service');
+  //   }, 'customer'])
+  //   ->get();
+  // ===========
+  // ===========
+  // $orders = Order::where('status', $statusFromQuery)
+  //   ->with('customer')
+  //   ->with(['orderItems' => function ($query) {
+  //     $query->with(['product' => function ($productQuery) {
+  //       $productQuery->where('type', 'product');
+  //     }, 'service' => function ($serviceQuery) {
+  //       $serviceQuery->where('type', 'service');
+  //     }]);
+  //   }])
+  //   ->get();
 
 
   /**
    * Display a listing of the resource.
    */
-  public function index()
+  public function index(Request $request)
   {
-    $orders = Order::orderBy('id', 'asc')->paginate(15);
-    // $products = $orders->products()->where('id','productId');
+    $statusFromQuery = $request->query('status', '');
+    if ($statusFromQuery !== '') {
 
-    $context = [
-      'orders' => $orders,
-      // 'products' => $products,
-    ];
-    return OrderResource::collection($context);
+
+      $orders = Order::where('status', $statusFromQuery)
+        ->with('customer')
+        ->with(['orderItems' => function ($query) {
+          $query->whereNotNull('product_id')->with('product');
+          $query->orWhereNotNull('service_id')->with('service');
+        }])
+        ->get();
+      return OrderResource::collection($orders);
+    } else {
+      $orders = Order::orderBy('id', 'asc')->with('customer')->with('orderItems')->paginate(15);
+      return new OrderCollection($orders);
+    }
   }
 
 
@@ -139,6 +167,7 @@ class OrderController extends Controller
           'quantity' => $itemData['quantity'],
           'total_price' => $itemData['total_price'],
           'unit_price' => $itemData['unit_price'],
+          'type' => $validatedData['type']
         ]);
 
 
@@ -193,21 +222,18 @@ class OrderController extends Controller
     $validated = $request->validated();
     try {
       $order = Order::find($id);
-
+      $order->fill($request->all());
       // $order->customerId = $request->customerId;
-      $order->customer_id = $request->customer_id;
-      $order->total = $request->total;
-      $order->discount = $request->discount;
-      $order->tax = $request->tax;
-      $order->note = $request->note;
-      $order->status = $request->status;
+      // $order->customer_id = $request->customer_id;
+      // $order->total = $request->total;
+      // $order->discount = $request->discount;
+      // $order->tax = $request->tax;
+      // $order->note = $request->note;
+      // $order->status = $request->status;
 
       $order->save();
 
-      $context = [
-        'order' => $order,
-      ];
-      return send_response("Order Update successfully !", $context);
+      return send_response("Order Updated successfully !", $order);
     } catch (Exception $e) {
       return send_error($e->getMessage(), $e->getCode());
     }

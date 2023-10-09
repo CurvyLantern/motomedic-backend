@@ -1,48 +1,35 @@
 import BasicSection from "@/components/sections/BasicSection";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeConnectors";
 
-import { useDisclosure } from "@mantine/hooks";
+import useCustomForm from "@/hooks/useCustomForm";
+import axiosClient from "@/lib/axios";
+import { qc } from "@/providers/QueryProvider";
+import { useMechanicQuery } from "@/queries/mechanicQuery";
+import { addOrder } from "@/store/slices/OrderSlice";
+import { CompWithChildren, IdField } from "@/types/defaultTypes";
 import {
-  ScrollArea,
-  Table,
   Button,
   Grid,
-  MultiSelect,
+  Modal,
   NumberInput,
+  ScrollArea,
+  Select,
   SimpleGrid,
   Stack,
+  Table,
+  TextInput,
   Textarea,
   TransferList,
   TransferListData,
-  Modal,
-  Select,
-  TextInput,
 } from "@mantine/core";
-import { serviceData } from "../fields";
-import { useEffect, useState } from "react";
-import { CompWithChildren, IdField } from "@/types/defaultTypes";
-import { faker } from "@faker-js/faker";
-import { addCustomerOrderService } from "@/store/slices/CustomerSlice";
-import { addOrder } from "@/store/slices/OrderSlice";
-import { useMechanicQuery } from "@/queries/mechanicQuery";
-import { notifications } from "@mantine/notifications";
-import useCustomForm from "@/hooks/useCustomForm";
 import { zodResolver } from "@mantine/form";
-import { z } from "zod";
-import axiosClient from "@/lib/axios";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import { useQuery } from "@tanstack/react-query";
-import { qc } from "@/providers/QueryProvider";
+import { useEffect, useState } from "react";
+import { z } from "zod";
+import { serviceData } from "../fields";
 
-export const UserServiceActions = () => {
-  return <BasicSection title="Actions">asd</BasicSection>;
-};
-
-const mechanics2 = Array.from({ length: 100 }, (v, k) => {
-  return {
-    id: k + 1,
-    name: faker.person.firstName(),
-  };
-});
 export const UserService = () => {
   const serviceTypes = useAppSelector((state) => state.service.serviceTypes);
   const [myServiceTypes, setMyServiceTypes] = useState([]);
@@ -242,12 +229,14 @@ export const UserService = () => {
               </Table>
             </ScrollArea>
           </Modal>
-          <Button type="button" onClick={openModal}>
-            Assign Mechanic
-          </Button>
-          <Button disabled={!assignedMechanic} type="submit">
-            Confirm
-          </Button>
+          <SimpleGrid cols={2}>
+            <Button type="button" onClick={openModal}>
+              Assign Mechanic
+            </Button>
+            <Button disabled={!assignedMechanic} type="submit">
+              Confirm
+            </Button>
+          </SimpleGrid>
         </Stack>
       </form>
     </BasicSection>
@@ -351,12 +340,14 @@ const IncompleteServiceTableRow = ({
           {/* .join(",") */}
           Service types : {service.serviceTypes}
         </Modal>
-        <Button onClick={openServiceDetailsModal} compact size="xs">
-          Details
-        </Button>
-        <Button onClick={onComplete} compact size="xs">
-          Done
-        </Button>
+        <SimpleGrid cols={2}>
+          <Button onClick={openServiceDetailsModal} compact size="xs">
+            Details
+          </Button>
+          <Button onClick={onComplete} compact size="xs">
+            Done
+          </Button>
+        </SimpleGrid>
       </td>
     </tr>
   );
@@ -374,43 +365,58 @@ export const ServiceFieldWrapper: CompWithChildren = ({ children }) => {
   const selectedCustomer = useAppSelector((s) => s.customer.selectedCustomer);
   const dispatch = useAppDispatch();
 
-  const onIncompleteServiceFinish = async (service: unknown) => {
-    console.log(service, "ajsdkajdjkaljdjakldjklasjkldjalkdjakjd");
+  const onIncompleteServiceFinish = async (
+    service: unknown,
+    values?: typeof form.values
+  ) => {
+    try {
+      const updatedService = await axiosClient.v1.api
+        .put(`services/${service.id}`, { status: "completed" })
+        .then((res) => res.data);
 
-    const updatedService = await axiosClient.v1.api
-      .put(`services/${service.id}`, { status: "completed" })
-      .then((res) => res.data);
+      const subTotal = values ? values.total : 0;
+      const discountPercent = values ? values.discount : 0;
+      const discountPlain = (subTotal * discountPercent) / 100;
+      const subTotalMinusDiscount = subTotal - discountPlain;
+      const taxPercent = values ? values.tax : 0;
+      const taxPlain = (subTotalMinusDiscount * taxPercent) / 100;
+      const total = subTotalMinusDiscount - taxPlain;
+      const submitData = {
+        customer_id: updatedService.customer_id,
+        total: total,
+        discount: discountPlain,
+        tax: taxPlain,
+        note: updatedService.note,
+        type: "service",
+        status: "unpaid",
+        items: [
+          {
+            id: updatedService.id,
+            quantity: 1,
+            total_price: values ? values.total : 0,
+            unit_price: values ? values.total : 0,
+          },
+        ],
+      };
 
-    const submitData = {
-      customer_id: updatedService.customer_id,
-      total: 0,
-      discount: 0,
-      tax: 0,
-      note: updatedService.note,
-      type: "service",
-      status: "Onhold",
-      items: [
-        {
-          id: updatedService.id,
-          quantity: 1,
-          total_price: 0,
-          unit_price: 0,
-        },
-      ],
-    };
+      const serverData = await axiosClient.v1.api
+        .post("orders", submitData)
+        .then((res) => res.data);
 
-    const serverData = await axiosClient.v1.api
-      .post("orders", submitData)
-      .then((res) => res.data);
+      notifications.show({
+        message: "Bike service completed.",
+        color: "green",
+      });
 
-    notifications.show({
-      message: "Bike service completed.",
-      color: "green",
-    });
+      qc.invalidateQueries(["get/services/incomplete"]);
 
-    qc.invalidateQueries(["get/services/incomplete"]);
-
-    console.log(serverData, "Server response data");
+      console.log(serverData, "Server response data");
+    } catch (error) {
+      notifications.show({
+        message: error.data.message,
+        color: "red",
+      });
+    }
   };
 
   useEffect(() => {
@@ -430,8 +436,85 @@ export const ServiceFieldWrapper: CompWithChildren = ({ children }) => {
   console.log(incompleteServices, "incmplete services");
   const isArr = incompleteServices && Array.isArray(incompleteServices.data);
 
+  const [doneModalOpened, { open: openDoneModal, close: closeDoneModal }] =
+    useDisclosure(false);
+
+  const form = useCustomForm({
+    initialValues: {
+      total: 0,
+      discount: 0,
+      tax: 0,
+    },
+    validate: zodResolver(
+      z.object({
+        total: z.number().nonnegative(),
+        discount: z.number().nonnegative(),
+        tax: z.number().nonnegative(),
+      })
+    ),
+  });
+
+  const [selectedService, setSelectedService] = useState(null);
+
+  const submitServiceForm = (values: typeof form.values) => {
+    onIncompleteServiceFinish(selectedService, values);
+    form.reset();
+    closeDoneModal();
+    setSelectedService(null);
+  };
+
   return (
     <Grid>
+      <Modal
+        title="Confirm Service"
+        opened={doneModalOpened}
+        onClose={() => {
+          closeDoneModal();
+          form.reset();
+          setSelectedService(null);
+        }}
+        size={"lg"}
+        centered
+      >
+        <form onSubmit={form.onSubmit(submitServiceForm)}>
+          <Stack>
+            <SimpleGrid cols={3}>
+              <NumberInput label="Total" {...form.getInputProps("total")} />
+              <NumberInput
+                label="Discount percentage"
+                min={0}
+                max={100}
+                rightSection={"%"}
+                {...form.getInputProps("discount")}
+              />
+              <NumberInput
+                label="Tax percentage"
+                min={0}
+                max={100}
+                rightSection={"%"}
+                {...form.getInputProps("tax")}
+              />
+            </SimpleGrid>
+
+            <SimpleGrid cols={2}>
+              <Button type="submit" disabled={!form.values.total}>
+                Submit
+              </Button>
+              <Button
+                variant="danger"
+                type="button"
+                onClick={() => {
+                  closeDoneModal();
+                  form.reset();
+                  setSelectedService(null);
+                }}
+              >
+                Cancel
+              </Button>
+            </SimpleGrid>
+          </Stack>
+        </form>
+      </Modal>
       <Grid.Col span={leftColSize}>
         <Stack>
           {/* user enter data */}
@@ -462,7 +545,10 @@ export const ServiceFieldWrapper: CompWithChildren = ({ children }) => {
                 incompleteServices.data.map((service) => {
                   return (
                     <IncompleteServiceTableRow
-                      onComplete={() => onIncompleteServiceFinish(service)}
+                      onComplete={() => {
+                        setSelectedService(service);
+                        openDoneModal();
+                      }}
                       service={service}
                       key={service.id}
                     />

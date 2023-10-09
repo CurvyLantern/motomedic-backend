@@ -28,11 +28,21 @@ class OrderItem extends Model
 
   public function product()
   {
-    return $this->belongsTo(Product::class, 'product_id')->where('type', 'product');
+    return $this->belongsTo(Product::class, 'product_id', 'id');
   }
 
   public function service()
   {
-    return $this->belongsTo(Service::class, 'service_id')->where('type', 'service');
+    return $this->belongsTo(Service::class, 'service_id', 'id');
   }
+  // public function product()
+  // {
+  //   return $this->belongsTo(Product::class, 'product_id')->where('type', 'product');
+  // }
+
+  // public function service()
+  // {
+  //   return $this->belongsTo(Service::class, 'service_id')->where('type', 'service');
+  // }
+
 }

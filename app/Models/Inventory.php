@@ -7,18 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Inventory extends Model
 {
-    use HasFactory;
-    protected $fillable = [
-        'sku',
-        'stock_count'
-    ];
+  use HasFactory;
+  protected $fillable = [
+    'sku',
+    'stock_count'
+  ];
 
-    public function productOrVariation()
-    {
-        return Product::whereHas('inventory', function ($query) {
-            $query->where('sku', $this->sku);
-        })->first() ?? ProductVariation::whereHas('inventory', function ($query) {
-            $query->where('sku', $this->sku);
-        })->first();
-    }
+  public function productOrVariation()
+  {
+    return Product::whereHas('inventory', function ($query) {
+      $query->where('sku', $this->sku);
+    })->first() ?? ProductVariation::whereHas('inventory', function ($query) {
+      $query->where('sku', $this->sku);
+    })->first();
+  }
 }

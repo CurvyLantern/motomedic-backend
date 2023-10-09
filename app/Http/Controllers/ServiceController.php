@@ -139,10 +139,6 @@ class ServiceController extends Controller
       $service->save();
 
       return response()->json($service);
-
-
-
-      return send_response('service Create successfull', new ServiceResource($service));
     } catch (Exception $e) {
       return send_error($e->getMessage(), $e->getCode());
     }
@@ -185,7 +181,7 @@ class ServiceController extends Controller
    * @param  \App\Models\Service  $service
    * @return \Illuminate\Http\JsonResponse
    */
-  public function update(Request $request, $id)
+  public function update(Request $request, String $id)
   {
     // Get the properties to update from the request
     $dataToUpdate = $request->all();
@@ -204,34 +200,6 @@ class ServiceController extends Controller
 
     // Return a success response
     return response()->json(['message' => 'Service properties updated successfully']);
-
-
-
-    $validated = $request->validated();
-    try {
-
-      $service = Service::find($id);
-      if ($service) {
-
-        $service->name = $validated['name'];
-        $service->slug = Str::slug($request->serviceName, '-');
-        $service->service_type = $validated['service_type'];
-        $service->customer_id = $validated['customer_id'];
-        $service->problem_details = $validated['problem_details'];
-        $service->mechanic_id = $validated['mechanic_id'];
-        $service->price = $validated['price'];
-        $service->items = $validated['items'];
-        $service->elapsed_time = $validated['elapsed_time'];
-        $service->note = $validated['note'];
-        $service->status = $validated['status'];
-        $service->save();
-        return send_response("Service Update successfully !", new ServiceResource($service));
-      } else {
-        return send_response('No Service found !!', []);
-      }
-    } catch (Exception $e) {
-      return send_error("Service data update failed !!!", $e->getMessage(), $e->getCode());
-    }
   }
 
   public function destroy($id)

@@ -1,6 +1,5 @@
 import { ProductCard } from "@/components/products/card/ProductCard";
 import { ScrollWrapper } from "@/components/scroller";
-import BasicSection from "@/components/sections/BasicSection";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeConnectors";
 import axiosClient from "@/lib/axios";
 import {
@@ -9,33 +8,28 @@ import {
 } from "@/store/slices/CustomerSlice";
 import { faker } from "@faker-js/faker";
 import {
-  Text,
-  Image,
   ActionIcon,
-  Badge,
   Box,
   Button,
-  CopyButton,
   Grid,
   Group,
+  Image,
   MultiSelect,
   NumberInput,
+  NumberInputHandlers,
   Paper,
   ScrollArea,
   SimpleGrid,
-  Table,
-  TextInput,
-  Tooltip,
-  UnstyledButton,
-  useMantineTheme,
   Stack,
-  NumberInputHandlers,
+  Table,
+  Text,
+  TextInput,
   rem,
+  useMantineTheme,
 } from "@mantine/core";
-import { IconSearch, IconArrowRight, IconArrowLeft } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { TbArrowRight, TbSearch, TbTrash } from "react-icons/tb";
+import { TbArrowRight, TbSearch, TbTrash, TbArrowLeft } from "react-icons/tb";
 class Order {
   orderId: string;
   customer: string;
@@ -130,7 +124,7 @@ const LeftSide = () => {
               {theme.dir === "ltr" ? (
                 <TbArrowRight size="1.1rem" />
               ) : (
-                <IconArrowLeft size="1.1rem" />
+                <TbArrowLeft size="1.1rem" />
               )}
             </ActionIcon>
           }

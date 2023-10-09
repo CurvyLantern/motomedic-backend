@@ -22,6 +22,7 @@ export const useCustomInputStyles = createStyles((theme) => ({
     position: "relative",
   },
   label: {
+    letterSpacing: 1,
     position: "absolute",
     pointerEvents: "none",
     fontSize: 10,
@@ -35,7 +36,7 @@ export const useCustomInputStyles = createStyles((theme) => ({
     borderRadius: 5,
     paddingInline: 2,
     color: "black",
-    fontWeight: 500,
+    fontWeight: 600,
     textTransform: "uppercase",
 
     marginLeft: 10,

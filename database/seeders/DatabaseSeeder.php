@@ -32,9 +32,14 @@ class DatabaseSeeder extends Seeder
     //     'email' => 'test@example.com',
     // ]);
 
+    // User::create([
+    //   'name' => 'admin',
+    //   'email' => 'admin@motomedic.com',
+    //   'password' => bcrypt('password'),
+    // ]);
     // User::factory(2)->create();
-    Customer::factory(10)->create();
-    Mechanic::factory(10)->create();
+    // Customer::factory(10)->create();
+    // Mechanic::factory(10)->create();
     // Color::factory(100)->create();
     // Brand::factory(10)->create();
     // Category::factory(10)->create();
@@ -42,7 +47,7 @@ class DatabaseSeeder extends Seeder
     // Product::factory(200)->create();
     // Order::factory(10)->create();
 
-    // Seller::factory(10)->create();
+    Seller::factory(10)->create();
     // Service::factory(15)->create();
 
     // Invoice::factory(15)->create();

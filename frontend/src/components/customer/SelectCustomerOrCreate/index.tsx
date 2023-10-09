@@ -42,8 +42,8 @@ export const SelectCustomerOrCreate = () => {
   // const customers = useAppSelector((state) => state.customer.customers);
   const customers = useCustomerQuery();
   const modifiedCustomersForSelect = useMemo(() => {
-    return customers
-      ? customers.map((c) => ({
+    return customers && Array.isArray(customers.data)
+      ? customers.data.map((c) => ({
           ...customers,
           label: c.name,
           value: String(c.id),
@@ -56,9 +56,11 @@ export const SelectCustomerOrCreate = () => {
   );
   const updateCustomerSelection = (customerFieldValue: unknown) => {
     // dispatch(updateCustomerByIdOrValue(" aksjdklajdkljaksld "));
-    const desiredCustomer = customers.find(
+
+    const desiredCustomer = customers.data.find(
       (c) => String(c.id) === customerFieldValue
     );
+
     dispatch(
       updateSelectedCustomer({
         id: undefined,

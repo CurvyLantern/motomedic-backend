@@ -8,7 +8,7 @@ import {
   TbHome,
   TbCardboards,
 } from "react-icons/tb";
-
+import { MdPayment } from "react-icons/md";
 const getNavUrl = (prefix: string, url: string) => {
   return `${prefix}/${url}`;
 };
@@ -21,8 +21,13 @@ export const navData = [
   },
   {
     label: "POS",
-    icon: TbHome,
+    icon: MdPayment,
     href: "/pos",
+  },
+  {
+    label: "Service Management",
+    icon: TbSettingsAutomation,
+    href: "/service",
   },
   {
     label: "Products",
@@ -30,7 +35,7 @@ export const navData = [
     childLinks: [
       {
         href: getNavUrl("product", "add"),
-        label: "Add New Product",
+        label: "Add Product",
         icon: TbShoppingBag,
       },
 
@@ -71,33 +76,13 @@ export const navData = [
         icon: TbShoppingBag,
       },
       {
-        href: getNavUrl("order", "add"),
-        label: "Create Order",
+        href: getNavUrl("order", "process"),
+        label: "Process Order",
         icon: TbShoppingBag,
       },
     ],
   },
-  {
-    label: "Invoice Management",
-    icon: TbCardboards,
-    childLinks: [
-      {
-        href: getNavUrl("invoice", "add"),
-        label: "Create Invoice",
-        icon: TbCardboards,
-      },
-      {
-        href: getNavUrl("invoice", "all"),
-        label: "All Invoices",
-        icon: TbCardboards,
-      },
-      // {
-      //     href: "service/create-service-data",
-      //     label: "Create Service Essentitals",
-      //     icon: TbSettingsAutomation,
-      // },
-    ],
-  },
+
   {
     label: "Inventory Management",
     icon: TbCardboards,
@@ -107,40 +92,19 @@ export const navData = [
         label: "All Inventory",
         icon: TbCardboards,
       },
-      // {
-      //     href: getNavUrl("inventory", "add"),
-      //     label: "Add to Inventory",
-      //     icon: TbCardboards,
-      // },
+      {
+        href: getNavUrl("inventory", "add"),
+        label: "Add to Inventory",
+        icon: TbCardboards,
+      },
+      {
+        href: getNavUrl("inventory", "sellers"),
+        label: "Product Sellers",
+        icon: TbCardboards,
+      },
+    ],
+  },
 
-      // {
-      //     href: "service/create-service-data",
-      //     label: "Create Service Essentitals",
-      //     icon: TbSettingsAutomation,
-      // },
-    ],
-  },
-  {
-    label: "Service Management",
-    icon: TbSettingsAutomation,
-    childLinks: [
-      {
-        href: getNavUrl("service", "add"),
-        label: "Create Service",
-        icon: TbSettingsAutomation,
-      },
-      {
-        href: getNavUrl("service", "all"),
-        label: "All Services",
-        icon: TbSettingsAutomation,
-      },
-      // {
-      //     href: "service/create-service-data",
-      //     label: "Create Service Essentitals",
-      //     icon: TbSettingsAutomation,
-      // },
-    ],
-  },
   {
     label: "Mechanic Management",
     icon: TbHammer,
@@ -153,22 +117,22 @@ export const navData = [
     ],
   },
 
-  {
-    label: "Billing Management",
-    icon: TbUser,
-    childLinks: [
-      {
-        href: getNavUrl("billing", "add"),
-        label: "Create Customer Invoice",
-        icon: TbCardboards,
-      },
-      {
-        href: getNavUrl("billing", "all"),
-        label: "Customer Invoices",
-        icon: TbCardboards,
-      },
-    ],
-  },
+  // {
+  //   label: "Billing Management",
+  //   icon: TbUser,
+  //   childLinks: [
+  //     {
+  //       href: getNavUrl("billing", "add"),
+  //       label: "Create Customer Invoice",
+  //       icon: TbCardboards,
+  //     },
+  //     {
+  //       href: getNavUrl("billing", "all"),
+  //       label: "Customer Invoices",
+  //       icon: TbCardboards,
+  //     },
+  //   ],
+  // },
   {
     label: "Customers Management",
     icon: TbUser,

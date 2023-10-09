@@ -1,37 +1,24 @@
-import { redirect, type RouteObject } from "react-router-dom";
-import GuestLayout, { guestLayoutLoader } from "@/layouts/GuestLayout";
-import LoginPage, { loginLoader } from "@/pages/guest/LoginPage";
-import RegisterPage, { registerLoader } from "@/pages/guest/RegisterPage";
-import ForgotPasswordPage, {
-  forgotPasswordLoader,
-} from "@/pages/guest/ForgotPasswordPage";
-import NotFoundPage from "@/pages/NotFoundPage";
 import AuthenticatedLayout, {
   authenticatedLoader,
 } from "@/layouts/AuthenticatedLayout";
-import { qc } from "@/providers/QueryProvider";
-import AddProductPage from "@/pages/product/AddProductPage";
-import AllProductPage from "@/pages/product/AllProductPage";
-import BrandPage from "@/pages/product/BrandPage";
-import AttributePage from "@/pages/product/AttributePage";
-import ColorPage from "@/pages/product/ColorPage";
-import OrderPage from "@/pages/sales/OrderPage";
-import CreateServicePage from "@/pages/service/CreateServicePage";
-import CategoryPage from "@/pages/product/CategoryPage";
-import CreateOrderPage from "@/pages/sales/CreateOrderPage";
-import CreateInventoryPage from "@/pages/inventory/CreateInventoryPage";
-import CreateInvoicePage from "@/pages/invoice/CreateInvoicePage";
-import AllInvoicePage from "@/pages/invoice/AllInvoicePage";
-import RootErrorBoundary from "@/components/erorrBoundary/RootErrorBoundary";
-import AllInventoryPage from "@/pages/inventory/AllInventory";
-import CreateBillingPage from "@/pages/billing/CreateBillingPage";
-import PosPage from "@/pages/pos/PosPage";
-import CustomerPage from "@/pages/customers/CustomerPage";
-import MechanicPage from "@/pages/mechanic/MechanicPage";
+import { guestLayoutLoader } from "@/layouts/GuestLayout";
+import ForgotPasswordPage, {
+  forgotPasswordLoader,
+} from "@/pages/guest/ForgotPasswordPage";
+import LoginPage, { loginLoader } from "@/pages/guest/LoginPage";
+import RegisterPage, { registerLoader } from "@/pages/guest/RegisterPage";
+import NotFoundPage from "@/pages/NotFoundPage";
+import { redirect, type RouteObject } from "react-router-dom";
 
 const routes: RouteObject[] = [
   {
-    element: <GuestLayout />,
+    // element: <GuestLayout />,
+    lazy: async () => {
+      const GuestLayout = (await import("@/layouts/GuestLayout")).default;
+      return {
+        element: <GuestLayout />,
+      };
+    },
     loader: guestLayoutLoader,
     path: "/auth",
     children: [
@@ -63,22 +50,28 @@ const routes: RouteObject[] = [
     loader: authenticatedLoader,
     children: [
       {
+        path: "/",
         loader: () => {
           return redirect("/dashboard");
         },
-        path: "/",
       },
       {
         path: "pos",
-        element: <PosPage />,
+        // element: <PosPage />,
+        lazy: async () => {
+          const module = await import("@/pages/pos/PosPage");
+          const PosPage = module.default;
+          return {
+            element: <PosPage />,
+          };
+        },
       },
       {
         path: "dashboard",
         lazy: async () => {
-          const module = await import("@/pages/DashboardPage");
-          const DashboardPage = module.default;
+          const Page = (await import("@/pages/DashboardPage")).default;
           return {
-            element: <DashboardPage />,
+            element: <Page />,
           };
         },
       },
@@ -87,27 +80,69 @@ const routes: RouteObject[] = [
         children: [
           {
             path: "add",
-            element: <AddProductPage />,
+            // element: <AddProductPage />,
+            lazy: async () => {
+              const Page = (await import("@/pages/product/AddProductPage"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
           },
           {
             path: "all",
-            element: <AllProductPage />,
+            // element: <AllProductPage />,
+            lazy: async () => {
+              const Page = (await import("@/pages/product/AllProductPage"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
           },
           {
             path: "brands",
-            element: <BrandPage />,
+            // element: <BrandPage />,
+            lazy: async () => {
+              const Page = (await import("@/pages/product/BrandPage")).default;
+              return {
+                element: <Page />,
+              };
+            },
           },
           {
             path: "categories",
-            element: <CategoryPage />,
+            // element: <CategoryPage />,
+            lazy: async () => {
+              const Page = (await import("@/pages/product/CategoryPage"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
           },
           {
             path: "attributes",
-            element: <AttributePage />,
+            // element: <AttributePage />,
+
+            lazy: async () => {
+              const Page = (await import("@/pages/product/AttributePage"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
           },
           {
             path: "colors",
-            element: <ColorPage />,
+            // element: <ColorPage />,
+
+            lazy: async () => {
+              const Page = (await import("@/pages/product/ColorPage")).default;
+              return {
+                element: <Page />,
+              };
+            },
           },
         ],
       },
@@ -116,11 +151,14 @@ const routes: RouteObject[] = [
         children: [
           {
             path: "all",
-            element: <AllInvoicePage />,
-          },
-          {
-            path: "add",
-            element: <CreateInvoicePage />,
+            // element: <AllInvoicePage />,
+            lazy: async () => {
+              const Page = (await import("@/pages/invoice/AllInvoicePage"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
           },
         ],
       },
@@ -129,12 +167,38 @@ const routes: RouteObject[] = [
         children: [
           {
             path: "all",
-            element: <AllInventoryPage />,
+            // element: <AllInventoryPage />,
+            lazy: async () => {
+              const Page = (await import("@/pages/inventory/AllInventory"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
           },
-          // {
-          //     path: "add",
-          //     element: <CreateInventoryPage />,
-          // },
+          {
+            path: "add",
+            // element: <CreateInventoryPage />,
+            lazy: async () => {
+              const Page = (
+                await import("@/pages/inventory/CreateInventoryPage")
+              ).default;
+              return {
+                element: <Page />,
+              };
+            },
+          },
+          {
+            path: "sellers",
+            // element: <SellersPage />,
+            lazy: async () => {
+              const Page = (await import("@/pages/inventory/SellersPage"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
+          },
         ],
       },
       {
@@ -142,42 +206,70 @@ const routes: RouteObject[] = [
         children: [
           {
             path: "all",
-            element: <OrderPage />,
+            // element: <OrderPage />,
+            lazy: async () => {
+              const Page = (await import("@/pages/sales/OrderPage")).default;
+              return {
+                element: <Page />,
+              };
+            },
           },
           {
-            path: "add",
-            element: <CreateOrderPage />,
+            path: "process",
+            // element: <CreateBillingPage />,
+            lazy: async () => {
+              const Page = (await import("@/pages/billing/CreateBillingPage"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
           },
         ],
       },
       {
         path: "service",
-        children: [
-          {
-            path: "add",
-            element: <CreateServicePage />,
-          },
-        ],
+        // element: <CreateServicePage />,
+        lazy: async () => {
+          const Page = (await import("@/pages/service/CreateServicePage"))
+            .default;
+          return {
+            element: <Page />,
+          };
+        },
       },
-      {
-        path: "billing",
-        children: [
-          {
-            path: "add",
-            element: <CreateBillingPage />,
-          },
-        ],
-      },
+      // {
+      //   path: "billing",
+      //   children: [
+      //     {
+      //       path: "add",
+      //       element: <CreateBillingPage />,
+      //     },
+      //   ],
+      // },
       {
         path: "customers",
-        element: <CustomerPage />,
+        // element: <CustomerPage />,
+        lazy: async () => {
+          const Page = (await import("@/pages/customers/CustomerPage")).default;
+          return {
+            element: <Page />,
+          };
+        },
       },
       {
         path: "mechanic",
         children: [
           {
             path: "all",
-            element: <MechanicPage />,
+            // element: <MechanicPage />,
+            lazy: async () => {
+              const Page = (await import("@/pages/mechanic/MechanicPage"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
           },
         ],
       },

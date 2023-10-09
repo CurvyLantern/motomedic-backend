@@ -45,6 +45,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('colors', ColorController::class);
     Route::apiResource('brands', BrandController::class);
     Route::apiResource('attributes', AttributeController::class);
+    Route::apiResource('attributeValues', AttributeValueController::class);
     Route::apiResource('categories', CategoryController::class)->names([
       'index' => 'category.index'
     ]);
@@ -53,12 +54,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('invoices', InvoiceController::class);
 
 
+    Route::get('products/all', [ProductController::class, 'allProducts'])->name('product.allProducts');
     Route::post('products/search', [ProductController::class, 'search'])->name('product.search');
     Route::get('products/createInfos', [ProductController::class, 'createInfos'])->name('products.createInfos');
+
     Route::apiResource('products', ProductController::class);
 
 
     Route::apiResource('mechanics', MechanicController::class);
+    Route::apiResource('sellers', SellerController::class);
     Route::apiResource('services', ServiceController::class);
 
 

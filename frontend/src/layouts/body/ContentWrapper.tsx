@@ -7,7 +7,7 @@ export const ContentWrapper: CompWithChildren = ({ children }) => {
   return (
     <ScrollWrapper>
       <Box
-        p={"md"}
+        p={"xs"}
         sx={() => ({
           position: "relative",
           height: "100%",

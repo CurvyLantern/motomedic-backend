@@ -21,7 +21,7 @@ return new class extends Migration
       $table->double('discount')->nullable();
       $table->double('tax')->default(0);
       $table->text('note')->nullable();
-      $table->enum('status', ['Onhold', 'Processing', 'Completed'])->default('Onhold');
+      $table->enum('status', ['paid', 'unpaid'])->default('paid');
 
 
       $table->timestamps();
@@ -36,7 +36,7 @@ return new class extends Migration
 
 
       $table->enum('type', ['product', 'service'])->default('product');
-      $table->enum('status', ['running', 'onhold', 'completed'])->default('running');
+      $table->enum('status', ['processing', 'completed'])->default('processing');
 
 
       $table->decimal('total_price', 10, 2)->default(0.00);

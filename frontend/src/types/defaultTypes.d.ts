@@ -38,6 +38,7 @@ type Product = {
   warranty: string;
   sku: string;
   name: string;
+  parent_category_id: IdField;
   category_id: IdField;
   brand_id: IdField;
   model: string;
@@ -50,7 +51,10 @@ type Product = {
   description: string;
   active: boolean;
   image: File | null;
+  barcode: string;
   status: "active" | "inactive";
+  id: IdField;
+  stock_count: number;
 };
 type ProductVariation = {
   variation_enabled: boolean;

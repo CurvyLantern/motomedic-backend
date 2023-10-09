@@ -27,6 +27,13 @@ export const useNavLinkGroupStyles = createStyles((theme) => ({
       ),
     },
   },
+  controlActive: {
+    color: theme.fn.darken(theme.other.colors.primary.foreground, 0.9),
+    backgroundColor: theme.fn.lighten(
+      theme.other.colors.primary.background,
+      0.9
+    ),
+  },
   activeControl: {
     fontWeight: 700,
   },
@@ -60,6 +67,13 @@ export const useNavLinkGroupStyles = createStyles((theme) => ({
       ),
       color: theme.other.colors.secondary.foreground,
     },
+  },
+  linkActive: {
+    backgroundColor: theme.fn.darken(
+      theme.other.colors.secondary.background,
+      0.1
+    ),
+    color: theme.other.colors.secondary.foreground,
   },
 
   chevron: {

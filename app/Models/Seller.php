@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Seller extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $fillable = [
+  protected $fillable = [
 
-        'name',
-        'contact_number',
-        'email',
-        'address',
-    ];
+    'name',
+    'phone',
+    'email',
+    'address',
+  ];
 }
