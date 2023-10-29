@@ -18,20 +18,16 @@ const ThemeProvider: CompWithChildren = ({ children }) => {
               danger: (theme) => ({
                 root: {
                   backgroundColor: theme.colors.red[8],
-                  color: theme.colors.red[0],
+                  color: theme.white,
                   ...theme.fn.hover({ backgroundColor: theme.colors.red[7] }),
                 },
               }),
 
               success: (theme) => ({
                 root: {
-                  backgroundImage: theme.fn.linearGradient(
-                    45,
-                    theme.colors.cyan[theme.fn.primaryShade()],
-                    theme.colors.teal[theme.fn.primaryShade()],
-                    theme.colors.green[theme.fn.primaryShade()]
-                  ),
+                  backgroundColor: theme.colors.green[7],
                   color: theme.white,
+                  ...theme.fn.hover({ backgroundColor: theme.colors.green[8] }),
                 },
               }),
             },
@@ -46,6 +42,17 @@ const ThemeProvider: CompWithChildren = ({ children }) => {
                 fontWeight: 500,
               },
             }),
+          },
+          ActionIcon: {
+            variants: {
+              danger: (theme) => ({
+                root: {
+                  backgroundColor: theme.colors.red[8],
+                  color: theme.white,
+                  ...theme.fn.hover({ backgroundColor: theme.colors.red[7] }),
+                },
+              }),
+            },
           },
           Input: {
             styles: () => ({

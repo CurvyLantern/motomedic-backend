@@ -5,44 +5,32 @@ import { useQuery } from "@tanstack/react-query";
 
 const url = "categories";
 export const useCategoryQuery = () => {
-    const { data: categories } = useQuery<Array<CategoryWithSubCateogry>>({
-        queryKey: ["get/categories"],
-        queryFn: () => {
-            return axiosClient.v1.api.get(url).then((res) => res.data);
-        },
-    });
-
-    // let categories: CategoryWithSubCateogry[] | null = null;
-
-    // if (data) {
-    //     if (Array.isArray(data)) {
-    //         categories = data;
-    //     } else if (
-    //         data.data &&
-    //         Array.isArray(data.data) &&
-    //         data.data.length > 0
-    //     ) {
-    //         categories = data.data;
-    //     }
-    // }
-
-    return categories;
+  const { data: categories } = useQuery<{
+    data: Array<CategoryWithSubCateogry>;
+  }>({
+    queryKey: ["get/categories"],
+    queryFn: () => {
+      return axiosClient.v1.api.get(url).then((res) => res.data);
+    },
+  });
+  return categories;
 };
+
 export const invalidateCateogryQuery = () => {
-    qc.invalidateQueries(["get/categories"]);
+  qc.invalidateQueries(["get/categories"]);
 };
 export const editCategory = async (category: Category) => {
-    return axiosClient.v1.api
-        .put(`${url}/${category.id}`, category)
-        .then((res) => res.data)
-        .catch((error) => console.error(error));
+  return axiosClient.v1.api
+    .put(`${url}/${category.id}`, category)
+    .then((res) => res.data)
+    .catch((error) => console.error(error));
 };
 export const deleteCategory = async (category: Category) => {
-    return axiosClient.v1.api
-        .delete(`${url}/${category.id}`)
-        .then((res) => {
-            qc.invalidateQueries(["get/categories"]);
-            return res.data;
-        })
-        .catch((error) => console.error(error));
+  return axiosClient.v1.api
+    .delete(`${url}/${category.id}`)
+    .then((res) => {
+      qc.invalidateQueries(["get/categories"]);
+      return res.data;
+    })
+    .catch((error) => console.error(error));
 };

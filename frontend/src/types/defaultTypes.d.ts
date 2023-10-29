@@ -4,7 +4,7 @@ type CompWithChildren = React.FC<{ children?: React.ReactNode }>;
 type TypedObject<T, V = undefined> = {
   [key in keyof T]: V extends undefined ? T[key] : V;
 };
-type IdField = string | number;
+type IdField = string;
 type SelectInputItem = {
   value: string;
   label: string;
@@ -27,11 +27,18 @@ type CategoryWithSubCateogry = Category & {
   sub_categories: Array<Category>;
 };
 
+type ProductModels = {
+  name: string;
+  id: string;
+  brands: Brand[];
+};
+
 type Brand = {
   id: IdField;
   name: string;
   description: string;
   image: string | null;
+  product_models: ProductModels[];
 };
 
 type Product = {

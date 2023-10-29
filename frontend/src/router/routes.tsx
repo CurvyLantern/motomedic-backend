@@ -134,11 +134,42 @@ const routes: RouteObject[] = [
             },
           },
           {
+            path: "models",
+            // element: <ColorPage />,
+
+            lazy: async () => {
+              const Page = (await import("@/pages/product/ModelPage")).default;
+              return {
+                element: <Page />,
+              };
+            },
+          },
+          {
             path: "colors",
             // element: <ColorPage />,
 
             lazy: async () => {
               const Page = (await import("@/pages/product/ColorPage")).default;
+              return {
+                element: <Page />,
+              };
+            },
+          },
+          {
+            path: ":productSku",
+            lazy: async () => {
+              const Page = (await import("@/pages/product/SingleProductView"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
+          },
+          {
+            path: ":productSku/edit",
+            lazy: async () => {
+              const Page = (await import("@/pages/product/EditProductForm"))
+                .default;
               return {
                 element: <Page />,
               };

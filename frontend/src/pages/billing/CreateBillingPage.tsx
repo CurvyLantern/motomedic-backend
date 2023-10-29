@@ -52,6 +52,12 @@ const CreateBillingPage = () => {
     console.log(serverResponse, "serverResponse");
   };
 
+  const [filteredOrder, setFilteredOrder] = useState(
+    orders && Array.isArray(orders.data) && orders.data.length > 0
+      ? orders.data
+      : []
+  );
+
   return (
     <Grid h={"100%"}>
       <Grid.Col span={8}>
@@ -85,9 +91,29 @@ const CreateBillingPage = () => {
             <Text align="center" variant="gradient" fw={"bold"}>
               Select Order
             </Text>
+            <Box>
+              <TextInput
+                placeholder="Search by number"
+                onChange={(e) => {
+                  const query = e.currentTarget.value;
+                  if (query) {
+                    setFilteredOrder(
+                      orders.data.filter((d) => {
+                        console.log(query, d.customer.phone);
+                        return d.customer.phone
+                          .toLowerCase()
+                          .includes(query.toLowerCase());
+                      })
+                    );
+                  } else {
+                    setFilteredOrder(orders.data);
+                  }
+                }}
+              />
+            </Box>
 
-            {orders && Array.isArray(orders.data) && orders.data.length > 0 ? (
-              orders.data.map((order) => {
+            {filteredOrder.length > 0 ? (
+              filteredOrder.map((order) => {
                 return (
                   <React.Fragment key={order.id}>
                     <Box
@@ -101,6 +127,11 @@ const CreateBillingPage = () => {
                       <Box>
                         <Text opacity={0.9} fw={"bold"} fz={"md"}>
                           {order.id}
+                        </Text>
+                      </Box>
+                      <Box>
+                        <Text opacity={0.9} fz={"xs"}>
+                          {order.customer.phone}
                         </Text>
                       </Box>
                       <Box mx={"auto"} sx={{}}>

@@ -81,7 +81,6 @@ export function ProductCard({ withDetails, count, product }: ProductCardProps) {
   // const {} = useAppSelector(state => state.customer.)
   const dispatch = useAppDispatch();
   const onOrder = () => {
-    console.log(" hello ");
     dispatch(addCustomerOrderProduct({ ...product, count: count ?? 0 }));
   };
 

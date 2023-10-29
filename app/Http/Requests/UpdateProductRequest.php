@@ -6,52 +6,34 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProductRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return false;
-    }
+  /**
+   * Determine if the user is authorized to make this request.
+   */
+  public function authorize(): bool
+  {
+    return true;
+  }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
-     */
-    public function rules(): array
-    {
-        return [
-
-            'productName' => "required",
-            'slug' => "required",
-            'categoryId' => "required",
-            'brandId' => "required",
-            'model' => "required",
-            'color' => "required",
-            'tags' => "required",
-            'productType' => "required",
-            'material' => "required",
-            'size' => "required",
-            'year' => "required",
-            'compitibility' => "required",
-            'condition' => "required",
-            'manufacturer' => "required",
-            'weight' => "required",
-            'quantity' => "required",
-            'price' => "required",
-            'discount' => "required",
-            'discoundType' => "required",
-            'primaryImg' => "required",
-            'thumbImg' => "required",
-            'shortDescriptions' => "required",
-            'longDescriptions' => "required",
-            'installationMethod' => "required",
-            'note' => "required",
-            'warranty' => "required",
-            'rating' => "required",
-            'availability' => "required",
-            'status' => "required",
-        ];
-    }
+  /**
+   * Get the validation rules that apply to the request.
+   *
+   * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+   */
+  public function rules(): array
+  {
+    return [
+      'name' => "nullable",
+      'category_id' => "nullable",
+      'brand_id' => "nullable",
+      'model' => "nullable",
+      'color_id' => "nullable",
+      'material' => "nullable",
+      'weight' => "nullable",
+      'year' => "nullable",
+      'price' => "nullable",
+      'description' => "nullable",
+      'warranty' => "nullable",
+      'status' => "nullable",
+    ];
+  }
 }

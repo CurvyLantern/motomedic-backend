@@ -43,6 +43,7 @@ const BrandPage = () => {
                   onSuccess={() => {
                     notifications.show({
                       message: "Brand created successfully",
+                      color: "green",
                     });
                     invalidateBrandQuery();
                   }}
@@ -75,6 +76,7 @@ const ViewBrands = () => {
           }}
           onSuccess={() => {
             modals.closeAll();
+            invalidateBrandQuery();
           }}
         />
       ),

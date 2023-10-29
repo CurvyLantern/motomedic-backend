@@ -21,23 +21,19 @@ export const StatsCell = ({ title, value, diff }: StatsCellType) => {
   const DiffIcon = diff > 0 ? TbArrowUpRight : TbArrowDownRight;
 
   return (
-    <Paper
-      withBorder
-      p="md"
-      radius="md">
+    <Paper withBorder p="md" radius="md">
       <Group position="apart">
         <div>
           <Text
             c="dimmed"
             tt="uppercase"
-            fw={700}
+            fw={600}
             fz="xs"
-            className={classes.label}>
+            className={classes.label}
+          >
             {title}
           </Text>
-          <Text
-            fw={700}
-            fz="xl">
+          <Text fw={600} fz="lg">
             {value}
           </Text>
         </div>
@@ -48,18 +44,13 @@ export const StatsCell = ({ title, value, diff }: StatsCellType) => {
             color: diff > 0 ? theme.colors.teal[6] : theme.colors.red[6],
           })}
           size={38}
-          radius="md">
+          radius="md"
+        >
           <DiffIcon size="1.8rem" />
         </ThemeIcon>
       </Group>
-      <Text
-        c="dimmed"
-        fz="sm"
-        mt="md">
-        <Text
-          component="span"
-          c={diff > 0 ? "teal" : "red"}
-          fw={700}>
+      <Text c="dimmed" fz="sm" mt="md">
+        <Text component="span" c={diff > 0 ? "teal" : "red"} fw={500}>
           {diff}%
         </Text>{" "}
         {diff > 0 ? "increase" : "decrease"} compared to last month

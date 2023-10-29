@@ -2,28 +2,29 @@ import BasicSection from "@/components/sections/BasicSection";
 import { useCategoryQuery } from "@/queries/categoryQuery";
 
 import { useAppSelector } from "@/hooks/storeConnectors";
-import WithCustomerLayout from "@/layouts/WithCustomerLayout";
+import WithCustomerLayout, {
+  SelectCustomerButton,
+} from "@/layouts/WithCustomerLayout";
 import axiosClient from "@/lib/axios";
 import { IdField, Product } from "@/types/defaultTypes";
 import {
   ActionIcon,
-  AspectRatio,
   Badge,
   Box,
   Button,
   Center,
   CloseButton,
+  Divider,
   Grid,
   Group,
   Image,
-  LoadingOverlay,
   NumberInput,
   NumberInputHandlers,
   Pagination,
+  Popover,
   ScrollArea,
   Select,
   SimpleGrid,
-  Spoiler,
   Stack,
   Text,
   TextInput,
@@ -34,214 +35,17 @@ import { useElementSize } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { ScrollWrapper } from "@/components/scroller";
 import { useProductSearch } from "@/hooks/useProductSearch";
 import { useBrandQuery } from "@/queries/brandQuery";
-import { useCustomInputStyles } from "./customInput.styles";
-import { ScrollWrapper } from "@/components/scroller";
 import { TbCactus } from "react-icons/tb";
+import { useCustomInputStyles } from "./customInput.styles";
+import ScrollWrapper2 from "@/components/scrollWrapper/ScrollWrapper2";
 
 const getPercentage = (prcnt: number, outOf: number) => outOf * (prcnt / 100);
 
 type FlatOrPercent = "flat" | "percent";
-const PosContents = () => {
-  const categories = useCategoryQuery();
-  const brands = useBrandQuery();
-  const [selectedCategoryId, setSelectedCategoryId] = useState("");
-  const [selectedBrandId, setSelectedBrandId] = useState("");
 
-  // const { data: products } = useQuery<{
-  //   data: Array<Product & { id: IdField; stock_count: number }>;
-  // }>({
-  //   queryKey: ["pos", selectedCategoryId],
-  //   queryFn: () => {
-  //     return axiosClient.v1.api
-  //       .get(`products?categoryId=${selectedCategoryId}`)
-  //       .then((res) => res.data);
-  //   },
-  //   // enabled: Boolean(selectedCategoryId),
-  // });
-
-  const { products, handleSearchInputChange, searchQuery, searchLoading } =
-    useProductSearch(selectedCategoryId, selectedBrandId);
-
-  const { ref } = useElementSize();
-  const categoriesIsArr = Array.isArray(categories) && categories.length > 0;
-
-  const categoryForSelectInput = useMemo(() => {
-    return categoriesIsArr
-      ? categories
-          .map((cat) => {
-            return [
-              {
-                label: cat.name,
-                value: String(cat.id),
-              },
-              ...cat.sub_categories.map((subC) => ({
-                label: subC.name,
-                value: String(subC.id),
-              })),
-            ];
-          })
-          .flat(1)
-      : [];
-  }, [categories, categoriesIsArr]);
-  const brandsForSelectInput = useMemo(() => {
-    return brands && Array.isArray(brands.data) && brands.data.length > 0
-      ? brands.data.map((brand) => ({
-          ...brand,
-          label: brand.name,
-          value: String(brand.id),
-        }))
-      : [];
-  }, [brands]);
-
-  const [cartProducts, setCartProducts] = useState<
-    Array<
-      Product & { id: IdField; cartProductCount: number; stock_count: number }
-    >
-  >([]);
-  useEffect(() => {
-    console.log(products, "products");
-  }, [products]);
-
-  const removeFromCart = (sku: string) => {
-    setCartProducts((cps) => {
-      const withoutProduct = cps.filter((cp) => cp.sku !== sku);
-      console.log({ withoutProduct });
-      return withoutProduct;
-    });
-  };
-
-  return (
-    <Grid h={"100%"}>
-      <Grid.Col span={8} ref={ref}>
-        <Box
-          sx={() => ({
-            display: "flex",
-            width: "100%",
-            height: "100%",
-            maxHeight: "100%",
-            position: "relative",
-          })}
-        >
-          <ScrollWrapper>
-            <Box
-              p={"0"}
-              sx={() => ({
-                position: "relative",
-                height: "100%",
-                display: "flex",
-                overflow: "hidden",
-              })}
-            >
-              <ScrollArea
-                styles={{
-                  viewport: {
-                    display: "flex",
-                    "& > div": {
-                      height: "100%",
-                      position: "relative",
-                    },
-                  },
-                }}
-                sx={(t) => ({
-                  // display: "flex",
-                  borderRadius: t.other.radius.primary,
-                  flex: 1,
-                })}
-              >
-                <Stack h={"100%"} spacing={"xs"}>
-                  {/* Product choose option */}
-                  <BasicSection p={"xs"} h={"auto"}>
-                    <Grid>
-                      <Grid.Col span={6}>
-                        <TextInput
-                          value={searchQuery}
-                          onChange={(event) =>
-                            handleSearchInputChange(event.currentTarget.value)
-                          }
-                          size="md"
-                          placeholder="Search product by name or sku or barcode "
-                          styles={{
-                            input: {
-                              "::placeholder": {
-                                color: "#555",
-                              },
-                            },
-                          }}
-                        />
-                      </Grid.Col>
-                      <Grid.Col span={3}>
-                        <Select
-                          dropdownComponent="div"
-                          clearable
-                          value={selectedCategoryId}
-                          onChange={(v) =>
-                            setSelectedCategoryId(v === null ? "" : v)
-                          }
-                          styles={{
-                            input: {
-                              "::placeholder": {
-                                color: "#555",
-                              },
-                            },
-                          }}
-                          placeholder="Select Category"
-                          searchable
-                          nothingFound="No category found"
-                          size="md"
-                          data={categoryForSelectInput}
-                        />
-                      </Grid.Col>
-                      <Grid.Col span={3}>
-                        <Select
-                          dropdownComponent="div"
-                          clearable
-                          value={selectedBrandId}
-                          onChange={(v) =>
-                            setSelectedBrandId(v === null ? "" : v)
-                          }
-                          styles={{
-                            input: {
-                              "::placeholder": {
-                                color: "#555",
-                              },
-                            },
-                          }}
-                          placeholder="Select Brand"
-                          searchable
-                          nothingFound="No brand found"
-                          size="md"
-                          data={brandsForSelectInput}
-                        />
-                      </Grid.Col>
-                    </Grid>
-                  </BasicSection>
-
-                  <PosProductsComp
-                    searchLoading={searchLoading}
-                    products={products}
-                    removeFromCart={removeFromCart}
-                    setCartProducts={setCartProducts}
-                    cartProducts={cartProducts}
-                  />
-                </Stack>
-              </ScrollArea>
-            </Box>
-          </ScrollWrapper>
-        </Box>
-      </Grid.Col>
-
-      <Grid.Col span={4}>
-        <Cart
-          cartProducts={cartProducts}
-          setCartProducts={setCartProducts}
-          removeFromCart={removeFromCart}
-        />
-      </Grid.Col>
-    </Grid>
-  );
-};
 type PosProductsComp = {
   searchLoading: boolean;
   products?: {
@@ -281,131 +85,133 @@ const PosProductsComp = ({
     posProducts.length > 0
   ) {
     return (
-      <BasicSection p={"xs"}>
-        <Stack h={"100%"}>
-          <SimpleGrid
-            cols={1}
-            breakpoints={[
-              { minWidth: "xs", cols: 3 },
-              { minWidth: "md", cols: 3 },
-              { minWidth: "lg", cols: 4 },
-              { minWidth: "xl", cols: 5 },
-            ]}
-          >
-            {posProducts.map((product) => {
-              const productInCart = cartProducts.find(
-                (cp) => cp.sku === product.sku
-              );
+      <Stack h={"100%"}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: rem(12),
+            flexWrap: "wrap",
+          }}
+        >
+          {posProducts.map((product) => {
+            const productInCart = cartProducts.find(
+              (cp) => cp.sku === product.sku
+            );
 
-              const maxNameLen = 12;
-              const formattedProductName =
-                typeof product.name === "string"
-                  ? product.name.length > maxNameLen
-                    ? `${product.name.substring(0, maxNameLen)}...`
-                    : product.name
-                  : "Name not found";
+            const maxNameLen = 12;
+            const formattedProductName =
+              typeof product.name === "string"
+                ? product.name.length > maxNameLen
+                  ? `${product.name.substring(0, maxNameLen)}...`
+                  : product.name
+                : "Name not found";
 
-              return (
-                <Box
-                  p={theme.spacing.xs}
+            return (
+              <Box
+                p={theme.spacing.xs}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: theme.spacing.xs,
+                  borderRadius: theme.other.radius.primary,
+                  boxShadow: theme.shadows.sm,
+                  border: `1px solid black`,
+                  position: "relative",
+                  minWidth: 150,
+                }}
+                key={product.sku}
+              >
+                <Text
                   sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: theme.spacing.xs,
+                    backgroundColor: theme.colors.yellow[5],
+                    textTransform: "uppercase",
+                    fontSize: rem(10),
+                    fontWeight: 600,
+                    margin: theme.spacing.xs,
+                    paddingInline: 5,
+                    paddingBlock: 1,
                     borderRadius: theme.other.radius.primary,
-                    boxShadow: theme.shadows.sm,
-                    border: `1px solid black`,
-                    position: "relative",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    zIndex: 10,
+                    color: "black",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
-                  key={product.sku}
                 >
-                  <Text
-                    sx={{
-                      backgroundColor: theme.colors.yellow[5],
-                      textTransform: "uppercase",
-                      fontSize: 12,
-                      fontWeight: "bold",
-                      margin: theme.spacing.xs,
-                      paddingInline: 5,
-                      paddingBlock: 2,
-                      borderRadius: theme.other.radius.primary,
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      zIndex: 10,
-                      color: "black",
-                    }}
-                  >
-                    Unit : {product.stock_count}
-                  </Text>
-                  <Image
-                    styles={{
-                      figure: {
-                        height: "100%",
-                      },
-                      imageWrapper: {
-                        height: "100%",
-                      },
-                    }}
-                    withPlaceholder
-                    h={40}
-                    src={"#"}
-                  ></Image>
-                  <Text weight={500} fz={"xs"} align="center">
-                    {formattedProductName}
-                  </Text>
+                  Unit : {product.stock_count}
+                </Text>
+                <Image
+                  styles={{
+                    figure: {
+                      height: "100%",
+                    },
+                    imageWrapper: {
+                      height: "100%",
+                    },
+                  }}
+                  withPlaceholder
+                  h={40}
+                  src={"#"}
+                ></Image>
+                <Text weight={500} fz={"sm"} align="center">
+                  {formattedProductName}
+                </Text>
 
-                  <Group
-                    noWrap
-                    fz={"xs"}
-                    fw={"500"}
-                    mt={"auto"}
-                    position="apart"
+                <Group
+                  noWrap
+                  fz={rem(10)}
+                  fw={"500"}
+                  mt={"auto"}
+                  position="apart"
+                >
+                  {/* <Text>Unit : {product.stock_count}</Text> */}
+                  <Text>Price : {product.price} ৳</Text>
+                </Group>
+                {productInCart ? (
+                  <Button
+                    size="xs"
+                    variant="danger"
+                    onClick={() => {
+                      removeFromCart(product.sku);
+                    }}
                   >
-                    {/* <Text>Unit : {product.stock_count}</Text> */}
-                    <Text>Price : {product.price}</Text>
-                  </Group>
-                  {productInCart ? (
-                    <Button
-                      size="xs"
-                      variant="danger"
-                      onClick={() => {
-                        removeFromCart(product.sku);
-                      }}
-                    >
-                      Remove
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="gradient"
-                      size="xs"
-                      disabled={product.stock_count <= 0}
-                      onClick={() => {
-                        setCartProducts((p) => [
-                          ...p,
-                          {
-                            ...product,
-                            cartProductCount: 1,
-                          },
-                        ]);
-                      }}
-                    >
-                      Add
-                    </Button>
-                  )}
-                </Box>
-              );
-            })}
-          </SimpleGrid>
-          <Center mt={"auto"}>
-            <Pagination
-              total={products.totalPageCount}
-              value={products?.currentPage}
-              onChange={products?.handlePageChange}
-            />
-          </Center>
-        </Stack>
-      </BasicSection>
+                    Remove
+                  </Button>
+                ) : (
+                  <Button
+                    variant="gradient"
+                    size="xs"
+                    disabled={product.stock_count <= 0}
+                    onClick={() => {
+                      setCartProducts((p) => [
+                        ...p,
+                        {
+                          ...product,
+                          cartProductCount: 1,
+                        },
+                      ]);
+                    }}
+                  >
+                    Add to cart
+                  </Button>
+                )}
+              </Box>
+            );
+          })}
+        </Box>
+
+        <Center mt={"auto"}>
+          <Pagination
+            total={products.totalPageCount}
+            value={products?.currentPage}
+            onChange={products?.handlePageChange}
+          />
+        </Center>
+      </Stack>
     );
   }
   return (
@@ -450,15 +256,15 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
   const [cartDiscountInput, setCartDiscountInput] = useState(0);
   const [cartTaxInput, setCartTaxInput] = useState(0);
 
-  const cartTotalWithoutTaxDiscount = cartProducts.reduce((sum, item) => {
+  const cartSubTotal = cartProducts.reduce((sum, item) => {
     sum += Number(item.price) * Number(item.cartProductCount);
     return sum;
   }, 0);
   const cartDiscount =
     cartDiscountType === "flat"
       ? cartDiscountInput
-      : getPercentage(cartDiscountInput, cartTotalWithoutTaxDiscount);
-  const cartTotalWithDiscount = cartTotalWithoutTaxDiscount - cartDiscount;
+      : getPercentage(cartDiscountInput, cartSubTotal);
+  const cartTotalWithDiscount = cartSubTotal - cartDiscount;
   const cartTax =
     cartTaxType === "flat"
       ? cartTaxInput
@@ -510,6 +316,8 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
     }
   };
 
+  const isTotalNegative = cartTotal < 0;
+
   return (
     <BasicSection px={"sm"} title="Cart">
       <Stack spacing={8}>
@@ -517,6 +325,10 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
           const max = cartProduct.stock_count;
           const cartPrice =
             Number(cartProduct.price) * cartProduct.cartProductCount;
+          const cartProductName =
+            typeof cartProduct.name === "string"
+              ? cartProduct.name.substring(0, 12)
+              : "Name not found";
           return (
             <Box
               sx={{
@@ -550,12 +362,14 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
                     });
                   }}
                 />
-                <Stack spacing={2} fw={"bold"}>
-                  <Text mr={"auto"}>{cartProduct.name}</Text>
+                <Stack spacing={2} fw={"500"}>
+                  <Text mr={"auto"}>{cartProductName}</Text>
                   <Text fz={10} mr={"auto"}>
                     Unit Price : {cartProduct.price}
                   </Text>
                 </Stack>
+                {/*
+
                 <AspectRatio ratio={1} w={rem(40)}>
                   <Image
                     styles={{
@@ -571,12 +385,11 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
                     src={"#"}
                   ></Image>
                 </AspectRatio>
+                */}
 
-                <Stack ml={"auto"} spacing={2}>
-                  <Badge size="lg" variant="filled">
-                    {cartPrice.toFixed(2)}
-                  </Badge>
-                </Stack>
+                <Badge size="md" fw={600} ml={"auto"} variant="filled">
+                  {cartPrice.toFixed(2)}
+                </Badge>
                 <CloseButton
                   onClick={() => {
                     removeFromCart(cartProduct.sku);
@@ -590,9 +403,10 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
         })}
       </Stack>
       <Stack
-        spacing={"xs"}
+        spacing={"5px"}
         p={"xs"}
         sx={{
+          boxShadow: "0 0 0 black",
           position: "absolute",
           bottom: 0,
           left: 0,
@@ -603,28 +417,116 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
           ),
         }}
       >
-        <SimpleGrid
-          cols={3}
-          spacing={"xs"}
-          sx={{
-            fontSize: "10px",
-            fontWeight: 600,
-          }}
-        >
-          <Badge size="lg" fullWidth color="green" variant="filled">
-            Discount : {cartDiscount} ৳
-          </Badge>
+        <Box>
+          <SimpleGrid
+            cols={2}
+            spacing={"xs"}
+            sx={{
+              fontSize: "10px",
+              fontWeight: 500,
+              textTransform: "uppercase",
+              opacity: 0.9,
+            }}
+          >
+            {/* subtotal */}
+            <Text>Subtotal </Text>
+            <Text align="right">{cartSubTotal}</Text>
 
-          <Badge size="lg" fullWidth color="red" variant="filled">
-            Tax : {cartTax} ৳
-          </Badge>
+            {/* discount */}
+            <Text>Discount </Text>
+            <Text align="right">{cartDiscount}</Text>
 
-          <Badge size="lg" variant="filled" fullWidth>
-            Total : {cartTotal} ৳
-          </Badge>
-        </SimpleGrid>
+            {/* tax */}
+            <Text>Tax </Text>
+            <Text align="right">{cartTax}</Text>
+          </SimpleGrid>
+          <Divider />
+          <SimpleGrid
+            cols={2}
+            sx={{
+              fontWeight: 500,
+              textTransform: "uppercase",
+              color: isTotalNegative ? "red" : "black",
+            }}
+          >
+            {/* total */}
+            <Text fz={"md"}>Total </Text>
+            <Text fz={"md"} align="right">
+              {cartTotal}
+            </Text>
+          </SimpleGrid>
+        </Box>
+
         <SimpleGrid cols={2} spacing={"xs"}>
-          <NumberInput
+          <Popover trapFocus withArrow>
+            <Popover.Target>
+              <Button size="xs" variant="outline" bg={"white"}>
+                Discount
+              </Button>
+            </Popover.Target>
+            <Popover.Dropdown
+              sx={(t) => ({
+                display: "flex",
+                gap: 5,
+                padding: rem(5),
+                border: `1px solid ${t.other.colors.primary}`,
+              })}
+            >
+              <Box sx={{ flex: 2, width: 100 }}>
+                <NumberInput
+                  classNames={classes}
+                  hideControls
+                  placeholder="Discount"
+                  value={cartDiscountInput}
+                  onChange={(v) => {
+                    setCartDiscountInput(Number(v));
+                  }}
+                />
+              </Box>
+              <Select
+                sx={{ flex: 1 }}
+                classNames={classes}
+                value={cartDiscountType}
+                onChange={(v) => setCartDiscountType(v as FlatOrPercent)}
+                data={["flat", "percent"]}
+              />
+            </Popover.Dropdown>
+          </Popover>
+          <Popover trapFocus withArrow>
+            <Popover.Target>
+              <Button size="xs" variant="outline" bg={"white"}>
+                Tax
+              </Button>
+            </Popover.Target>
+            <Popover.Dropdown
+              sx={(t) => ({
+                display: "flex",
+                gap: 5,
+                padding: rem(5),
+                border: `1px solid ${t.other.colors.primary}`,
+              })}
+            >
+              <Box sx={{ flex: 2, width: 100 }}>
+                <NumberInput
+                  classNames={classes}
+                  hideControls
+                  placeholder="Tax"
+                  value={cartTaxInput}
+                  onChange={(v) => {
+                    setCartTaxInput(Number(v));
+                  }}
+                />
+              </Box>
+              <Select
+                sx={{ flex: 1 }}
+                classNames={classes}
+                value={cartTaxType}
+                onChange={(v) => setCartTaxType(v as FlatOrPercent)}
+                data={["flat", "percent"]}
+              />
+            </Popover.Dropdown>
+          </Popover>
+          {/* <NumberInput
             classNames={classes}
             label="Discount"
             hideControls
@@ -640,9 +542,9 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
             value={cartDiscountType}
             onChange={(v) => setCartDiscountType(v as FlatOrPercent)}
             data={["flat", "percent"]}
-          />
+          /> */}
         </SimpleGrid>
-        <SimpleGrid cols={2} spacing={"xs"}>
+        {/* <SimpleGrid cols={2} spacing={"xs"}>
           <NumberInput
             classNames={classes}
             label="Tax"
@@ -660,11 +562,14 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
             onChange={(v) => setCartTaxType(v as FlatOrPercent)}
             data={["flat", "percent"]}
           />
-        </SimpleGrid>
+        </SimpleGrid> */}
         <SimpleGrid cols={2} p={5}>
           <Button
+            size="xs"
             variant="gradient"
-            disabled={!cartProducts || cartProducts.length <= 0}
+            disabled={
+              !cartProducts || cartProducts.length <= 0 || isTotalNegative
+            }
             fullWidth
             onClick={() => {
               console.log(cartProducts);
@@ -674,11 +579,16 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
             Confirm Order
           </Button>
           <Button
+            size="xs"
             variant="danger"
-            disabled={!cartProducts || cartProducts.length <= 0}
             fullWidth
             onClick={() => {
               setCartProducts([]);
+              setCartDiscountInput(0);
+              setCartDiscountType("flat");
+
+              setCartTaxInput(0);
+              setCartTaxType("percent");
             }}
           >
             Reset cart
@@ -709,20 +619,18 @@ const CartNumberInput = ({
   //     setCount((p) => Math.max(p - 1, min));
   // };
   return (
-    <Group noWrap spacing={3} sx={{ userSelect: "none" }}>
-      {/* <UnstyledButton onClick={increment}>
-                <TbChevronUp />
-            </UnstyledButton> */}
+    <Stack spacing={3} sx={{ userSelect: "none" }}>
       <ActionIcon
         // w={"100%"}
         mih={0}
         h={"auto"}
-        disabled={defaultValue <= min}
         variant={"gradient"}
-        onClick={() => handlers.current?.decrement()}
+        disabled={defaultValue >= max}
+        onClick={() => handlers.current?.increment()}
       >
-        –
+        +
       </ActionIcon>
+
       <NumberInput
         hideControls
         value={defaultValue}
@@ -734,8 +642,8 @@ const CartNumberInput = ({
         styles={(theme) => ({
           root: {},
           input: {
-            fontWeight: "bold",
-            width: 40,
+            fontWeight: 600,
+            width: 55,
             height: rem(20),
             minHeight: 0,
             border: "1px solid",
@@ -745,108 +653,172 @@ const CartNumberInput = ({
           },
         })}
       />
-      {/* <span>{count}</span>
-            <UnstyledButton onClick={decrement}>
-                <TbChevronDown />
-            </UnstyledButton> */}
-
       <ActionIcon
         // w={"100%"}
         mih={0}
         h={"auto"}
+        disabled={defaultValue <= min}
         variant={"gradient"}
-        disabled={defaultValue >= max}
-        onClick={() => handlers.current?.increment()}
+        onClick={() => handlers.current?.decrement()}
       >
-        +
+        –
       </ActionIcon>
-    </Group>
+    </Stack>
   );
 };
 
 const PosPage = () => {
+  const categories = useCategoryQuery();
+  const brands = useBrandQuery();
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [selectedBrandId, setSelectedBrandId] = useState("");
+
+  const { products, handleSearchInputChange, searchQuery, searchLoading } =
+    useProductSearch(selectedCategoryId, selectedBrandId);
+  const categoriesIsArr = Array.isArray(categories) && categories.length > 0;
+
+  const categoryForSelectInput = useMemo(() => {
+    return categoriesIsArr
+      ? categories
+          .map((cat) => {
+            return [
+              {
+                label: cat.name,
+                value: String(cat.id),
+              },
+              ...cat.sub_categories.map((subC) => ({
+                label: subC.name,
+                value: String(subC.id),
+              })),
+            ];
+          })
+          .flat(1)
+      : [];
+  }, [categories, categoriesIsArr]);
+  const brandsForSelectInput = useMemo(() => {
+    return brands && Array.isArray(brands.data) && brands.data.length > 0
+      ? brands.data.map((brand) => ({
+          ...brand,
+          label: brand.name,
+          value: String(brand.id),
+        }))
+      : [];
+  }, [brands]);
+
+  const [cartProducts, setCartProducts] = useState<
+    Array<
+      Product & { id: IdField; cartProductCount: number; stock_count: number }
+    >
+  >([]);
+  useEffect(() => {
+    console.log(products, "products");
+  }, [products]);
+
+  const removeFromCart = (sku: string) => {
+    setCartProducts((cps) => {
+      const withoutProduct = cps.filter((cp) => cp.sku !== sku);
+      console.log({ withoutProduct });
+      return withoutProduct;
+    });
+  };
   return (
     <WithCustomerLayout>
-      <PosContents />
+      <Grid h={"100%"} m={0} gutter={"xs"}>
+        <Grid.Col span={12} sm={"auto"} h={"100%"}>
+          <Stack h={"100%"} spacing={"xs"}>
+            {/* Product choose option */}
+            <BasicSection p={"5px"} h={"auto"}>
+              <Grid gutter={"5px"} m={0}>
+                <Grid.Col span={12} xs={4} md={6}>
+                  <TextInput
+                    value={searchQuery}
+                    onChange={(event) =>
+                      handleSearchInputChange(event.currentTarget.value)
+                    }
+                    size="xs"
+                    placeholder="Search product by name or sku or barcode "
+                    styles={{
+                      input: {
+                        "::placeholder": {
+                          color: "#555",
+                        },
+                      },
+                    }}
+                  />
+                </Grid.Col>
+                <Grid.Col span={12} xs={4} md={3}>
+                  <Select
+                    size="xs"
+                    dropdownComponent="div"
+                    clearable
+                    value={selectedCategoryId}
+                    onChange={(v) => setSelectedCategoryId(v === null ? "" : v)}
+                    styles={{
+                      input: {
+                        "::placeholder": {
+                          color: "#555",
+                        },
+                      },
+                    }}
+                    placeholder="Select Category"
+                    searchable
+                    nothingFound="No category found"
+                    data={categoryForSelectInput}
+                  />
+                </Grid.Col>
+                <Grid.Col span={12} xs={4} md={3}>
+                  <Select
+                    size="xs"
+                    dropdownComponent="div"
+                    clearable
+                    value={selectedBrandId}
+                    onChange={(v) => setSelectedBrandId(v === null ? "" : v)}
+                    styles={{
+                      input: {
+                        "::placeholder": {
+                          color: "#555",
+                        },
+                      },
+                    }}
+                    placeholder="Select Brand"
+                    searchable
+                    nothingFound="No brand found"
+                    data={brandsForSelectInput}
+                  />
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <SelectCustomerButton />
+                </Grid.Col>
+              </Grid>
+            </BasicSection>
+
+            <BasicSection>
+              <ScrollWrapper2>
+                <PosProductsComp
+                  searchLoading={searchLoading}
+                  products={products}
+                  removeFromCart={removeFromCart}
+                  setCartProducts={setCartProducts}
+                  cartProducts={cartProducts}
+                />
+              </ScrollWrapper2>
+            </BasicSection>
+          </Stack>
+        </Grid.Col>
+        {/* <MediaQuery smallerThan={"md"} styles={{ display: "none" }}> */}
+        <Grid.Col span={12} sm={"content"} h={"100%"}>
+          <Box miw={"max(30vw,300px)"} h={"100%"}>
+            <Cart
+              cartProducts={cartProducts}
+              setCartProducts={setCartProducts}
+              removeFromCart={removeFromCart}
+            />
+          </Box>
+        </Grid.Col>
+        {/* </MediaQuery> */}
+      </Grid>
     </WithCustomerLayout>
   );
 };
 
 export default PosPage;
-
-/* Old category slider
-
-
-<BasicSection p={"xs"} title="Select category">
-            <Carousel
-              sx={{ maxWidth: `${width}px`, flex: 1 }}
-              slideSize="25%"
-              height={60}
-              align="start"
-              slideGap="xs"
-              controlsOffset="sm"
-              loop
-              slidesToScroll={4}
-              styles={{
-                control: {
-                  "&[data-inactive]": {
-                    opacity: 0,
-                    cursor: "default",
-                  },
-                },
-              }}
-            >
-              {isArr
-                ? categories.map((category, categoryIdx) => {
-                    const colors = [
-                      "#69d2e7",
-                      "#a7dbd8",
-                      "#e0e4cc",
-                      "#f38630",
-                      "#fa6900",
-                    ];
-                    const isCatActive = selectedCategoryId == category.id;
-                    return (
-                      <Carousel.Slide p={"xs"} key={category.id}>
-                        <UnstyledButton
-                          onClick={() => {
-                            setSelectedCategoryId(category.id as string);
-                          }}
-                          h={"100%"}
-                          w={"100%"}
-                          sx={{ display: "block" }}
-                        >
-                          <Center
-                            p={5}
-                            w={"100%"}
-                            h={"100%"}
-                            sx={(t) => ({
-                              fontWeight: 900,
-                              outline: isCatActive ? "2px" : "0px",
-                              outlineStyle: "dashed",
-                              outlineColor: theme.colors.red,
-                              outlineOffset: 2,
-                              backgroundColor:
-                                colors[categoryIdx % colors.length],
-                              borderRadius: t.other.radius.primary,
-                              boxShadow: t.shadows.md,
-                              //   border: `1px solid ${t.black}`,
-                            })}
-                          >
-                            <Text>{category.name}</Text>
-                          </Center>
-                        </UnstyledButton>
-                      </Carousel.Slide>
-                    );
-                  })
-                : null}
-            </Carousel>
-          </BasicSection>
-
-
-
-
-
-
-
-*/

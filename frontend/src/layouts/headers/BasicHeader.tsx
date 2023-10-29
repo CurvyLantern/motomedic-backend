@@ -10,6 +10,7 @@ import {
   Group,
   Header,
   Image,
+  MediaQuery,
   Menu,
   Popover,
   Tabs,
@@ -39,7 +40,7 @@ export const BasicHeader = () => {
   const { classes } = useBasicHeaderStyles();
   const burgerOpened = !navHidden;
   return (
-    <Header withBorder={false} className={classes.header} height={70}>
+    <Header withBorder={false} className={classes.header} height={50}>
       {/* largerThan="sm" styles={{ display: "none" }} */}
 
       <Burger
@@ -50,15 +51,9 @@ export const BasicHeader = () => {
         mx="xl"
       />
       <Anchor sx={{ display: "flex" }} component={Link} to="/">
-        <Box sx={{ width: 100, overflow: "hidden" }}>
+        <Box sx={{ width: 60, overflow: "hidden" }}>
           <Image src={BrandLogo} sx={{ width: "100%" }}></Image>
         </Box>
-        {/* <Title
-            size="h2"
-            order={5}
-            color="white">
-            MotoMedic
-          </Title> */}
       </Anchor>
 
       {/* drawer button */}
@@ -235,6 +230,7 @@ const AuthenticatedProfile = () => {
           }}
           sx={(theme) => ({
             // display: "block",
+            transition: "all 150ms ease",
             width: "100%",
             height: "100%",
             paddingInline: theme.spacing.md,
@@ -253,23 +249,29 @@ const AuthenticatedProfile = () => {
               : theme.other.colors.primaryDark.background,
 
             "&:hover": {
-              backgroundColor: theme.other.colors.primaryDark.foreground,
-              color: theme.other.colors.primaryDark.background,
+              backgroundColor: theme.fn.lighten(
+                theme.other.colors.primaryDark.background,
+                0.2
+              ),
+              color: theme.other.colors.primaryDark.foreground,
             },
           })}
         >
           <Group>
             <Avatar src={""} radius="xl" />
 
-            <div style={{ flex: 1 }}>
-              <Text size="sm" weight={500}>
-                {user.name}
-              </Text>
+            <MediaQuery smallerThan={"sm"} styles={{ display: "none" }}>
+              <div style={{ flex: 1 }}>
+                <Text size="sm" weight={500}>
+                  {user.name}
+                </Text>
 
-              <Text size="xs">{user.email}</Text>
-            </div>
-
-            <TbChevronDown size="1.5rem" />
+                <Text size="xs">{user.email}</Text>
+              </div>
+            </MediaQuery>
+            <MediaQuery smallerThan={"sm"} styles={{ display: "none" }}>
+              <TbChevronDown size="1.5rem" />
+            </MediaQuery>
           </Group>
         </UnstyledButton>
       </Menu.Target>

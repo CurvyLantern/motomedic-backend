@@ -17,149 +17,144 @@ use Exception;
 class BrandController extends Controller
 {
 
-    public function page()
-    {
-        return view('apitest');
+  public function page()
+  {
+    return view('apitest');
+  }
+
+
+  /**
+   * Display a listing of the resource.
+   */
+  // public function testBrand(Request $req){
+  //     return send_response('dasdasd',[]);
+  //  }
+
+  public function getBrandsAttributeData()
+  {
+    $tableName = 'brands'; // Replace with the actual table name
+
+    if (Schema::hasTable($tableName)) {
+      $columnNames = Schema::getColumnListing($tableName);
+      return $columnNames;
+    } else {
+      return ['Table not found'];
     }
+  }
 
-
-    /**
-     * Display a listing of the resource.
-     */
-    // public function testBrand(Request $req){
-    //     return send_response('dasdasd',[]);
-    //  }
-
-    public function getBrandsAttributeData()
-    {
-        $tableName = 'brands'; // Replace with the actual table name
-
-        if (Schema::hasTable($tableName)) {
-            $columnNames = Schema::getColumnListing($tableName);
-            return $columnNames;
-        } else {
-            return ['Table not found'];
-        }
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    $brands = Brand::with('productModels')->orderBy('id', 'asc')->get();
+    if ($brands) {
+      return BrandResource::collection($brands);
+    } else {
+      return send_response('Brand data not found !!', []);
     }
+  }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $brands = Brand::orderBy('id', 'asc')->get();
-        if ($brands) {
-            return BrandResource::collection($brands);
-        } else {
-            return send_response('Brand data not found !!', []);
-        }
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(StoreBrandRequest $request)
+  {
+    //
+
+    try {
+      $validated = $request->validated();
+
+      if ($request->hasFile('image')) {
+        $imagePrefix = 'motomedic-media-image-';
+        $formattedTimestamp = Carbon::now()->format('Ymd_His');
+
+        $imageName = $imagePrefix . $formattedTimestamp . '.' . $request->file('image')->getClientOriginalExtension();
+        $validated['image'] = $request->file('image')->storeAs('image', $imageName);
+      }
+
+      $brand = Brand::create($validated);
+
+
+
+
+      $context = [
+        'brand' => $brand,
+      ];
+
+
+      return send_response('Brand create successfull !', $context);
+    } catch (Exception $e) {
+      return send_error($e->getMessage(), $e->getCode());
     }
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreBrandRequest $request)
-    {
-        //
-
-        try {
-            $validated = $request->validated();
-
-            if ($request->hasFile('image')) {
-                $imagePrefix = 'motomedic-media-image-';
-                $formattedTimestamp = Carbon::now()->format('Ymd_His');
-
-                $imageName = $imagePrefix . $formattedTimestamp . '.' . $request->file('image')->getClientOriginalExtension();
-                $validated['image'] = $request->file('image')->storeAs('image', $imageName);
-            }
-
-            $brand = Brand::create($validated);
+  /**
+   * Display the specified resource.
+   */
+  public function show(String $id)
+  {
+    $brand = Brand::find($id);
 
 
-
-
-            $context = [
-                'brand' => $brand,
-            ];
-
-
-            return send_response('Brand create successfull !', $context);
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
+    if ($brand) {
+      return send_response('Brand founded !', $brand);
+    } else {
+      return send_error('Brand Not found to show!!!');
     }
+  }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(String $id)
-    {
-        $brand = Brand::find($id);
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(UpdateBrandRequest $request, String $id)
+  {
+    //
+    $validated = $request->validated();
 
+    // if ($validator->fails()) {
+    //     return send_error('Validation Error', $validator->errors(), 422);
+    // }
 
-        if ($brand) {
-            return send_response('Brand founded !', $brand);
-        } else {
-            return send_error('Brand Not found to show!!!');
-        }
+    try {
+
+      $brand = Brand::find($id);
+      $brand->fill($validated);
+      $brand->save();
+
+      $brand->save();
+
+      return send_response('Brand update successfully', $brand);
+    } catch (Exception $e) {
+      return send_error('Brand update failed !!!');
     }
+  }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateBrandRequest $request, String $id)
-    {
-        //
-        $validator = $request->validate();
-
-        // if ($validator->fails()) {
-        //     return send_error('Validation Error', $validator->errors(), 422);
-        // }
-
-        try {
-
-            $brand = Brand::find($id);
-            $brand->brandName = $request->brandName;
-            $brand->slug = $request->slug;
-            $brand->description = $request->description;
-            $brand->img = $request->img;
-            $brand->save();
-
-            $context = [
-                'brand' => $brand,
-            ];
-
-            return send_response('Brand update successfully', $context);
-        } catch (Exception $e) {
-            return send_error('Brand update failed !!!');
-        }
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(String $id)
+  {
+    //
+    try {
+      $brand = Brand::find($id);
+      if ($brand) {
+        $brand->delete();
+        return send_response('Brand Deleted successfully', []);
+      } else {
+        return send_error('Brand Not Found to delete !!');
+      }
+    } catch (Exception $e) {
+      return send_error($e->getMessage(), $e->getCode());
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(String $id)
-    {
-        //
-        try {
-            $brand = Brand::find($id);
-            if ($brand) {
-                $brand->delete();
-                return send_response('Brand Deleted successfully', []);
-            } else {
-                return send_error('Brand Not Found to delete !!');
-            }
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
-    }
+  }
 
 
-    public function apiTestPage()
-    {
+  public function apiTestPage()
+  {
 
 
 
-        return view('apitest');
-    }
+    return view('apitest');
+  }
 }

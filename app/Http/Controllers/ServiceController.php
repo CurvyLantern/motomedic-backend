@@ -118,6 +118,10 @@ class ServiceController extends Controller
     return $jobNumber;
   }
 
+  public function storeServiceType(Request $request)
+  {
+  }
+
   /**
    * Show the form for creating a new resource.
    */

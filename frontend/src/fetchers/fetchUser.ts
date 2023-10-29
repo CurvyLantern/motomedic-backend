@@ -1,15 +1,15 @@
 import axiosClient from "@/lib/axios";
+import { User } from "@/types/defaultTypes";
 import { AxiosError, AxiosResponse } from "axios";
+import { redirect } from "react-router";
 
 export const fetchUser = async () => {
-  return await axiosClient.v1.api
-    .get("user")
-    .then<User>((res) => {
-      return res.data;
-    })
-    .catch((error) => {
-      const axiosError = error as AxiosResponse;
-      const msg = (error?.data as unknown as { message: string }).message;
-      throw new Error(msg ?? "Something went wrong");
-    });
+  const user = await axiosClient.v1.api.get("user").then<User>((res) => {
+    return res.data;
+  });
+  if (user) {
+    return user;
+  } else {
+    throw new Error("No user was found");
+  }
 };

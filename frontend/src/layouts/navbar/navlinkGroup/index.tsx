@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Box, Collapse, Group, UnstyledButton } from "@mantine/core";
+import { Box, Collapse, UnstyledButton } from "@mantine/core";
 import { TbChevronRight } from "react-icons/tb";
 import type { IconType } from "react-icons";
 import { useState } from "react";
@@ -25,9 +25,7 @@ const NavLinkGroup = ({ href, Icon, label, childLinks }: NavLinkGroupProps) => {
   const location = useLocation();
 
   const pathname = location.pathname;
-  console.log(location, "location");
 
-  const getHref = (path: string) => `/${path}`;
   const navLinkItems = (hasChild ? childLinks : []).map(
     (childLinkItem, childLinkIdx) => {
       return (

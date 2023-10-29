@@ -7,18 +7,16 @@ const client = Axios.create({
   baseURL: getBaseUrl([""]).href,
   headers: {
     "X-Requested-With": "XMLHttpRequest",
-    // Accept: "application/json",
-    // "Content-Type": "application/json",
   },
   withCredentials: true,
 });
 
-client.interceptors.response.use(
-  (res) => res,
-  (error) => {
-    throw error.response;
-  }
-);
+// client.interceptors.response.use(
+//   (res) => res,
+//   (error) => {
+//     throw error.response;
+//   }
+// );
 
 const axiosClient = {
   get base() {

@@ -16,10 +16,12 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ColorResource;
 use App\Http\Resources\ProductCollection;
+use App\Http\Resources\ProductModelResource;
 use App\Http\Resources\ProductResource;
 use App\Models\AttributeValue;
 use App\Models\Color;
 use App\Models\Inventory;
+use App\Models\ProductModel;
 use App\Models\ProductVariation;
 use Database\Factories\AttributeValueFactory;
 use Illuminate\Http\Request;
@@ -64,12 +66,14 @@ class ProductController extends Controller
 
   public function createInfos()
   {
-    $categories = Category::allWithChildren();
+    $categories = CategoryResource::collection(Category::allWithChildren());
 
-    $brands = BrandResource::collection(Brand::orderBy('id', 'asc')->get());
+    $brands = BrandResource::collection(Brand::with('productModels')->orderBy('id', 'asc')->get());
 
-    $colors = ColorResource::collection(Color::all());
-    return response()->json(compact('categories', 'brands', 'colors'));
+    $colors = ColorResource::collection(Color::orderBy('id', 'asc')->get());
+
+    $productModels = ProductModelResource::collection(ProductModel::with('brands')->orderBy('id', 'asc')->get());
+    return response()->json(compact('productModels', 'categories', 'brands', 'colors'));
   }
 
   public function getProductAttributeData()
@@ -86,11 +90,9 @@ class ProductController extends Controller
 
   public function allProducts(Request $request)
   {
-    // Retrieve products and sort by 'created_at' in descending order
-    // $products = Product::orderBy('created_at', 'desc')->paginate($perPage);
 
     try {
-      $products = Product::with('variations', 'brand', 'category', 'color')
+      $products = Product::with('variations.attributeValues', 'variations.color', 'brand', 'category', 'color')
         ->orderBy('created_at', 'desc')
         ->get();
 
@@ -114,17 +116,6 @@ class ProductController extends Controller
         // Replace the product's variations with the updated versions
         $product->setRelation('variations', $variations);
       }
-
-      // foreach ($products as $product) {
-      //   $inventory = Inventory::where('sku', $product->sku)->first();
-      //   $product->stock_count = $inventory->stock_count ?? 0; // Default to 0 if no inventory record found
-      // }
-
-      // foreach ($variations as &$variation) {
-      //   $inventory = Inventory::where('sku', $variation['sku'])->first();
-      //   $variation['stock_count'] = $inventory->stock_count ?? 0; // Default to 0 if no inventory record found
-      // }
-      // unset($variation);
 
       $variations = $products->pluck('variations')->flatten()->toArray();
 
@@ -204,21 +195,23 @@ class ProductController extends Controller
       'sku' => $product->sku,
     ]);
 
-    $variationEnabled = $request->variation_enabled;
+    $variationEnabled = $validated['variation_enabled'];
     $variations = $request->variations;
 
     if ($variationEnabled) {
+      $product->barcode = null;
+      $product->save();
       foreach ($variations as $variationData) {
         // Create a new ProductVariation instance
         $variation = ProductVariation::create([
           'color_id' => $variationData['color_id'],
-          'price' => $variationData['price'],
-          'name' => $variationData['name']
+          'name' => $variationData['name'],
+          'barcode' => $variationData['barcode'],
           // 'image' => $variationData['image'],
         ]);
 
         // Generate the 'sku' based on the desired format
-        $sku = $variation->id . '-' . $variationData['color_id'] . '' . implode('', $variationData['attribute_value_ids']);
+        $sku = 'SKU-' . $variation->id . $variationData['color_id'] . implode('', $variationData['attribute_value_ids']);
 
         // Set the 'sku' for the variation
         $variation->sku = $sku;
@@ -239,7 +232,8 @@ class ProductController extends Controller
           $attributeValue = AttributeValue::find($attributeValueId);
 
           // Associate the attribute value with the variation
-          $variation->attributeValue()->associate($attributeValue);
+          // $variation->attributeValue()->associate($attwributeValue);
+          $variation->attributeValues()->attach($attributeValue);
         }
       }
     }
@@ -263,34 +257,7 @@ class ProductController extends Controller
 
 
       // products() function is from category model relation
-      $product = $category->products()->create([
-        'categoryId' => $validated['category'],
-        'productName' => $validated['productName'],
-        'slug' =>  Str::slug($validated['productName'], '-'),
-        'brandId' => $validated['brandId'],
-        'model' => $validated['model'],
-        'color' => $validated['color'],
-        'tags' => $validated['tags'],
-        'size' => $validated['size'],
-        'year' => $validated['year'],
-        'compitibility' => $validated['compitibility'],
-        'condition' => $validated['condition'],
-        'weight' => $validated['weight'],
-        'manufacturer' => $validated['manufacturer'],
-        'price' => $validated['price'],
-        'quantity' => $validated['quantity'],
-        'price' => $validated['price'],
-        'discoundType' => $validated['discoundType'],
-        'discount' => $validated['discount'],
-        'primaryImg' => $image_path,
-        'shortDescriptions' => $validated['shortDescriptions'],
-        'longDescriptions' => $validated['longDescriptions'],
-        'installationMethod' => $validated['installationMethod'],
-        'warranty' => $validated['warranty'],
-        'note' => $validated['note'],
-        'availability' => $validated['availability'],
-        'status' => $validated['status'],
-      ]);
+
       // media_images()
       // Upload multiple thumbnail image
       if ($request->hasFile('thumbImg')) {
@@ -306,36 +273,6 @@ class ProductController extends Controller
           ]);
         }
       }
-
-      if ($request->productType == 'variationProduct') {
-
-        // This is a logical mistake as it's not obvious which array contains the whole collection of values.
-        foreach ($request->attributesData as $key => $attributes) {
-          $image_path = '';
-
-          if ($request->hasFile('attribiuteImgId')) {
-            $image_path = $attributes->file('attribiuteImgId')->store('products', 'public');
-          }
-          $product->attributes()->create([
-            'productId' => $product->id,
-            'sku' => $attributes->sku,
-            'attribiuteImgId' => $image_path,
-            'discount' => $attributes->discount,
-            'discountType' => $attributes->discountType,
-            'size' => $attributes->size,
-            'weight' => $attributes->weight,
-            'quantity' => $attributes->quantity,
-            'color' => $attributes->color,
-          ]);
-        }
-      }
-
-      $context = [
-        'product' => $product,
-        'categories' => $categories,
-        'brands' => $brands,
-      ];
-      return send_response('Product Stored successfull', $context);
     } catch (Exception $e) {
       return send_error($e->getMessage(), $e->getCode());
     }
@@ -346,11 +283,32 @@ class ProductController extends Controller
    */
   public function show(String $id)
   {
-    $products = Product::find($id);
+    $product = Product::with('variations.attributeValues', 'variations.color', 'brand', 'category', 'color')->where('id', $id)
+      ->orWhere('sku', $id)
+      ->first();
 
 
-    if ($products) {
-      return send_response('Products founded !', $products);
+    if ($product) {
+      $inventory = Inventory::where('sku', $product->sku)->first();
+      $product->stock_count = $inventory->stock_count ?? 0; // Default to 0 if no inventory record found
+      $parentCategoryId = $product->category->parent_category_id;
+      $product->parent_category_id = $parentCategoryId;
+      // Attach the category_id to each variation of the product
+      $variations = $product->variations;
+      foreach ($variations as &$variation) {
+
+        $variation->parent_category_id = $parentCategoryId;
+        $variation->category_id = $product->category_id;
+        $variation->brand_id = $product->brand_id;
+        $inventory = Inventory::where('sku', $variation->sku)->first();
+        $variation->stock_count = $inventory->stock_count ?? 0; // Default to 0 if no inventory record found
+      }
+      unset($variation);
+
+      // Replace the product's variations with the updated versions
+      $product->setRelation('variations', $variations);
+
+      return response()->json(compact('product'));
     } else {
       return send_error('Products Not found !!!');
     }
@@ -361,64 +319,74 @@ class ProductController extends Controller
    */
   public function update(UpdateProductRequest $request, String $id)
   {
-    $validator = $request->validate();
 
-    // if ($validator->fails()) {
-    //     return send_error('Data validation Failed !!', $validator->errors(), 422);
-    // }
 
+    $validated = $request->validated();
     try {
 
       $product = Product::find($id);
-
-      if ($request->hasFile('primaryImg')) {
-        // Delete old image
-        if ($product->primaryImg) {
-          Storage::delete($product->primaryImg);
-        }
-        // Store image
-        $image_path = $request->file('primaryImg')->store('products', 'public');
-        // Save to Database
-        $product->primaryImg = $image_path;
-      }
-
-      $product->productName = $request->productName;
-      $product->slug = $request->slug;
-      $product->categoryId = $request->categoryId;
-      $product->brandId = $request->brandId;
-      $product->model = $request->model;
-      $product->color = $request->color;
-      $product->tags = $request->tags;
-      $product->productType = $request->productType;
-      $product->material = $request->material;
-      $product->size = $request->size;
-      $product->year = $request->year;
-      $product->compitibility = $request->compitibility;
-      $product->condition = $request->condition;
-      $product->manufacturer = $request->manufacturer;
-      $product->weight = $request->weight;
-      $product->quantity = $request->quantity;
-      $product->price = $request->price;
-      $product->discoundType = $request->discoundType;
-
-      $product->thumbImg = $request->thumbImg;
-      $product->shortDescriptions = $request->shortDescriptions;
-      $product->longDescriptions = $request->longDescriptions;
-      $product->installationMethod = $request->installationMethod;
-      $product->note = $request->note;
-      $product->warranty = $request->warranty;
-      $product->rating = $request->rating;
-      $product->availability = $request->availability;
-      $product->status = $request->status;
-
+      $product->fill($validated);
       $product->save();
 
-      $context = [
-        'product' => $product,
-      ];
-      return send_response("Product Update successfully !", $context);
+      foreach ($request['variations_old'] as $variationData) {
+        $variation = $product->variations()->where('id', $variationData['id'])->first();
+
+        if ($variation) {
+          if (isset($variationData['deleted']) && $variationData['deleted']) {
+            $inventory = Inventory::where('sku', $variation->sku)->first();
+            if ($inventory) {
+              $inventory->delete();
+            }
+            $variation->delete();
+          } else {
+            $variation->price = $variationData['price'];
+            $variation->save();
+          }
+        }
+      }
+
+
+      $variations = $request->variations;
+
+      foreach ($variations as $variationData) {
+        // Create a new ProductVariation instance
+        $variation = ProductVariation::create([
+          'color_id' => $variationData['color_id'],
+          'price' => $variationData['price'],
+          'name' => $variationData['name']
+        ]);
+
+        // Generate the 'sku' based on the desired format
+        $sku = 'SKU-' . $variation->id . $variationData['color_id'] . implode('', $variationData['attribute_value_ids']);
+
+        // Set the 'sku' for the variation
+        $variation->sku = $sku;
+
+        // Save the variation to the database
+        $variation->save();
+
+        $variationInventory = Inventory::create([
+          'sku' => $variation->sku,
+        ]);
+
+        // Associate the variation with the product (assuming $product is the product model)
+        $product->variations()->save($variation);
+
+        // Loop through the attribute_value_ids and associate each one with the variation
+        foreach ($variationData['attribute_value_ids'] as $attributeValueId) {
+          // Find the corresponding attribute value
+          $attributeValue = AttributeValue::find($attributeValueId);
+
+          // Associate the attribute value with the variation
+          // $variation->attributeValue()->associate($attwributeValue);
+          $variation->attributeValues()->attach($attributeValue);
+        }
+      }
+
+
+      return $request;
     } catch (Exception $e) {
-      return send_error("Produc data update failed !!!");
+      return $request;
     }
   }
 
@@ -428,11 +396,22 @@ class ProductController extends Controller
   public function destroy(String $id)
   {
     try {
-      $products = Product::find($id);
-      if ($products) {
-        $products->delete();
+      $product = Product::where('id', $id)
+        ->orWhere('sku', $id)
+        ->first();
+
+      if (!$product) {
+        $product = ProductVariation::where('id', $id)
+          ->orWhere('sku', $id)
+          ->first();
       }
-      return send_response('products Deleted successfully', []);
+
+      if ($product) {
+        $product->delete();
+        return response()->noContent();
+      }
+
+      return response()->json('No product found', 404);
     } catch (Exception $e) {
       return send_error($e->getMessage(), $e->getCode());
     }

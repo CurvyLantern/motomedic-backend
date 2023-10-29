@@ -11,15 +11,19 @@ import {
 import { CategoryWithSubCateogry } from "@/types/defaultTypes";
 import {
   ActionIcon,
+  Box,
   Button,
   Container,
   Divider,
   Grid,
+  Modal,
   SimpleGrid,
   Table,
   Tabs,
+  TextInput,
 } from "@mantine/core";
 import { zodResolver } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useRef, useState } from "react";
@@ -66,6 +70,8 @@ const ViewCategories = () => {
   console.log(categories, "categories from db ");
 
   const [isDeletingId, setIsDeletingId] = useState<string | number>();
+  const [selectedCategoryForEdit, setSelectedCategoryForEdit] =
+    useState<CategoryWithSubCateogry | null>(null);
 
   const viewCategory = (category: CategoryWithSubCateogry) => {
     modals.open({
@@ -74,8 +80,8 @@ const ViewCategories = () => {
       withCloseButton: false,
       children: (
         <BasicSection
-          title={`All Category data of ${category.id}`}
-          headerLeftElement={
+          title={`Category data`}
+          headerRightElement={
             <ActionIcon
               onClick={() => {
                 modals.close("viewCategory");
@@ -116,9 +122,12 @@ const ViewCategories = () => {
       ),
     });
   };
+  const [editModalOpened, { open: openEditModal, close: closeEditModal }] =
+    useDisclosure(false);
+
   const tCategoryRows =
-    categories && categories.length > 0 ? (
-      categories.map((category) => {
+    categories?.data && categories.data.length > 0 ? (
+      categories.data.map((category) => {
         const deleting = isDeletingId === category.id;
         return (
           <tr key={category.id}>
@@ -140,7 +149,8 @@ const ViewCategories = () => {
                 <Button
                   disabled={deleting}
                   onClick={() => {
-                    editCategory(category);
+                    setSelectedCategoryForEdit(category);
+                    openEditModal();
                   }}
                   compact
                   size="xs"
@@ -175,6 +185,21 @@ const ViewCategories = () => {
     );
   return (
     <BasicSection title="Categories">
+      <Modal
+        w={"70%"}
+        centered
+        opened={editModalOpened}
+        onClose={closeEditModal}
+      >
+        {selectedCategoryForEdit ? (
+          <EditCategoryForm
+            onFinish={closeEditModal}
+            category={selectedCategoryForEdit}
+          />
+        ) : (
+          "No category Selected"
+        )}
+      </Modal>
       <Table>
         <thead>
           <tr>
@@ -190,30 +215,206 @@ const ViewCategories = () => {
   );
 };
 
-const validationSchema = () => {
-  const obj = {
-    name: z.string().min(1, "Name cannot be empty"),
-    image: z.any().refine((file) => {
-      return file instanceof File || !file;
-    }),
+const EditCategoryForm = ({
+  category,
+  onFinish,
+}: {
+  onFinish: () => void;
+  category: CategoryWithSubCateogry;
+}) => {
+  const [loading, setLoading] = useState(false);
+  const form = useCustomForm({
+    initialValues: {
+      image: null,
+      name: category.name,
+      sub_categories: [{ image: null, name: "" }],
+      sub_categories_old: category.sub_categories?.map((sc) => ({
+        ...sc,
+        deleted: 0,
+      })),
+    },
+  });
+  const categoryFormRef = useRef<HTMLFormElement>(null);
+  const onEdit = async (values: typeof form.values) => {
+    setLoading(true);
+
+    const url = "categories";
+    // const formData = dataToFormdata({ data: values });
+    // const formData = new FormData(categoryFormRef.current ?? undefined);
+    // console.log(values , 'from 34')
+    // for (const [k, v] of formData.entries()) {
+    //     console.log("1 ", k + ", " + JSON.stringify(v));
+    // }
+
+    try {
+      const res = await axiosClient.v1.api
+        .put(`${url}/${category.id}`, values)
+        .then((res) => res.data);
+      console.log(res, "from on Edit");
+      notifications.show({
+        color: "green",
+        message: "Category Updated successfully",
+      });
+      form.reset();
+      invalidateCateogryQuery();
+      onFinish();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
-  return zodResolver(
-    z.object({
-      ...obj,
-      sub_categories: z.array(z.object(obj)),
-    })
+  const onAddSubCateogry = () => {
+    form.insertListItem("sub_categories", { name: "", image: "" });
+  };
+  return (
+    <Box>
+      <form ref={categoryFormRef} onSubmit={form.onSubmit(onEdit)}>
+        <Grid>
+          <Grid.Col span="auto">
+            <TextInput {...form.getInputProps("name")} />
+          </Grid.Col>
+          <Grid.Col span={"content"}>
+            <Button disabled={loading} type="button" onClick={onAddSubCateogry}>
+              <TbPlus />
+            </Button>
+          </Grid.Col>
+          <Grid.Col span={"content"}>
+            <Button loading={loading} type="submit">
+              Update
+            </Button>
+          </Grid.Col>
+
+          <Grid.Col span={12}>
+            <Table>
+              <caption>Old Subcategories</caption>
+              <thead>
+                <tr>
+                  <th>Old Sub category Name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {form.values.sub_categories_old.map((scold, scoldIdx) => {
+                  const isDeleted = scold.deleted === 1;
+                  return (
+                    <tr key={scold.id}>
+                      <td>
+                        <TextInput
+                          {...form.getInputProps(
+                            `sub_categories_old.${scoldIdx}.name`
+                          )}
+                        />
+                      </td>
+                      <td>
+                        {isDeleted ? (
+                          <Button
+                            variant="outline"
+                            color="yellow"
+                            compact
+                            size="xs"
+                            onClick={() => {
+                              form.setFieldValue(
+                                `sub_categories_old.${scoldIdx}.deleted`,
+                                0
+                              );
+                            }}
+                          >
+                            Undo
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="danger"
+                            compact
+                            size="xs"
+                            onClick={() => {
+                              form.setFieldValue(
+                                `sub_categories_old.${scoldIdx}.deleted`,
+                                1
+                              );
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+            <Table withBorder withColumnBorders>
+              <caption>New Subcategories</caption>
+
+              <thead>
+                <tr>
+                  <th>Sub Category Name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {form.values.sub_categories.map((subCat, subCatIndex) => {
+                  return (
+                    <tr key={subCatIndex}>
+                      <td>
+                        <TextInput
+                          {...form.getInputProps(
+                            `sub_categories.${subCatIndex}.name`
+                          )}
+                        />
+                      </td>
+                      <td>
+                        <Button
+                          type="button"
+                          onClick={() =>
+                            form.removeListItem("sub_categories", subCatIndex)
+                          }
+                          variant="danger"
+                          compact
+                          size="xs"
+                        >
+                          Delete
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </Grid.Col>
+        </Grid>
+      </form>
+    </Box>
   );
 };
+
+const validationSchema = z.object({
+  name: z.string().min(1, "Name cannot be empty"),
+  image: z.any().refine((file) => {
+    return file instanceof File || !file;
+  }),
+  sub_categories: z.array(
+    z.object({
+      name: z.string().min(1, "Name cannot be empty"),
+      image: z.any().refine((file) => {
+        return file instanceof File || !file;
+      }),
+    })
+  ),
+});
+type CategoryFormValue = z.infer<typeof validationSchema>;
+
 const CreateCategoryForm = () => {
   const [loading, setLoading] = useState(false);
-  const form = useCustomForm<FormValue>({
+  const form = useCustomForm<CategoryFormValue>({
     initialValues: {
       image: null,
       name: "",
-      sub_categories: [{ image: null, name: "" }],
+      sub_categories: [],
     },
 
-    validate: validationSchema(),
+    // { image: null, name: "" }
+    validate: zodResolver(validationSchema),
     //   parentCategoryId: () => null,
   });
   const categoryFormRef = useRef<HTMLFormElement>(null);

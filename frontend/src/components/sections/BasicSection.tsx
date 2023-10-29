@@ -4,11 +4,13 @@ type BasicSectionType = PaperProps & {
   title?: string;
   children: React.ReactNode;
   headerLeftElement?: JSX.Element;
+  headerRightElement?: JSX.Element;
 };
 const BasicSection = ({
   title,
   children,
   headerLeftElement,
+  headerRightElement,
   ...props
 }: BasicSectionType) => {
   return (
@@ -16,8 +18,6 @@ const BasicSection = ({
       withBorder
       shadow="sm"
       radius="md"
-      p="md"
-      pt={title ? 0 : "md"}
       sx={(theme) => ({
         backgroundColor: theme.other.colors.card.background,
         color: theme.other.colors.card.foreground,
@@ -28,8 +28,20 @@ const BasicSection = ({
       })}
       {...props}
     >
-      {headerLeftElement || title ? (
-        <Group align="center">
+      {headerLeftElement || headerRightElement || title ? (
+        <Group
+          align="center"
+          position="apart"
+          sx={(theme) => ({
+            boxShadow: theme.shadows.xs,
+            borderBottom: "1px solid",
+            borderColor: theme.other.colors.primary.background,
+          })}
+          px="md"
+        >
+          {headerLeftElement ? (
+            <Box ml={"auto"}>{headerLeftElement}</Box>
+          ) : null}
           {title ? (
             <Text
               component="p"
@@ -43,12 +55,15 @@ const BasicSection = ({
               {title}
             </Text>
           ) : null}
-
-          <Box ml={"auto"}>{headerLeftElement}</Box>
+          {headerRightElement ? (
+            <Box ml={"auto"}>{headerRightElement}</Box>
+          ) : null}
         </Group>
       ) : null}
 
-      <Box sx={{ flex: 1 }}>{children}</Box>
+      <Box p={"xs"} sx={{ flex: 1 }}>
+        {children}
+      </Box>
     </Paper>
   );
 };

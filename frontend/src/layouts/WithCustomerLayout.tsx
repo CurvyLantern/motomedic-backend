@@ -1,12 +1,19 @@
 import { SelectCustomerOrCreate } from "@/components/customer/SelectCustomerOrCreate";
+import { useAppDispatch, useAppSelector } from "@/hooks/storeConnectors";
+import {
+  closeCustomerDrawer,
+  toggleCustomerDrawer,
+} from "@/store/slices/AppConfigSlice";
 import { CompWithChildren } from "@/types/defaultTypes";
 import { Box, Button, Center, Drawer } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { relative } from "path";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 const WithCustomerLayout: CompWithChildren = ({ children }) => {
-  const [opened, { open, close, toggle }] = useDisclosure(false);
+  const customerDrawerOpened = useAppSelector(
+    (s) => s.appConfig.customerDrawerOpened
+  );
+  const dispatch = useAppDispatch();
 
   const [ref, setRef] = useState<HTMLDivElement | null>(null);
   return (
@@ -20,45 +27,46 @@ const WithCustomerLayout: CompWithChildren = ({ children }) => {
       <Drawer
         withCloseButton={false}
         styles={(theme) => ({
+          root: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          },
           content: {
             borderRadius: `${theme.other.radius.primary} !important`,
-            // height: "auto !important",
           },
           body: { height: "100%" },
-          inner: { position: "absolute" },
+          inner: { maxWidth: "800px", position: "absolute" },
         })}
         target={ref ?? undefined}
         keepMounted
         position="top"
-        opened={opened}
-        onClose={close}
+        opened={customerDrawerOpened}
+        onClose={() => {
+          dispatch(closeCustomerDrawer());
+        }}
       >
         <SelectCustomerOrCreate />
       </Drawer>
-      <Center
-        sx={{
-          position: "absolute",
-          top: 10,
-          left: 0,
-          height: "auto",
-          width: "100%",
-          zIndex: 10,
-          opacity: 0.7,
-          pointerEvents: "none",
-        }}
-      >
-        <Button
-          sx={{
-            pointerEvents: "initial",
-          }}
-          onClick={toggle}
-          variant="gradient"
-        >
-          Select User
-        </Button>
-      </Center>
       {children}
     </Box>
+  );
+};
+
+export const SelectCustomerButton = () => {
+  const dispatch = useAppDispatch();
+  return (
+    <Button
+      sx={{
+        pointerEvents: "initial",
+      }}
+      onClick={() => {
+        dispatch(toggleCustomerDrawer());
+      }}
+      variant="gradient"
+    >
+      Customer
+    </Button>
   );
 };
 

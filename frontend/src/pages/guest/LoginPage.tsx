@@ -32,13 +32,13 @@ const LoginPage = () => {
       email: "",
       password: "",
       remember: false,
-      role: "staff",
+      // role: "staff",
     },
     validate: {
       email: () => null,
       password: () => null,
       remember: () => null,
-      role: () => null,
+      // role: () => null,
     },
   });
 
@@ -142,7 +142,7 @@ const LoginPage = () => {
               placeholder="Enter your strong password"
             />
 
-            <Select
+            {/* <Select
               {...form.getInputProps("role")}
               label="Role"
               data={[
@@ -151,7 +151,7 @@ const LoginPage = () => {
                 { label: "biller", value: "2" },
               ]}
               size="sm"
-            ></Select>
+            ></Select> */}
 
             <Checkbox
               {...form.getInputProps("remember", {

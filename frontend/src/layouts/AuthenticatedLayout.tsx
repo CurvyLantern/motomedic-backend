@@ -9,6 +9,7 @@ import BasicNavbar from "./navbar/BasicNavbar";
 export const authenticatedLoader = async () => {
   try {
     // const user = await qc.fetchQuery(userQuery);
+    console.log("authenticatedLoader is not being called");
     const yes = await isAuthenticated();
     // const user = await fetchUser();
     if (yes) {
@@ -17,6 +18,7 @@ export const authenticatedLoader = async () => {
       return redirect("/auth");
     }
   } catch (error) {
+    console.log(error, " from authenticatedLoader ");
     return redirect("/auth");
   }
 };

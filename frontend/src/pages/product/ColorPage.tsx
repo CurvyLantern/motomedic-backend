@@ -1,9 +1,11 @@
 import axiosClient from "@/lib/axios";
 import {
+  ActionIcon,
   Box,
   Button,
   ColorInput,
   Group,
+  Modal,
   SimpleGrid,
   Stack,
   Table,
@@ -17,17 +19,22 @@ import { useForm, zodResolver } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import colorFn from "color";
-import { TbEdit, TbTrash } from "react-icons/tb";
+import { TbEdit, TbPencil, TbTrash } from "react-icons/tb";
 import { z } from "zod";
 import BaseInputs, { fieldTypes } from "@/components/inputs/BaseInputs";
 import BasicSection from "@/components/sections/BasicSection";
-import { ProductFieldInputType } from "@/types/defaultTypes";
+import { IdField, ProductFieldInputType } from "@/types/defaultTypes";
 import { qc } from "@/providers/QueryProvider";
+import { invalidateColorQuery, useColorQuery } from "@/queries/colorQuery";
+import { useDisclosure } from "@mantine/hooks";
+import useCustomForm from "@/hooks/useCustomForm";
+import { useState } from "react";
 
 type MyColor = {
   name: string;
   hexcode: string;
-  id: string;
+  id: IdField;
+  [k: string]: unknown;
 };
 
 const useTableStyles = createStyles({
@@ -92,14 +99,20 @@ const CreateColors = () => {
       <form
         onSubmit={form.onSubmit(async (values) => {
           console.log(values);
-          await axiosClient.v1.api.post(url, values).then((res) => res.data);
-          notifications.show({
-            title: "Color Created",
-            message: "",
-            color: "green",
-          });
-
-          qc.invalidateQueries(["colors"]);
+          try {
+            await axiosClient.v1.api.post(url, values).then((res) => res.data);
+            notifications.show({
+              message: "Color created successfully",
+              color: "green",
+            });
+          } catch (error) {
+            notifications.show({
+              message: JSON.stringify(error.data.message),
+              color: "red",
+            });
+          } finally {
+            invalidateColorQuery();
+          }
         })}
       >
         <Stack maw={500}>
@@ -114,36 +127,56 @@ const CreateColors = () => {
 };
 const ViewColors = () => {
   const { classes } = useTableStyles();
-  const { data: colors, refetch } = useQuery<Array<MyColor>>({
-    queryKey: ["colors"],
-    queryFn: () => {
-      return axiosClient.v1.api.get(url).then((res) => res.data);
-    },
-  });
-  const mutation = useMutation({
-    mutationFn: (color: MyColor) => {
-      return axiosClient.v1.api
-        .put(`${url}/${color.id}`, {
-          name: color.name,
-          hexcode: color.hexcode,
-        })
-        .then((res) => {
-          console.log(res.data);
-          return res.data;
+  // const { data: colors, refetch } = useQuery<Array<MyColor>>({
+  //   queryKey: ["colors"],
+  //   queryFn: () => {
+  //     return axiosClient.v1.api.get(url).then((res) => res.data);
+  //   },
+  // });
+  const colors = useColorQuery();
+
+  const onDelete = (color: MyColor) => {
+    if (!color) return;
+    modals.openConfirmModal({
+      title: "Delete this color ?",
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to delete this color? This action is
+          destructive.
+        </Text>
+      ),
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { variant: "danger" },
+      onCancel: () => {
+        notifications.show({
+          title: "Cancelled deleting color",
+          color: "gray",
+          message: "",
         });
-    },
-    onSuccess: () => {
-      // qc.invalidateQueries({ queryKey: ["colors"] });
-      refetch();
-    },
-  });
-  const onEdit = (colorToUpdate: MyColor) => {
-    mutation.mutate(colorToUpdate);
+      },
+      onConfirm: async () => {
+        try {
+          await axiosClient.v1.api
+            .delete(`${url}/${color.id}`)
+            .then((res) => res.data);
+          notifications.show({
+            message: "Color deleted successfully",
+            color: "green",
+          });
+        } catch (error) {
+          notifications.show({
+            message: JSON.stringify(error.data.message),
+            color: "red",
+          });
+        } finally {
+          invalidateColorQuery();
+        }
+      },
+    });
   };
-  const onDelete = () => {
-    refetch();
-  };
-  const tRows = colors
+
+  const tRows = colors?.data
     ?.map((c) => ({
       ...c,
       code: c.hexcode[0] === "#" ? c.hexcode.slice(1) : c.hexcode,
@@ -179,15 +212,100 @@ const ViewColors = () => {
           </td>
           <td>
             <Group position="center" align="center">
-              <EditColorModal onEdit={onEdit} color={colorItem} />
-              <DeleteColorAction onDelete={onDelete} color={colorItem} />
+              <ActionIcon
+                onClick={() => {
+                  setSelectedColorForEdit(colorItem);
+                }}
+                color="blue"
+                variant="outline"
+              >
+                <TbPencil />
+              </ActionIcon>
+              <ActionIcon
+                onClick={() => {
+                  onDelete(colorItem);
+                }}
+                variant="outline"
+                color="red"
+              >
+                <TbTrash />
+              </ActionIcon>
+              {/* <EditColorModal onEdit={onEdit} color={colorItem} />
+              <DeleteColorAction onDelete={onDelete} color={colorItem} /> */}
             </Group>
           </td>
         </tr>
       );
     });
+  const [selectedColorForEdit, setSelectedColorForEdit] =
+    useState<MyColor | null>(null);
+  const closeEditModal = () => {
+    setSelectedColorForEdit(null);
+  };
   return (
     <div>
+      <Modal
+        centered
+        opened={Boolean(selectedColorForEdit)}
+        onClose={closeEditModal}
+      >
+        {selectedColorForEdit ? (
+          <Stack>
+            <TextInput
+              value={selectedColorForEdit.name}
+              onChange={(evt) =>
+                setSelectedColorForEdit({
+                  ...selectedColorForEdit,
+                  name: evt.currentTarget.value,
+                })
+              }
+              label="Color Name"
+            />
+            <ColorInput
+              placeholder="Pick color"
+              label="Your favorite color"
+              value={selectedColorForEdit.hexcode}
+              onChange={(clr) =>
+                setSelectedColorForEdit({
+                  ...selectedColorForEdit,
+                  hexcode: clr,
+                })
+              }
+            />
+            <div>
+              <Button
+                onClick={async () => {
+                  try {
+                    await axiosClient.v1.api
+                      .put(
+                        `${url}/${selectedColorForEdit.id}`,
+                        selectedColorForEdit
+                      )
+                      .then((res) => {
+                        console.log(res.data);
+                        return res.data;
+                      });
+                    notifications.show({
+                      message: `Color ID ${selectedColorForEdit.id} edited successfully`,
+                      color: "green",
+                    });
+                    closeEditModal();
+                  } catch (error) {
+                    notifications.show({
+                      message: JSON.stringify(error.data.message),
+                      color: "red",
+                    });
+                  } finally {
+                    invalidateColorQuery();
+                  }
+                }}
+              >
+                Confirm
+              </Button>
+            </div>
+          </Stack>
+        ) : null}
+      </Modal>
       <Table withBorder withColumnBorders>
         <thead>
           <tr>
@@ -203,141 +321,6 @@ const ViewColors = () => {
         <tbody>{tRows}</tbody>
       </Table>
     </div>
-  );
-};
-
-type DeleteColorType = {
-  color: MyColor;
-  onDelete: () => void;
-};
-const DeleteColorAction: React.FC<DeleteColorType> = ({ onDelete, color }) => {
-  const showModal = () => {
-    modals.openConfirmModal({
-      title: "Delete this color ?",
-      centered: true,
-      children: (
-        <Text size="sm">
-          Are you sure you want to delete this color? This action is
-          destructive.
-        </Text>
-      ),
-      labels: { confirm: "Delete", cancel: "Cancel" },
-      confirmProps: { variant: "danger" },
-      onCancel: () => {
-        notifications.show({
-          id: color.name,
-          withCloseButton: true,
-          autoClose: 3000,
-          title: "Cancelled deleting color",
-          color: "gray",
-          message: "",
-        });
-      },
-      onConfirm: async () => {
-        try {
-          await axiosClient.v1.api
-            .delete(`${url}/${color.id}`)
-            .then((res) => res.data);
-          onDelete();
-
-          notifications.show({
-            id: color.name,
-            withCloseButton: true,
-            autoClose: 3000,
-            title: "Deleted color " + color.name,
-            color: "red",
-            message: "",
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      },
-    });
-  };
-  return (
-    <Button
-      variant="danger"
-      onClick={async () => {
-        showModal();
-      }}
-      size="xs"
-      compact
-      w={30}
-      h={30}
-      radius={"100%"}
-    >
-      {/* Edit */}
-      <TbTrash />
-    </Button>
-  );
-};
-
-type EditColorModalType = {
-  color: MyColor;
-  onEdit: (clr: MyColor) => void;
-};
-const EditColorModal: React.FC<EditColorModalType> = ({ onEdit, color }) => {
-  const show = () =>
-    modals.open({
-      centered: true,
-      title: "Edit This Color",
-      children: (
-        <>
-          <EditColor onEdit={onEdit} color={color} />
-        </>
-      ),
-    });
-
-  return (
-    <Button onClick={show} size="xs" compact w={30} h={30} radius={"100%"}>
-      <TbEdit size={20} />
-    </Button>
-  );
-};
-type EditColorType = {
-  color: MyColor;
-  onEdit: (clr: MyColor) => void;
-};
-const EditColor: React.FC<EditColorType> = ({ onEdit, color }) => {
-  const form = useForm({
-    initialValues: {
-      name: color.name,
-      code: `${color.hexcode}`,
-    },
-    validate: zodResolver(
-      z.object({
-        name: z.string(),
-        code: z.string(),
-      })
-    ),
-  });
-  return (
-    <form
-      onSubmit={form.onSubmit((values) => {
-        onEdit({
-          id: color.id,
-          hexcode: values.code,
-          name: values.name,
-        });
-      })}
-    >
-      <Stack>
-        {/*
-                    name
-                    color setter
-                    action
-                */}
-        <TextInput {...form.getInputProps("name")} label="Color Name" />
-        <ColorInput
-          placeholder="Pick color"
-          label="Your favorite color"
-          {...form.getInputProps("code")}
-        />
-        <div>
-          <Button type="submit">Confirm</Button>
-        </div>
-      </Stack>
-    </form>
   );
 };
 

@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ProductVariation extends Model
 {
   use HasFactory;
   protected $fillable = [
-    'attribute_value_id',
     'product_id',
-    'attribute_id',
     'color_id',
     'image',
     'price',
@@ -27,14 +27,13 @@ class ProductVariation extends Model
   {
     return $this->belongsTo(Product::class);
   }
-
-  public function attribute()
+  public function color(): BelongsTo
   {
-    return $this->belongsTo(Attribute::class, 'attribute_id');
+    return $this->belongsTo(Color::class, 'color_id');
   }
 
-  public function attributeValue()
+  public function attributeValues(): BelongsToMany
   {
-    return $this->belongsTo(AttributeValue::class, 'attribute_value_id');
+    return $this->belongsToMany(AttributeValue::class, 'product_attribute_values');
   }
 }

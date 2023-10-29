@@ -10,7 +10,7 @@ import {
 } from "react-icons/tb";
 import { MdPayment } from "react-icons/md";
 const getNavUrl = (prefix: string, url: string) => {
-  return `${prefix}/${url}`;
+  return `/${prefix}/${url}`;
 };
 
 export const navData = [
@@ -30,7 +30,7 @@ export const navData = [
     href: "/service",
   },
   {
-    label: "Products",
+    label: "Product Management",
     icon: TbShoppingBag,
     childLinks: [
       {
@@ -57,6 +57,11 @@ export const navData = [
       {
         href: getNavUrl("product", "attributes"),
         label: "Attributes",
+        icon: TbShoppingBag,
+      },
+      {
+        href: getNavUrl("product", "models"),
+        label: "Models",
         icon: TbShoppingBag,
       },
       {

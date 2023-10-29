@@ -159,54 +159,75 @@ const Invoice1 = forwardRef(({ order, amountInWords, ...props }, ref) => {
         </Group>
 
         {/* invoice contents */}
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <Box sx={{ flex: 1, border: "1px solid #aaa" }}>
+            <Table
+              withBorder
+              withColumnBorders
+              verticalSpacing="2px"
+              horizontalSpacing="xs"
+              fontSize="xs"
+            >
+              <thead>
+                <tr>
+                  <th style={{ width: "10%" }}>#</th>
+                  <th>Item & Description</th>
+                  <th style={{ width: "20%" }}>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderItems.map((orderItem) => {
+                  const isProduct = orderItem.type === "product";
+                  const isService = orderItem.type === "service";
+
+                  return (
+                    <tr
+                      style={{ height: 20, border: "none" }}
+                      key={orderItem.id}
+                    >
+                      <td style={{ borderBottom: "none", borderTop: "none" }}>
+                        {orderItem.id}
+                      </td>
+                      {/* name */}
+                      <td style={{ borderBottom: "none", borderTop: "none" }}>
+                        {isProduct && orderItem.product.name}
+                        {isService && orderItem.service.name}
+                      </td>
+                      <td style={{ borderBottom: "none", borderTop: "none" }}>
+                        <div>
+                          <p className={classes.amount}>
+                            {orderItem.total_price} {currencySymbol}
+                          </p>
+                          <p className={classes.amountInfo}>
+                            {orderItem.quantity} pcs * {orderItem.unit_price}{" "}
+                            {currencySymbol}
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+
+                {/* total row */}
+              </tbody>
+            </Table>
+          </Box>
           <Table
             withBorder
             withColumnBorders
-            style={{ height: "100%" }}
             verticalSpacing="2px"
             horizontalSpacing="xs"
             fontSize="xs"
           >
-            <thead>
+            <thead hidden>
               <tr>
-                <th style={{ width: "10%" }}>#</th>
-                <th>Item & Description</th>
-                <th style={{ width: "20%" }}>Amount</th>
+                <th style={{ width: "10%" }}></th>
+                <th style={{ width: "10%" }}></th>
+                <th style={{ width: "10%" }}></th>
+                <th style={{ width: "70%" }}></th>
+                <th style={{ width: "20%" }}></th>
               </tr>
             </thead>
-            <tbody style={{ height: "100%" }}>
-              {orderItems.map((orderItem) => {
-                const isProduct = orderItem.type === "product";
-                const isService = orderItem.type === "service";
-
-                return (
-                  <tr style={{ border: "none" }} key={orderItem.id}>
-                    <td style={{ borderBottom: "none", borderTop: "none" }}>
-                      {orderItem.id}
-                    </td>
-                    {/* name */}
-                    <td style={{ borderBottom: "none", borderTop: "none" }}>
-                      {isProduct && orderItem.product.name}
-                      {isService && orderItem.service.name}
-                    </td>
-                    <td style={{ borderBottom: "none", borderTop: "none" }}>
-                      <div>
-                        <p className={classes.amount}>
-                          {orderItem.total_price} {currencySymbol}
-                        </p>
-                        <p className={classes.amountInfo}>
-                          {orderItem.quantity} pcs * {orderItem.unit_price}{" "}
-                          {currencySymbol}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-
-              {/* total row */}
-            </tbody>
             <tfoot>
               <tr>
                 <th

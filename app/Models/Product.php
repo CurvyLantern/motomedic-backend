@@ -20,6 +20,7 @@ class Product extends Model
     'material',
     'weight',
     'price',
+    'barcode',
     'description',
     'warranty',
     'status',

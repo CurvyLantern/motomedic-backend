@@ -1,9 +1,14 @@
 import axiosClient from "@/lib/axios";
-import { Brand, CategoryWithSubCateogry, Color } from "@/types/defaultTypes";
+import {
+  Brand,
+  CategoryWithSubCateogry,
+  Color,
+  ProductModels,
+} from "@/types/defaultTypes";
 import { useQuery } from "@tanstack/react-query";
 
 const useProductFormQuery = () => {
-  const { data: productFormInitialData } = useQuery<{
+  const queryResponse = useQuery<{
     colors: Color[];
     categories: CategoryWithSubCateogry[];
     brands: Brand[];
@@ -16,10 +21,10 @@ const useProductFormQuery = () => {
     },
     refetchOnWindowFocus: false,
     refetchOnMount: true,
-    staleTime: 2000,
+    staleTime: 60 * 1000,
   });
 
-  return productFormInitialData;
+  return queryResponse.data;
 };
 
 export default useProductFormQuery;

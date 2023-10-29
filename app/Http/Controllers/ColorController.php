@@ -12,57 +12,59 @@ use Exception;
 
 class ColorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        try {
-            $colors = Color::orderBy('id', 'asc')->get();
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    $colors = Color::orderBy('id', 'asc')->get();
 
-            return ColorResource::collection($colors)->all();
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
+    return ColorResource::collection($colors);
+  }
+
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(StoreColorRequest $request)
+  {
+    $validated = $request->validated();
+
+
+    try {
+      $color = Color::create($validated);
+      return new ColorResource($color);
+    } catch (Exception $e) {
+      return send_error($e->getMessage(), $e->getCode());
     }
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreColorRequest $request)
-    {
-        $validated = $request->validated();
+  /**
+   * Display the specified resource.
+   */
+  public function show(Color $color)
+  {
+    //
+  }
 
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(UpdateColorRequest $request, Color $color)
+  {
+    $validated = $request->validated();
+    $color->fill($validated);
+    $color->save();
+    return response()->json(compact('color'));
+  }
 
-        try {
-            $color = Color::create($validated);
-            return new ColorResource($color);
-        } catch (Exception $e) {
-            return send_error($e->getMessage(), $e->getCode());
-        }
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(Color $color)
+  {
+    if ($color) {
+      $color->delete();
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Color $color)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateColorRequest $request, Color $color)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Color $color)
-    {
-        //
-    }
+    return response()->noContent();
+  }
 }

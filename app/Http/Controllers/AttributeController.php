@@ -107,18 +107,22 @@ class AttributeController extends Controller
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(String $id)
+  public function destroy(Attribute $attribute)
   {
-    try {
-      $attribute = Attribute::find($id);
-      if ($attribute) {
-        $attribute->delete();
-        return response()->noContent();
-      } else {
-        return response()->isNotFound();
-      }
-    } catch (Exception $e) {
-      return send_error($e->getMessage(), $e->getCode());
+    if ($attribute) {
+      $attribute->delete();
     }
+    return response()->noContent();
+    // try {
+    //   $attribute = Attribute::find($id);
+    //   if ($attribute) {
+    //     $attribute->delete();
+    //     return response()->noContent();
+    //   } else {
+    //     return response()->isNotFound();
+    //   }
+    // } catch (Exception $e) {
+    //   return send_error($e->getMessage(), $e->getCode());
+    // }
   }
 }

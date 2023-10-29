@@ -40,10 +40,11 @@ const DashboardPage = () => {
         <Tabs variant="outline" defaultValue="reports">
           <Tabs.List>
             <Tabs.Tab value="reports" icon={<TbPhoto size="0.8rem" />}>
-              Overview
-            </Tabs.Tab>
-            <Tabs.Tab value="overview" icon={<TbSettings size="0.8rem" />}>
               Reports
+            </Tabs.Tab>
+
+            <Tabs.Tab value="overview" icon={<TbSettings size="0.8rem" />}>
+              Overview
             </Tabs.Tab>
           </Tabs.List>
 

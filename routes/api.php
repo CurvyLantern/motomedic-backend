@@ -17,9 +17,12 @@ use App\Http\Controllers\ColorController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ProductModelController;
 use App\Http\Controllers\ProductVariationController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\ServiceTypeController;
 use App\Http\Resources\UserResource;
+use App\Models\ProductModel;
 use PhpParser\Node\Scalar\MagicConst\Dir;
 
 /*
@@ -44,12 +47,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('customers', CustomerController::class);
     Route::apiResource('colors', ColorController::class);
     Route::apiResource('brands', BrandController::class);
+
+    Route::delete('productModels/{mid}/brand/{bid}', [ProductModelController::class, 'productBrandDelete']);
+    Route::apiResource('productModels', ProductModelController::class);
+
+
     Route::apiResource('attributes', AttributeController::class);
     Route::apiResource('attributeValues', AttributeValueController::class);
     Route::apiResource('categories', CategoryController::class)->names([
       'index' => 'category.index'
     ]);
-    Route::apiResource('colors', ColorController::class);
     Route::apiResource('inventories', InventoryController::class);
     Route::apiResource('invoices', InvoiceController::class);
 
@@ -63,7 +70,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('mechanics', MechanicController::class);
     Route::apiResource('sellers', SellerController::class);
+
     Route::apiResource('services', ServiceController::class);
+    Route::apiResource('serviceTypes', ServiceTypeController::class);
 
 
 

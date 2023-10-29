@@ -7,6 +7,8 @@ import {
 } from "@/queries/attributeQuery";
 import { Attribute } from "@/types/defaultTypes";
 import {
+  ActionIcon,
+  Text,
   Badge,
   Button,
   Grid,
@@ -18,35 +20,33 @@ import {
   TextInput,
 } from "@mantine/core";
 import { UseFormReturnType, zodResolver } from "@mantine/form";
+import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useEffect, useRef, useState } from "react";
+import { TbPencil, TbTrash } from "react-icons/tb";
 import { z } from "zod";
 
 const url = "attributes";
+const validationSchema = z.object({
+  name: z.string().min(1, "Attribute name cannot be empty"),
+  priority: z.number(),
+  attribute_values: z
+    .object({
+      name: z.string().min(1, "value cannot be empty"),
+      id: z.string().nullable(),
+    })
+    .array(),
+});
+type AttributeFormType = z.infer<typeof validationSchema>;
 const AttributePage = () => {
   const attrs = useAttributeQuery();
-  const form = useCustomForm<{
-    name: string;
-    priority: number;
-    attribute_values: { name: string; id: string | null }[];
-  }>({
+  const form = useCustomForm<AttributeFormType>({
     initialValues: {
       name: "My cool attribute",
       priority: 0,
       attribute_values: [],
     },
-    validate: zodResolver(
-      z.object({
-        name: z.string().min(1, "Attribute name cannot be empty"),
-        priority: z.number(),
-        attribute_values: z
-          .object({
-            name: z.string().min(1, "value cannot be empty"),
-            id: z.string().nullable(),
-          })
-          .array(),
-      })
-    ),
+    validate: zodResolver(validationSchema),
   });
   const [selectedAttr, setSelectedAttr] = useState<Attribute | null>(null);
 
@@ -64,7 +64,7 @@ const AttributePage = () => {
       invalidateAttributeQuery();
     } catch (error) {
       notifications.show({
-        message: error.data.message,
+        message: JSON.stringify(error.data.message),
         color: "red",
       });
       console.error(error);
@@ -111,25 +111,48 @@ const AttributePage = () => {
         "test"
       );
     }
-
-    return () => {};
   }, [selectedAttr]);
-
   const onDeleteAttrs = (attr: Attribute) => {
-    axiosClient.v1.api
-      .delete(`${url}/${attr.id}`)
-      .then((res) => {
+    if (!attr) return;
+    modals.openConfirmModal({
+      title: "Delete this color ?",
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to delete this Attribute? This action is
+          destructive.
+        </Text>
+      ),
+      labels: { confirm: "Delete", cancel: "Cancel" },
+      confirmProps: { variant: "danger" },
+      onCancel: () => {
         notifications.show({
-          message: "Attribute deleted successfully",
-          color: "green",
+          title: "Cancelled deleting Attribute",
+          color: "gray",
+          message: "",
         });
-        invalidateAttributeQuery();
-
-        return res.data;
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+      },
+      onConfirm: async () => {
+        try {
+          await axiosClient.v1.api.delete(`${url}/${attr.id}`).then((res) => {
+            return res.data;
+          });
+          notifications.show({
+            message: "Attribute deleted successfully",
+            color: "green",
+          });
+        } catch (error) {
+          notifications.show({
+            message: JSON.stringify(error.data.message),
+            color: "red",
+          });
+        } finally {
+          invalidateAttributeQuery();
+          form.reset();
+          setSelectedAttr(null);
+        }
+      },
+    });
   };
 
   const onReset = () => {
@@ -184,28 +207,24 @@ const AttributePage = () => {
                           </td>
                           <td>
                             <Group>
-                              <Button
-                                compact
+                              <ActionIcon
                                 onClick={() => {
                                   setSelectedAttr(attr);
                                 }}
+                                color="blue"
+                                variant="outline"
                               >
-                                edit
-                              </Button>
-                              <Button
-                                compact
+                                <TbPencil />
+                              </ActionIcon>
+                              <ActionIcon
                                 onClick={() => {
-                                  const confirmed =
-                                    window.confirm("Are you sure?");
-                                  if (confirmed) {
-                                    onDeleteAttrs(attr);
-                                    form.reset();
-                                    setSelectedAttr(null);
-                                  }
+                                  onDeleteAttrs(attr);
                                 }}
+                                variant="outline"
+                                color="red"
                               >
-                                delete
-                              </Button>
+                                <TbTrash />
+                              </ActionIcon>
                             </Group>
                           </td>
                         </tr>
@@ -309,20 +328,6 @@ const CreateAttributeForm = ({
               form.values.attribute_values.map((attrValue, attrValueIndex) => {
                 return (
                   <tr key={attrValueIndex}>
-                    {/* <td>
-                                                <TextInput
-                                                    onChange={(v) => {
-                                                        onSubFieldChange({
-                                                            value: v
-                                                                .currentTarget
-                                                                .value,
-                                                            id: attrValue.id,
-                                                            propertyName:
-                                                                "name",
-                                                        });
-                                                    }}
-                                                />
-                                            </td> */}
                     <td>
                       <TextInput
                         {...form.getInputProps(
@@ -330,30 +335,17 @@ const CreateAttributeForm = ({
                         )}
                       />
                     </td>
-                    {/* <td>
-                                                <TextInput
-                                                    onChange={(v) => {
-                                                        onSubFieldChange({
-                                                            value: v
-                                                                .currentTarget
-                                                                .value,
-                                                            id: attrValue.id,
-                                                            propertyName:
-                                                                "value",
-                                                        });
-                                                    }}
-                                                />
-                                            </td> */}
+
                     <td>
-                      <Button
+                      <ActionIcon
                         onClick={() => {
                           onAttributeValueDelete(attrValue.id, attrValueIndex);
                         }}
-                        compact
-                        size={"xs"}
+                        variant="outline"
+                        color="red"
                       >
-                        Delete
-                      </Button>
+                        <TbTrash />
+                      </ActionIcon>
                     </td>
                   </tr>
                 );
@@ -370,6 +362,7 @@ const CreateAttributeForm = ({
             Save
           </Button>
           <Button
+            variant="danger"
             type="button"
             disabled={form.values.attribute_values.length <= 0}
             onClick={() => {

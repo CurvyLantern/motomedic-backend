@@ -10,6 +10,7 @@ import { CompWithChildren, IdField } from "@/types/defaultTypes";
 import {
   Button,
   Grid,
+  Group,
   Modal,
   NumberInput,
   ScrollArea,
@@ -26,12 +27,30 @@ import { zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { serviceData } from "../fields";
+import { SelectCustomerButton } from "@/layouts/WithCustomerLayout";
 
 export const UserService = () => {
-  const serviceTypes = useAppSelector((state) => state.service.serviceTypes);
+  const { data: serviceTypes } = useQuery({
+    queryFn: () => {
+      return axiosClient.v1.api.get("serviceTypes").then((res) => res.data);
+    },
+    queryKey: ["get/serviceTypes"],
+  });
+
+  const selectServiceTypesData = useMemo(() => {
+    if (serviceTypes && serviceTypes.length > 0) {
+      return serviceTypes.map((s) => ({
+        label: s.name,
+        value: s.id.toString(),
+        price: s.price,
+      }));
+    } else {
+      return [];
+    }
+  }, [serviceTypes]);
   const [myServiceTypes, setMyServiceTypes] = useState([]);
   const [problemDetails, setProblemDetails] = useState("");
   const [modalOpened, { open: openModal, close: closeModal }] =
@@ -152,15 +171,74 @@ export const UserService = () => {
     : [];
 
   console.log(form.errors);
+  const [
+    serviceModalOpened,
+    { open: openCreateServiceModal, close: closeServiceModal },
+  ] = useDisclosure(false);
   return (
-    <BasicSection title="Service Info">
+    <BasicSection
+      title="Service Info"
+      headerRightElement={
+        <Group>
+          <Button type="button" onClick={openCreateServiceModal}>
+            Create Service Type
+          </Button>
+          <SelectCustomerButton />
+        </Group>
+      }
+    >
+      <Modal
+        title="Create Service types"
+        centered
+        opened={serviceModalOpened}
+        onClose={closeServiceModal}
+      >
+        <form
+          onSubmit={async (evt) => {
+            evt.preventDefault();
+            try {
+              const formData = new FormData(evt.currentTarget);
+              const serverData = await axiosClient.v1.api
+                .post("serviceTypes", formData)
+                .then((res) => res.data);
+
+              console.log(serverData, "serverData");
+
+              notifications.show({
+                message: "Service type created successfully",
+                color: "green",
+              });
+
+              closeServiceModal();
+            } catch (error) {
+              notifications.show({
+                message: JSON.stringify(error.data.message),
+                color: "red",
+              });
+            }
+          }}
+        >
+          <Grid>
+            <Grid.Col span={6}>
+              <TextInput name="name" placeholder="Name" />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <NumberInput name="price" placeholder="Price" />
+            </Grid.Col>
+            <Grid.Col span={12}>
+              <Button type="submit">Submit</Button>
+            </Grid.Col>
+          </Grid>
+        </form>
+      </Modal>
+
       <form onSubmit={form.onSubmit(confirmService)}>
         <Stack>
           <SimpleGrid cols={1} breakpoints={[{ minWidth: "md", cols: 2 }]}>
             {/* Service */}
             <Select
               {...form.getInputProps("service_type_id")}
-              data={serviceTypes}
+              data={selectServiceTypesData}
               placeholder={serviceData.userService.ph}
               label={serviceData.userService.label}
               withAsterisk={serviceData.userService.required}
@@ -307,13 +385,32 @@ const IncompleteServiceTableRow = ({
     };
   }, [service.created_at]);
 
+  const { data: serviceTypes } = useQuery({
+    queryFn: () => {
+      return axiosClient.v1.api.get("serviceTypes").then((res) => res.data);
+    },
+    queryKey: ["get/serviceTypes"],
+  });
+
+  const selectServiceTypesData = useMemo(() => {
+    if (serviceTypes && serviceTypes.length > 0) {
+      return serviceTypes.map((s) => ({
+        label: s.name,
+        value: s.id.toString(),
+        price: s.price,
+      }));
+    } else {
+      return [];
+    }
+  }, [serviceTypes]);
+
   return (
     <tr key={service.id}>
       <td>{service.id}</td>
       <td>{elapsedTime}</td>
       <td>running</td>
       <td>
-        <Modal
+        {/* <Modal
           centered
           opened={serviceDetailsModalOpened}
           onClose={closeServiceDetailsModal}
@@ -327,22 +424,36 @@ const IncompleteServiceTableRow = ({
               </tr>
             </thead>
             <tbody>
-              {/* {service.assignedMechanics.map((mechanic) => {
+              {service.assignedMechanics.map((mechanic) => {
                 return (
                   <tr key={mechanic.id}>
                     <td>{mechanic.id}</td>
                     <td>{mechanic.name}</td>
                   </tr>
                 );
-              })} */}
+              })}
             </tbody>
           </Table>
-          {/* .join(",") */}
+          .join(",")
           Service types : {service.serviceTypes}
+        </Modal> */}
+        <Modal
+          centered
+          opened={serviceDetailsModalOpened}
+          onClose={closeServiceDetailsModal}
+          title="Add Service"
+        >
+          <Select
+            {...form.getInputProps("service_type_id")}
+            data={selectServiceTypesData}
+            placeholder={serviceData.userService.ph}
+            label={serviceData.userService.label}
+            withAsterisk={serviceData.userService.required}
+          />
         </Modal>
         <SimpleGrid cols={2}>
           <Button onClick={openServiceDetailsModal} compact size="xs">
-            Details
+            Add
           </Button>
           <Button onClick={onComplete} compact size="xs">
             Done
@@ -359,9 +470,6 @@ export const ServiceMechanics = () => {
   );
 };
 export const ServiceFieldWrapper: CompWithChildren = ({ children }) => {
-  const totalColSize = 12;
-  const leftColSize = 7;
-  const rightColSize = totalColSize - 7;
   const selectedCustomer = useAppSelector((s) => s.customer.selectedCustomer);
   const dispatch = useAppDispatch();
 
@@ -515,7 +623,7 @@ export const ServiceFieldWrapper: CompWithChildren = ({ children }) => {
           </Stack>
         </form>
       </Modal>
-      <Grid.Col span={leftColSize}>
+      <Grid.Col span={12} lg={6}>
         <Stack>
           {/* user enter data */}
 
@@ -529,7 +637,7 @@ export const ServiceFieldWrapper: CompWithChildren = ({ children }) => {
           {/* <MechanicTable /> */}
         </Stack>
       </Grid.Col>
-      <Grid.Col span={rightColSize}>
+      <Grid.Col span={12} lg={6}>
         <BasicSection title="Running Services">
           <Table>
             <thead>
