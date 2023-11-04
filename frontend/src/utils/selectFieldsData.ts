@@ -1,6 +1,7 @@
 import { useBrandQuery } from "@/queries/brandQuery";
 import { useCategoryQuery } from "@/queries/categoryQuery";
 import { useColorQuery } from "@/queries/colorQuery";
+import { SelectItem } from "@mantine/core";
 import { useMemo } from "react";
 
 export const useColorSelectData = () => {
@@ -20,8 +21,8 @@ export const useColorSelectData = () => {
 export const useCategorySelectData = () => {
   const categories = useCategoryQuery();
   const selectCategories = useMemo(() => {
-    const arr = [];
-    categories?.forEach((category) => {
+    const arr: SelectItem[] = [];
+    categories?.data?.forEach((category) => {
       arr.push({ value: String(category.id), label: category.name });
 
       category.sub_categories?.forEach((subC) => {

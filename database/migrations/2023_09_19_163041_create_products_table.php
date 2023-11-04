@@ -82,6 +82,7 @@ return new class extends Migration
       $table->string('name');
       $table->string('slug')->unique()->nullable('');
 
+
       $table->string('thumbnail_image')->nullable();
 
       $table->unsignedBigInteger('category_id')->nullable();
@@ -96,12 +97,13 @@ return new class extends Migration
 
 
       $table->string('sku')->unique()->nullable();
-      $table->string('model')->nullable();
+
+      $table->unsignedBigInteger('model_id')->nullable();
+      $table->foreign('model_id')->references('id')->on('product_models')->onUpdate('cascade');
 
 
-      $table->string('material')->nullable();
       $table->string('weight');
-      $table->double('price', 10, 2)->default(0);
+      // $table->double('price', 10, 2)->default(0);
 
       $table->string('barcode')->unique()->nullable();
 
@@ -141,10 +143,13 @@ return new class extends Migration
 
 
         $table->string('image')->nullable();
-        $table->double('price', 10, 2)->default(0);
+        // $table->double('price', 10, 2)->default(0);
 
         $table->unsignedBigInteger('color_id')->nullable();
-        $table->foreign('color_id')->references('id')->on('colors')->onUpdate('cascade')->onDelete('cascade');
+        $table->foreign('color_id')->references('id')->on('colors')->onUpdate('cascade');
+
+        $table->unsignedBigInteger('model_id')->nullable();
+        $table->foreign('model_id')->references('id')->on('product_models')->onUpdate('cascade');
 
         $table->timestamps();
       }

@@ -1,8 +1,9 @@
+import CrudOptions from "@/components/common/CrudOptions";
+import BasicSection from "@/components/sections/BasicSection";
 import axiosClient from "@/lib/axios";
 import { useCustomerQuery } from "@/queries/customerQuery";
 import { Button, Table } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { AxiosError } from "axios";
 
 const CustomerPage = () => {
   const customersPaginated = useCustomerQuery();
@@ -16,10 +17,9 @@ const CustomerPage = () => {
         color: "green",
       });
     } catch (error) {
-      const axiosError = error as AxiosError;
-      console.log(axiosError);
       notifications.show({
-        message: axiosError.statusText,
+        // @ts-expect-error error message
+        message: JSON.stringify(error.data.message),
         color: "red",
       });
     }
@@ -28,23 +28,20 @@ const CustomerPage = () => {
     customersPaginated.data.map((customer, customerIdx) => {
       return (
         <tr key={customer.id}>
-          <td>{customer.id}</td>
+          <td>{customerIdx + 1}</td>
           <td>{customer.name}</td>
           <td>{customer.phone}</td>
           <td>{customer.email}</td>
           <td>{customer.address}</td>
           <td>{customer.bike_info ? customer.bike_info : "Not found"}</td>
           <td>
-            <Button
-              onClick={() => {
+            <CrudOptions
+              onView={() => {}}
+              onEdit={() => {}}
+              onDelete={() => {
                 deleteCustomer(customer.id);
               }}
-              variant="danger"
-              compact
-              size="xs"
-            >
-              Delete
-            </Button>
+            />
           </td>
         </tr>
       );
@@ -55,7 +52,7 @@ const CustomerPage = () => {
     </tr>
   );
   return (
-    <div>
+    <BasicSection title="Customers">
       <Table
         fontSize="md"
         withBorder
@@ -65,7 +62,7 @@ const CustomerPage = () => {
       >
         <thead>
           <tr>
-            <th>ID</th>
+            <th>SL</th>
             <th>Name</th>
             <th>Phone</th>
             <th>Email</th>
@@ -76,7 +73,7 @@ const CustomerPage = () => {
         </thead>
         <tbody>{tRows}</tbody>
       </Table>
-    </div>
+    </BasicSection>
   );
 };
 

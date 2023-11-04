@@ -47,13 +47,14 @@ type Product = {
   name: string;
   parent_category_id: IdField;
   category_id: IdField;
+  category: Category;
   brand_id: IdField;
+  brand: Brand;
   model: string;
   color_id: IdField;
   material: string;
   year: string | number;
   weight: number | string;
-  price: number | string;
   discount: number | string;
   description: string;
   active: boolean;
@@ -62,6 +63,36 @@ type Product = {
   status: "active" | "inactive";
   id: IdField;
   stock_count: number;
+  variation_product: boolean;
+  type: "product" | "variation";
+  price: {
+    id: string;
+    buying_price: number;
+    selling_price: number;
+  };
+  variations: {
+    id: string;
+    model_id: string;
+    product_id: string;
+    sku: string;
+    price: {
+      id: string;
+      buying_price: number;
+      selling_price: number;
+    };
+    product_model: {
+      id: string;
+      name: string;
+    };
+    color: {
+      name: string;
+      hexcode: string;
+      id: string;
+    };
+    color_id: string;
+    attribute_values: { id: string; name: string }[];
+    type: "product" | "variation";
+  }[];
 };
 type ProductVariation = {
   variation_enabled: boolean;

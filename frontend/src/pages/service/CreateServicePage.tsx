@@ -22,9 +22,10 @@ import {
   Flex,
   Drawer,
   Modal,
+  SelectItem,
 } from "@mantine/core";
 import { useDisclosure, useListState } from "@mantine/hooks";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   TbPlus,
   TbShoppingCart,
@@ -36,6 +37,7 @@ import { FaPlus } from "react-icons/fa6";
 import PosPage from "../pos/PosPage";
 import BaseDrawer from "@/components/drawer/BaseDrawer";
 import { useMechanicQuery } from "@/queries/mechanicQuery";
+import { useServiceTypesAllQuery } from "@/queries/serviceTypeQuery";
 
 const CreateServicePage = () => {
   return (
@@ -48,6 +50,29 @@ const CreateServicePage = () => {
 
 const ServicePage2 = () => {
   const [allProblemDetails, allProblemDetailsHandler] = useListState<string>();
+  const [packageInputValue, setPackageInputValue] = useState("");
+
+  const servicePackages = useServiceTypesAllQuery();
+  const selectDataServicePackages = useMemo(() => {
+    return servicePackages && servicePackages.data
+      ? servicePackages.data.map((v) => ({
+          label: v.name,
+          value: v.id.toString(),
+        }))
+      : [];
+  }, [servicePackages]);
+
+  const onConfirm = () => {
+    const data = {
+      problem: allProblemDetails,
+      packageInputValue,
+      selectedPackage: servicePackages?.data?.find(
+        (p) => p.id.toString() === packageInputValue
+      ),
+    };
+
+    console.log(data, "data");
+  };
 
   return (
     <Grid h={"100%"}>
@@ -56,9 +81,15 @@ const ServicePage2 = () => {
         lg={6}
         sx={{ display: "flex", flexDirection: "column", gap: 5 }}
       >
-        <ServiceInfo onEnterProblemDetail={allProblemDetailsHandler.append} />
+        <ServiceInfo
+          packageInputValue={packageInputValue}
+          onChangePackageInput={(v) => setPackageInputValue(v)}
+          selectPackageData={selectDataServicePackages}
+          onEnterProblemDetail={allProblemDetailsHandler.append}
+        />
 
         <ServiceDetails
+          onConfirm={onConfirm}
           allProblemDetails={allProblemDetails}
           onProblemDelete={(idx: number) => {
             allProblemDetailsHandler.remove(idx);
@@ -232,12 +263,23 @@ const ServiceListTable = ({
 const ServiceDetails = ({
   allProblemDetails,
   onProblemDelete,
+  onConfirm,
 }: {
   allProblemDetails: string[];
   onProblemDelete: (idx: number) => void;
+  onConfirm: () => void;
 }) => {
+  const confirmDisabled = allProblemDetails.length <= 0;
   return (
-    <BasicSection title="Problems" mih={300}>
+    <BasicSection
+      title="Problems"
+      mih={300}
+      headerRightElement={
+        <Button disabled={confirmDisabled} onClick={onConfirm}>
+          Confirm
+        </Button>
+      }
+    >
       <ScrollWrapper2>
         <Stack px={"xs"} spacing={"xs"}>
           {allProblemDetails.length > 0 ? (
@@ -281,7 +323,13 @@ const ServiceDetails = ({
 
 const ServiceInfo = ({
   onEnterProblemDetail,
+  selectPackageData,
+  onChangePackageInput,
+  packageInputValue,
 }: {
+  packageInputValue: string;
+  onChangePackageInput: (v: string) => void;
+  selectPackageData: SelectItem[];
   onEnterProblemDetail: (detail: string) => void;
 }) => {
   const [problemDetailsInput, setProblemDetailsInput] = useState("");
@@ -291,12 +339,18 @@ const ServiceInfo = ({
     onEnterProblemDetail(problemDetailsInput);
     setProblemDetailsInput("");
   };
+
   return (
     <BasicSection
       title="Service Info"
       headerRightElement={<SelectCustomerButton />}
     >
-      <Select label="Service Type" data={[]} />
+      <Select
+        label="Service Type"
+        data={selectPackageData}
+        value={packageInputValue}
+        onChange={(v) => onChangePackageInput(v ? v : "")}
+      />
       <form onSubmit={onEnterDetails}>
         <TextInput
           label="Problem Details"

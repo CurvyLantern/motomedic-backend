@@ -12,7 +12,7 @@ return new class extends Migration
   public function up(): void
   {
 
-    Schema::create('sellers', function (Blueprint $table) {
+    Schema::create('vendors', function (Blueprint $table) {
       $table->id();
       $table->string('name')->nullable();
       $table->string('phone')->nullable();
@@ -24,17 +24,23 @@ return new class extends Migration
     Schema::create('inventory_records', function (Blueprint $table) {
       $table->id();
 
-      $table->unsignedBigInteger('inventory_seller_id')->nullable();
-      $table->foreign('inventory_seller_id')
+      $table->unsignedBigInteger('inventory_updater_id')->nullable();
+      $table->foreign('inventory_updater_id')->references('id')->on('users')->cascadeOnUpdate()->nullOnDelete();
+
+      $table->unsignedBigInteger('inventory_vendor_id')->nullable();
+      $table->foreign('inventory_vendor_id')
         ->references('id')
-        ->on('sellers')
+        ->on('vendors')
         ->onUpdate('cascade');
 
-      $table->enum('type', ['buying', 'selling'])->default('buying');
+      $table->enum('type', ['store_in', 'store_out'])->default('store_in');
+
+      $table->string('sku')->nullable();
+      $table->integer('quantity')->default(0);
 
       $table->unsignedDecimal('inventory_total_cost')->default(0);
       $table->unsignedDecimal('inventory_total_due')->default(0);
-      $table->json('purchased_products');
+
       $table->timestamps();
     });
 
@@ -43,7 +49,7 @@ return new class extends Migration
       $table->timestamps();
 
       $table->unsignedInteger('stock_count')->default(0);
-      $table->string('sku')->unique();
+      $table->string('sku')->unique()->nullable();
     });
   }
 
@@ -54,6 +60,6 @@ return new class extends Migration
   {
     Schema::dropIfExists('inventories');
     Schema::dropIfExists('inventory_records');
-    Schema::dropIfExists('sellers');
+    Schema::dropIfExists('vendors');
   }
 };

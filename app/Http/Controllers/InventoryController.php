@@ -10,6 +10,7 @@ use App\Http\Requests\StoreInventoryRequest;
 use App\Http\Requests\UpdateInventoryRequest;
 use App\Http\Resources\InventoryResource;
 use App\Models\InventoryRecord;
+use App\Models\Price;
 
 class InventoryController extends Controller
 {
@@ -33,14 +34,37 @@ class InventoryController extends Controller
     $products = $validated['inventory_products'];
 
     foreach ($products as $product) {
-      $inventory = Inventory::where('sku', $product['product_sku'])->first();
+      $productSku       = $product['product_sku'];
+      $inventory = Inventory::where('sku', $productSku)->first();
       $inventory->stock_count = $inventory->stock_count + $product['stock_count'];
       $inventory->save();
+
+      $sellPrice = $product["new_selling_price"];
+      $buyPrice = $product["new_buying_price"];
+      if (empty($sellPrice) || $sellPrice === 0) {
+        $price = Price::where('sku', $productSku)->latest()->first();
+        if ($price) {
+          $sellPrice = $price->selling_price;
+        }
+      }
+
+      if (empty($buyPrice) || $buyPrice === 0) {
+        $price = Price::where('sku', $productSku)->latest()->first();
+        if ($price) {
+          $buyPrice = $price->buying_price;
+        }
+      }
+
+      // Create new price with product sku
+      $price = new Price();
+      $price->sku = $productSku;
+      $price->buying_price = $buyPrice;
+      $price->selling_price = $sellPrice;
+      $price->save();
     }
 
-    // FIXME : Why isn't Invoice table available??
-    $invoice = InventoryRecord::create([
-      'inventory_seller_id' => $validated['inventory_seller_id'],
+    $inventoryRecord = InventoryRecord::create([
+      'inventory_vendor_id' => $validated['inventory_vendor_id'],
       'inventory_total_cost' => $validated['inventory_total_cost'],
       'inventory_total_due' => $validated['inventory_total_due'],
       'type' => $validated['type'],
@@ -48,7 +72,7 @@ class InventoryController extends Controller
     ]);
 
     // return response()->json(compact('invoice'));
-    return response()->noContent();
+    return response()->json(compact('inventoryRecord'));
   }
 
   /**

@@ -2,7 +2,7 @@ import CrudOptions, { CrudDeleteButton } from "@/components/common/CrudOptions";
 import BasicSection from "@/components/sections/BasicSection";
 import useCustomForm from "@/hooks/useCustomForm";
 import axiosClient from "@/lib/axios";
-import { useBrandQuery } from "@/queries/brandQuery";
+import { invalidateBrandQuery, useBrandQuery } from "@/queries/brandQuery";
 import {
   invalidateProductModelQuery,
   useProductModelQuery,
@@ -24,6 +24,7 @@ import {
   Flex,
   rem,
   SimpleGrid,
+  SelectItem,
 } from "@mantine/core";
 import { zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -38,69 +39,9 @@ const validationSchema = z.object({
 type modelFormType = z.infer<typeof validationSchema>;
 const ModelPage = () => {
   return (
-    <div>
-      <Tabs
-        defaultValue={"create"}
-        variant="pills"
-        styles={(theme) => ({
-          tab: {
-            ...theme.fn.focusStyles(),
-            backgroundColor:
-              theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
-            color:
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[0]
-                : theme.colors.gray[9],
-            border: `${rem(1)} solid ${
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[6]
-                : theme.colors.gray[4]
-            }`,
-            padding: `${theme.spacing.xs} ${theme.spacing.md}`,
-            cursor: "pointer",
-            fontSize: theme.fontSizes.sm,
-            display: "flex",
-            alignItems: "center",
-
-            "&:disabled": {
-              opacity: 0.5,
-              cursor: "not-allowed",
-            },
-
-            "&:not(:first-of-type)": {
-              borderLeft: 0,
-            },
-
-            "&:first-of-type": {
-              borderTopLeftRadius: theme.radius.md,
-              borderBottomLeftRadius: theme.radius.md,
-            },
-
-            "&:last-of-type": {
-              borderTopRightRadius: theme.radius.md,
-              borderBottomRightRadius: theme.radius.md,
-            },
-
-            "&[data-active]": {
-              backgroundColor: theme.colors.blue[7],
-              borderColor: theme.colors.blue[7],
-              color: theme.white,
-            },
-          },
-
-          tabIcon: {
-            marginRight: theme.spacing.xs,
-            display: "flex",
-            alignItems: "center",
-          },
-
-          tabsList: {
-            paddingTop: theme.spacing.xs,
-            paddingBottom: theme.spacing.xs,
-          },
-        })}
-      >
-        <Tabs.List grow position="center">
+    <BasicSection>
+      <Tabs defaultValue={"create"}>
+        <Tabs.List position="center">
           <Tabs.Tab value="create">Create Model</Tabs.Tab>
           <Tabs.Tab value="view">View Model</Tabs.Tab>
         </Tabs.List>
@@ -112,7 +53,7 @@ const ModelPage = () => {
           <ViewModel />
         </Tabs.Panel>
       </Tabs>
-    </div>
+    </BasicSection>
   );
 };
 
@@ -232,7 +173,7 @@ const ViewModel = () => {
       });
   };
 
-  const onSaveNewBrand = (mid: string | null) => {
+  const onSaveNewBrand = (mid?: string | null) => {
     if (!mid) return;
     axiosClient.v1.api
       .put(`productModels/${mid}`, {
@@ -253,11 +194,12 @@ const ViewModel = () => {
       })
       .finally(() => {
         invalidateProductModelQuery();
+        invalidateBrandQuery();
       });
   };
 
   return (
-    <>
+    <BasicSection>
       <Modal
         centered
         opened={modalOpened}
@@ -358,7 +300,7 @@ const ViewModel = () => {
                   ? editForm.values.brand_ids.length <= 0
                   : true
               }
-              onClick={() => onSaveNewBrand(selectedModel.id)}
+              onClick={() => onSaveNewBrand(selectedModel?.id)}
             >
               Save new brands
             </Button>
@@ -376,7 +318,7 @@ const ViewModel = () => {
         <tbody>
           {productModels?.data?.map((model, modelIdx) => {
             return (
-              <tr>
+              <tr key={model.id}>
                 <td>{modelIdx + 1}</td>
                 <td>{model.name}</td>
                 <td>
@@ -396,7 +338,7 @@ const ViewModel = () => {
           <tr></tr>
         </tbody>
       </Table>
-    </>
+    </BasicSection>
   );
 };
 
@@ -410,6 +352,7 @@ const CreateModel = () => {
   });
   const brands = useBrandQuery();
   const brandsSelect = useBrandSelectData();
+
   const filteredBrands = useMemo(() => {
     if (form.values.brand_ids.length > 0 && form.values.brand_ids) {
       const selectedBrands = form.values.brand_ids.map((id) =>
@@ -420,7 +363,7 @@ const CreateModel = () => {
         ...selectedBrands.map((b) => (b ? b.product_models.length : 0))
       );
       const rowData = [];
-      for (let i = 0; i <= maxLength; i++) {
+      for (let i = 0; i < maxLength; i++) {
         const temp: Array<ProductModels | null> = [];
         selectedBrands.forEach((b) => {
           if (b) {
@@ -442,6 +385,12 @@ const CreateModel = () => {
     }
   }, [form.values.brand_ids, brands]);
 
+  const [modelNames, setModelNames] = useState<string[]>([]);
+  const [modelNameData, setModelNameData] = useState<string[]>([]);
+  useEffect(() => {
+    form.setFieldValue("names", modelNames);
+  }, [modelNames]);
+
   const onSubmit = (values: typeof form.values) => {
     console.log(values, "values");
     try {
@@ -450,6 +399,8 @@ const CreateModel = () => {
         message: "Created model successfully",
         color: "green",
       });
+      setModelNameData([]);
+      setModelNames([]);
     } catch (error) {
       notifications.show({
         // @ts-expect-error error is not typed;
@@ -457,9 +408,13 @@ const CreateModel = () => {
         color: "red",
       });
     } finally {
+      invalidateBrandQuery();
       invalidateProductModelQuery();
     }
   };
+
+  console.log(form.values.names, "form names");
+  console.log(modelNames, "names");
   return (
     <BasicSection title="Create a model">
       <Grid>
@@ -470,17 +425,23 @@ const CreateModel = () => {
               breakpoints={[{ minWidth: "md", cols: 2, spacing: "md" }]}
             >
               <MultiSelect
-                data={[]}
+                styles={{
+                  input: {
+                    textTransform: "uppercase",
+                  },
+                }}
+                data={modelNameData}
                 label="Model Names"
                 searchable
                 creatable
+                value={modelNames}
+                onChange={setModelNames}
                 getCreateLabel={(query) => `+ Create ${query}`}
                 onCreate={(query) => {
-                  form.insertListItem(
-                    "names",
-                    query.trim().toUpperCase().split(" ").join("-")
-                  );
-                  return query;
+                  const name = query.trim().toUpperCase().split(" ").join("-");
+                  if (modelNameData.includes(name)) return null;
+                  setModelNameData((p) => [...p, name]);
+                  return name;
                 }}
               />
               <MultiSelect

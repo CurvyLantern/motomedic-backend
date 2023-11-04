@@ -9,15 +9,15 @@ class InventoryRecord extends Model
 {
   use HasFactory;
 
-  protected $fillable = ['inventory_seller_id', 'inventory_total_cost', 'inventory_total_due', 'purchased_products', 'type'];
+  protected $fillable = ['inventory_vendor_id', 'inventory_total_cost', 'inventory_total_due', 'purchased_products', 'type'];
 
   protected $casts = [
     'purchased_products' => 'array', // Cast the purchased_products attribute as an array
   ];
 
-  public function seller()
+  public function vendor()
   {
-    return $this->belongsTo(Seller::class, 'inventory_seller_id');
+    return $this->belongsTo(Vendor::class, 'inventory_vendor_id');
   }
 
   public function updateInventory()

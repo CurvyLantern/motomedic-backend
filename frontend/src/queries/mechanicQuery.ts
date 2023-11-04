@@ -8,6 +8,7 @@ type Mechanic = {
   phone: string;
   email: string;
   status: string;
+  address: string;
 };
 export const useMechanicQuery = () => {
   const { data: mechanics } = useQuery<{

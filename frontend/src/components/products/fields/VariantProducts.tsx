@@ -15,6 +15,8 @@ import {
   Table,
   Text,
   TextInput,
+  createStyles,
+  rem,
 } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useDisclosure, useElementSize } from "@mantine/hooks";
@@ -97,9 +99,9 @@ const VariantProducts = ({
         >
           <thead>
             <tr>
-              <th>Variant Name</th>
+              <th style={{ minWidth: 200 }}>Variant Name</th>
               <th>Attributes</th>
-              <th>Barcode</th>
+              <th style={{ minWidth: 200 }}>Barcode</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -110,6 +112,13 @@ const VariantProducts = ({
   );
 };
 
+const useAttributeModalStyles = createStyles({
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "auto 1fr",
+    gap: rem(10),
+  },
+});
 const VariantProductTableRow = ({
   colorSelectArr,
   variant,
@@ -129,6 +138,7 @@ const VariantProductTableRow = ({
   attributes?: Attribute[];
   attibuteSelectArr: SelectItem[];
 }) => {
+  const { classes } = useAttributeModalStyles();
   const [variantName, setVariantName] = useState("");
   useEffect(() => {
     const colorLabel = colorSelectArr.find(
@@ -179,8 +189,6 @@ const VariantProductTableRow = ({
   //   );
   // }, [colorSelectArr, form.values.variations, variantIdx]);
 
-  console.log(attributes, " attributes ");
-
   const filteredAttributes = useMemo(() => {
     if (!attributes) return [];
     return attributes.map((attr) => {
@@ -221,15 +229,15 @@ const VariantProductTableRow = ({
           }}
         >
           {/* {JSON.stringify(attributes)} */}
-          <Grid>
+          <Box className={classes.grid}>
             {/* Product Model */}
-            <Grid.Col
+            <Box
               sx={(t) => ({
                 textTransform: "uppercase",
                 display: "flex",
                 alignItems: "center",
               })}
-              span={3}
+              // span={3}
             >
               <Text
                 sx={(t) => ({
@@ -244,9 +252,9 @@ const VariantProductTableRow = ({
               >
                 Model
               </Text>
-            </Grid.Col>
+            </Box>
 
-            <Grid.Col span={9}>
+            <Box>
               <Select
                 onClick={() => {
                   if (form.values.model_id) {
@@ -283,17 +291,16 @@ const VariantProductTableRow = ({
                 {...form.getInputProps(`variations.${variantIdx}.model_id`)}
                 data={filteredProductModelData}
               />
-            </Grid.Col>
+            </Box>
 
             {/* Product color */}
 
-            <Grid.Col
+            <Box
               sx={(t) => ({
                 textTransform: "uppercase",
                 display: "flex",
                 alignItems: "center",
               })}
-              span={3}
             >
               <Text
                 sx={(t) => ({
@@ -308,20 +315,19 @@ const VariantProductTableRow = ({
               >
                 Color
               </Text>
-            </Grid.Col>
+            </Box>
 
-            <Grid.Col span={9}>
+            <Box>
               <SelectColorField
                 {...form.getInputProps(`variations.${variantIdx}.color_id`)}
                 colors={colorSelectArr}
               ></SelectColorField>
-            </Grid.Col>
+            </Box>
 
             {filteredAttributes?.map((attribute, attributeIdx) => {
               return (
                 <React.Fragment key={attribute.value}>
-                  <Grid.Col
-                    span={3}
+                  <Box
                     sx={(t) => ({
                       textTransform: "uppercase",
                       display: "flex",
@@ -341,8 +347,8 @@ const VariantProductTableRow = ({
                     >
                       {attribute.label}
                     </Text>
-                  </Grid.Col>
-                  <Grid.Col span={9}>
+                  </Box>
+                  <Box>
                     <Select
                       allowDeselect
                       dropdownPosition="bottom"
@@ -363,11 +369,11 @@ const VariantProductTableRow = ({
                       // }}
                       data={attribute.attribute_values}
                     />
-                  </Grid.Col>
+                  </Box>
                 </React.Fragment>
               );
             })}
-          </Grid>
+          </Box>
         </Modal>
         <Button variant="outline" onClick={openAttributeModal}>
           Select Attributes

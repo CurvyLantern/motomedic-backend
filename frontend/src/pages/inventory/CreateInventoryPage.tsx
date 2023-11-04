@@ -1,9 +1,10 @@
-import BaseInputs from "@/components/inputs/BaseInputs";
+import ScrollWrapper2 from "@/components/scrollWrapper/ScrollWrapper2";
+import { ScrollWrapper } from "@/components/scroller";
 import BasicSection from "@/components/sections/BasicSection";
 import useCustomForm from "@/hooks/useCustomForm";
 import { useProductSearchByNameSkuId } from "@/hooks/useProductSearch";
 import axiosClient from "@/lib/axios";
-import { useSellersQuery } from "@/queries/sellersQuery";
+import { useVendorsQuery } from "@/queries/vendorsQuery";
 import {
   Box,
   Button,
@@ -12,6 +13,7 @@ import {
   SimpleGrid,
   Stack,
   Table,
+  Text,
 } from "@mantine/core";
 import { UseFormReturnType, zodResolver } from "@mantine/form";
 import { randomId } from "@mantine/hooks";
@@ -30,89 +32,89 @@ const CreateInventoryPage = () => {
   return (
     <div>
       <BasicSection title="Add To inventory ">
-        <CreateInvoiceForm />
+        <CreateInventoryForm />
       </BasicSection>
     </div>
   );
 };
 
-type CreateInvoiceFormType = unknown;
-type FormType = {
-  inventory_total_cost: number;
-  inventory_total_due: number;
-  inventory_seller_id: string;
-  type: "buying";
-  inventory_products: {
-    product_sku: string;
-    stock_count: number;
-    new_selling_price: number;
-    new_buying_price: number;
-    new_total_cost: number;
-    key: string;
-  }[];
-};
-export const CreateInvoiceForm: React.FC<CreateInvoiceFormType> = () => {
-  const form = useCustomForm<FormType>({
+// type FormType = {
+//   inventory_total_cost: number;
+//   inventory_total_due: number;
+//   inventory_vendor_id: string;
+//   type: "buying";
+//   inventory_products: {
+//     product_sku: string;
+//     stock_count: number;
+//     new_selling_price: number;
+//     new_buying_price: number;
+//     new_total_cost: number;
+//     key: string;
+//   }[];
+// };
+const inventoryFormValidationSchema = z.object({
+  inventory_products: z
+    .object({
+      key: z.string(),
+      product_sku: z.string().min(1, "Product is not selected"),
+      stock_count: z.number().nonnegative().default(0),
+      new_selling_price: z
+        .number()
+        .nonnegative({ message: "Cannot be negative" })
+        .default(0),
+      new_buying_price: z
+        .number()
+        .nonnegative({ message: "Cannot be negative" })
+        .default(0),
+      // new_total_cost: z
+      //   .number()
+      //   .nonnegative({ message: "Cannot be negative" })
+      //   .default(0),
+    })
+    .array(),
+  type: z.string(),
+  inventory_total_cost: z
+    .number()
+    .nonnegative({ message: "cost can not be negative" }),
+
+  inventory_total_due: z
+    .number()
+    .nonnegative({ message: "due can not be negative" }),
+
+  inventory_vendor_id: z
+    .string()
+    .min(1, { message: "vendor id can not be empty" }),
+});
+
+type InventoryFormType = z.infer<typeof inventoryFormValidationSchema>;
+export const CreateInventoryForm = () => {
+  const form = useCustomForm<InventoryFormType>({
     initialValues: {
       inventory_total_cost: 0,
       inventory_total_due: 0,
-      inventory_seller_id: "",
+      inventory_vendor_id: "",
       inventory_products: [
         {
           product_sku: "",
-          stock_count: 1,
-          new_total_cost: 0,
-          new_buying_price: 0,
+          stock_count: 0,
           new_selling_price: 0,
+          new_buying_price: 0,
           key: randomId(),
         },
       ],
       type: "buying",
     },
-    validate: zodResolver(
-      z.object({
-        inventory_products: z
-          .object({
-            product_sku: z.string().min(1, "product id is not valid"),
-            stock_count: z.number().nonnegative().min(1).default(1),
-            new_selling_price: z
-              .number()
-
-              .nonnegative({ message: "Cannot be negative" })
-              .default(0),
-            new_buying_price: z
-              .number()
-              .nonnegative({ message: "Cannot be negative" })
-              .default(0),
-            new_total_cost: z
-              .number()
-              .nonnegative({ message: "Cannot be negative" })
-              .default(0),
-          })
-          .array(),
-        inventory_total_cost: z
-          .number()
-          .nonnegative({ message: "cost can not be negative" }),
-
-        inventory_total_due: z
-          .number()
-          .nonnegative({ message: "due can not be negative" }),
-
-        inventory_seller_id: z
-          .string()
-          .min(1, { message: "seller id can not be empty" }),
-      })
-    ),
+    validate: zodResolver(inventoryFormValidationSchema),
   });
   const [submitting, setSubmitting] = useState(false);
-  const sellers = useSellersQuery();
-  const sellersFromServer = useMemo(() => {
-    return sellers && Array.isArray(sellers.data)
-      ? sellers.data.map((s) => ({ label: s.name, value: String(s.id) }))
+  const vendors = useVendorsQuery();
+  const vendorsSelectData = useMemo(() => {
+    return vendors && vendors.data
+      ? vendors.data.map((s) => ({ label: s.name, value: String(s.id) }))
       : [];
-  }, [sellers]);
+  }, [vendors]);
 
-  const onSubmit = (values: typeof form.values) => {
+  const onFormSubmit = (values: typeof form.values) => {
     console.log(values, " on submit ");
     setSubmitting(true);
 
@@ -129,7 +131,13 @@ export const CreateInvoiceForm: React.FC<CreateInvoiceFormType> = () => {
         form.reset();
         return data;
       })
-      .catch((error) => console.error(error))
+      .catch((error) => {
+        notifications.show({
+          message: error.data.message,
+          color: "red",
+        });
+        console.error(error);
+      })
       .finally(() => {
         setSubmitting(false);
       });
@@ -188,13 +196,13 @@ export const CreateInvoiceForm: React.FC<CreateInvoiceFormType> = () => {
   };
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
+    <form onSubmit={form.onSubmit(onFormSubmit)}>
       <Stack>
         <SimpleGrid cols={4}>
           <Select
-            label="Seller Id"
-            {...form.getInputProps("inventory_seller_id")}
-            data={sellersFromServer}
+            label="Vendor"
+            {...form.getInputProps("inventory_vendor_id")}
+            data={vendorsSelectData}
           />
           <NumberInput
             label="Total Cost"
@@ -219,11 +227,11 @@ export const CreateInvoiceForm: React.FC<CreateInvoiceFormType> = () => {
         <Table withBorder withColumnBorders>
           <thead>
             <tr>
-              <th style={{ width: "40%" }}>Product</th>
-              <th>New Stock Count</th>
-              <th>New Selling Price</th>
-              <th>New Buying Price</th>
-              <th>New Total Cost</th>
+              <th style={{ width: "30%" }}>Product</th>
+              <th style={{ width: 200, minWidth: 200 }}>Stock</th>
+              <th style={{ width: 200, minWidth: 200 }}>Buy Price</th>
+              <th style={{ width: 200, minWidth: 200 }}>Sell Price</th>
+              <th style={{ width: 200, minWidth: 200 }}>New Total Cost</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -292,7 +300,7 @@ type SearchAbleTableRow = {
     stock_count: number;
   };
   productIndex: number;
-  form: UseFormReturnType<FormType>;
+  form: UseFormReturnType<InventoryFormType>;
 };
 const SearchAbleTableRow = ({
   updateTotalCost,
@@ -302,20 +310,18 @@ const SearchAbleTableRow = ({
   const { products, handleSearchInputChange, searchQuery } =
     useProductSearchByNameSkuId();
 
-  const filteredDataForSelect = useMemo(() => {
+  const selectProductsData = useMemo(() => {
     return products
-      .filter((item) => {
-        for (let i = 0; i < productIndex; i++) {
-          const invP = form.values.inventory_products[i];
-          if (invP.product_sku === item.sku) {
-            return false;
-          }
-        }
-        return true;
-      })
-      .map((p) => ({ label: p.name, value: p.sku }));
-  }, [products, form.values.inventory_products, productIndex]);
+      ? products.map((p) => ({ label: p.name || "", value: p.sku || "" }))
+      : [];
+  }, [products]);
 
+  const formSku = form.values.inventory_products[productIndex].product_sku;
+  const selectedProduct = useMemo(() => {
+    return products.find((product) => product?.sku === formSku);
+  }, [products, formSku]);
+
+  const productFrom = form.values.inventory_products[productIndex];
   return (
     <tr>
       <td>
@@ -325,87 +331,116 @@ const SearchAbleTableRow = ({
           )}
           nothingFound="No products"
           placeholder="Type sku,name,or id to search product"
-          searchable
           searchValue={searchQuery}
           onSearchChange={handleSearchInputChange}
-          data={filteredDataForSelect}
-          filter={(searchValue, item) => {
-            console.log({ searchValue, item });
-
-            return true;
-          }}
+          data={selectProductsData}
         ></Select>
       </td>
       <td>
-        <NumberInput
-          min={1}
-          {...form.getInputProps(
-            `inventory_products.${productIndex}.stock_count`
-          )}
-          onChange={(evt) => {
-            form.setFieldValue(
-              `inventory_products.${productIndex}.stock_count`,
-              evt ? evt : 0
-            );
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            alignItems: "center",
+            gap: 5,
           }}
-          onInput={(evt) => {
-            updateTotalCost({
-              idx: productIndex,
-              count: Number(
-                evt.currentTarget.valueAsNumber
-                  ? evt.currentTarget.valueAsNumber
-                  : 0
-              ),
-            });
-          }}
-        ></NumberInput>
+        >
+          <Text>Current :</Text> <Text>{selectedProduct?.stock_count}</Text>
+          <Text>New :</Text>{" "}
+          <NumberInput
+            min={1}
+            {...form.getInputProps(
+              `inventory_products.${productIndex}.stock_count`
+            )}
+            onChange={(evt) => {
+              form.setFieldValue(
+                `inventory_products.${productIndex}.stock_count`,
+                evt ? evt : 0
+              );
+            }}
+            onInput={(evt) => {
+              updateTotalCost({
+                idx: productIndex,
+                count: Number(
+                  evt.currentTarget.valueAsNumber
+                    ? evt.currentTarget.valueAsNumber
+                    : 0
+                ),
+              });
+            }}
+          />
+        </Box>
       </td>
       <td>
-        <NumberInput
-          precision={2}
-          step={0.01}
-          min={0}
-          placeholder="Update if needed"
-          {...form.getInputProps(
-            `inventory_products.${productIndex}.new_selling_price`
-          )}
-          onChange={(evt) => {
-            form.setFieldValue(
-              `inventory_products.${productIndex}.new_selling_price`,
-              evt ? evt : 0
-            );
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            alignItems: "center",
+            gap: 5,
           }}
-        ></NumberInput>
+        >
+          <Text>Current :</Text>{" "}
+          <Text>{selectedProduct?.price?.buying_price}৳</Text>
+          <Text>New :</Text>{" "}
+          <NumberInput
+            precision={2}
+            step={0.01}
+            placeholder="Update if needed"
+            min={0}
+            {...form.getInputProps(
+              `inventory_products.${productIndex}.new_buying_price`
+            )}
+            onChange={(evt) => {
+              form.setFieldValue(
+                `inventory_products.${productIndex}.new_buying_price`,
+                evt ? evt : 0
+              );
+            }}
+            onInput={(evt) => {
+              updateTotalCost({
+                idx: productIndex,
+                buyingPrice: Number(
+                  evt.currentTarget.valueAsNumber
+                    ? evt.currentTarget.valueAsNumber
+                    : 0
+                ),
+              });
+            }}
+          />
+        </Box>
       </td>
       <td>
-        <NumberInput
-          precision={2}
-          step={0.01}
-          placeholder="Update if needed"
-          min={0}
-          {...form.getInputProps(
-            `inventory_products.${productIndex}.new_buying_price`
-          )}
-          onChange={(evt) => {
-            form.setFieldValue(
-              `inventory_products.${productIndex}.new_buying_price`,
-              evt ? evt : 0
-            );
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            alignItems: "center",
+            gap: 5,
           }}
-          onInput={(evt) => {
-            updateTotalCost({
-              idx: productIndex,
-              buyingPrice: Number(
-                evt.currentTarget.valueAsNumber
-                  ? evt.currentTarget.valueAsNumber
-                  : 0
-              ),
-            });
-          }}
-        ></NumberInput>
+        >
+          <Text>Current :</Text>{" "}
+          <Text>{selectedProduct?.price?.selling_price}৳</Text>
+          <Text>New :</Text>{" "}
+          <NumberInput
+            precision={2}
+            step={0.01}
+            min={0}
+            placeholder="Update if needed"
+            {...form.getInputProps(
+              `inventory_products.${productIndex}.new_selling_price`
+            )}
+            onChange={(evt) => {
+              form.setFieldValue(
+                `inventory_products.${productIndex}.new_selling_price`,
+                evt ? evt : 0
+              );
+            }}
+          />
+        </Box>
       </td>
       <td>
-        <NumberInput
+        {/* <NumberInput
           precision={2}
           step={0.01}
           placeholder="Update if needed"
@@ -425,7 +460,10 @@ const SearchAbleTableRow = ({
               totalCost: Number(evt.currentTarget.valueAsNumber),
             });
           }}
-        ></NumberInput>
+        ></NumberInput> */}
+        <Box sx={{ textAlign: "center" }}>
+          {productFrom.stock_count * productFrom.new_buying_price}
+        </Box>
       </td>
       <td>
         <Button

@@ -1,7 +1,7 @@
+import { logout } from "@/hooks/auth";
 import axiosClient from "@/lib/axios";
 import { User } from "@/types/defaultTypes";
-import { AxiosError, AxiosResponse } from "axios";
-import { redirect } from "react-router";
+import { notifications } from "@mantine/notifications";
 
 export const fetchUser = async () => {
   const user = await axiosClient.v1.api.get("user").then<User>((res) => {
@@ -10,6 +10,11 @@ export const fetchUser = async () => {
   if (user) {
     return user;
   } else {
-    throw new Error("No user was found");
+    logout();
+    notifications.show({
+      message: JSON.stringify("Session expired"),
+      color: "red",
+    });
+    return null;
   }
 };

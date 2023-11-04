@@ -35,12 +35,6 @@ const NavWrapper: CompWithChildren = ({ children }) => {
       })}
     >
       <ScrollWrapper>
-        {/* <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-          }}>
-        </Box> */}
         <Box
           p={"xs"}
           pr={0}
@@ -91,7 +85,7 @@ const BasicNavbarComp: CompWithChildren = ({ children }) => {
 
 const NavWrapper2: CompWithChildren = ({ children }) => {
   const { navHidden } = useAppSelector((s) => s.appConfig);
-  const theme = useMantineTheme();
+
   return (
     <Box
       component={motion.nav}
@@ -101,7 +95,7 @@ const NavWrapper2: CompWithChildren = ({ children }) => {
       animate={{
         width: navHidden ? 0 : 300,
       }}
-      sx={(theme) => ({
+      sx={() => ({
         width: 300,
         display: "flex",
         flexDirection: "column",
@@ -158,6 +152,7 @@ const BasicNavbarOrDrawer: CompWithChildren = ({ children }) => {
           p={0}
           opened={!navHidden}
           withCloseButton={false}
+          zIndex={9999}
           onClose={() => {
             dispatch(closeNavState());
           }}

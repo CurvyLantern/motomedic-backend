@@ -26,6 +26,7 @@ import { DescriptionEditor } from "./fields/DescriptionEditor";
 import VariantProducts from "./fields/VariantProducts";
 import { SelectColorField } from "../fields/color/MultiSelectColorField";
 import { TbPlus } from "react-icons/tb";
+import { invalidateProductFormQuery } from "@/queries/productFormQuery";
 const url = "products";
 
 const ProductFieldSimpleGrid: React.FC<{
@@ -122,13 +123,8 @@ const CreateProductForm = () => {
     for (const [k, v] of formData.entries()) {
       console.log(`${k} => ${v} ${typeof v}`);
     }
-    const state = true;
+    const state = false;
     if (state) return;
-
-    // const state = true;
-    // if (state) {
-    //   return;
-    // }
 
     try {
       const data = await axiosClient.v1.api
@@ -147,6 +143,8 @@ const CreateProductForm = () => {
         color: "red",
       });
       console.error(error);
+    } finally {
+      invalidateProductFormQuery();
     }
   };
   const [previousVariationsArr, setPreviousVariationsArr] = useState<
@@ -178,7 +176,6 @@ const CreateProductForm = () => {
     }
     return [];
   }, [form.values.brand_id, selectsProductModelMap]);
-
   return (
     <form onSubmit={form.onSubmit(onFormSubmit)}>
       <Grid m={0} justify="center" gutter={"sm"} grow>
@@ -335,7 +332,7 @@ const CreateProductForm = () => {
                   disabled={!form.values.variation_enabled}
                   onClick={() => {
                     form.insertListItem("variations", {
-                      name: "",
+                      // name: "",
                       color_id: "",
                       attribute_value_ids: [],
                       barcode: "",

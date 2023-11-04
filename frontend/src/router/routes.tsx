@@ -219,22 +219,21 @@ const routes: RouteObject[] = [
               };
             },
           },
-          {
-            path: "sellers",
-            // element: <SellersPage />,
-            lazy: async () => {
-              const Page = (await import("@/pages/inventory/SellersPage"))
-                .default;
-              return {
-                element: <Page />,
-              };
-            },
-          },
         ],
       },
       {
         path: "order",
         children: [
+          {
+            path: "new",
+            // element: <OrderPage />,
+            lazy: async () => {
+              const Page = (await import("@/pages/sales/NewOrderPage")).default;
+              return {
+                element: <Page />,
+              };
+            },
+          },
           {
             path: "all",
             // element: <OrderPage />,
@@ -260,14 +259,28 @@ const routes: RouteObject[] = [
       },
       {
         path: "service",
-        // element: <CreateServicePage />,
-        lazy: async () => {
-          const Page = (await import("@/pages/service/CreateServicePage"))
-            .default;
-          return {
-            element: <Page />,
-          };
-        },
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const Page = (await import("@/pages/service/CreateServicePage"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
+          },
+          {
+            path: "packages",
+            lazy: async () => {
+              const Page = (await import("@/pages/service/PackagePage"))
+                .default;
+              return {
+                element: <Page />,
+              };
+            },
+          },
+        ],
       },
       // {
       //   path: "billing",
@@ -278,6 +291,15 @@ const routes: RouteObject[] = [
       //     },
       //   ],
       // },
+      {
+        path: "vendors",
+        lazy: async () => {
+          const Page = (await import("@/pages/vendor/VendorPage")).default;
+          return {
+            element: <Page />,
+          };
+        },
+      },
       {
         path: "customers",
         // element: <CustomerPage />,

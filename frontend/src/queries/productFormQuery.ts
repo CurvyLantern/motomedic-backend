@@ -1,4 +1,5 @@
 import axiosClient from "@/lib/axios";
+import { qc } from "@/providers/QueryProvider";
 import {
   Brand,
   CategoryWithSubCateogry,
@@ -25,6 +26,10 @@ const useProductFormQuery = () => {
   });
 
   return queryResponse.data;
+};
+
+export const invalidateProductFormQuery = () => {
+  qc.invalidateQueries(["products/createInfos"]);
 };
 
 export default useProductFormQuery;

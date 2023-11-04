@@ -64,6 +64,7 @@ const AttributePage = () => {
       invalidateAttributeQuery();
     } catch (error) {
       notifications.show({
+        // @ts-expect-error stupid error
         message: JSON.stringify(error.data.message),
         color: "red",
       });
@@ -83,6 +84,7 @@ const AttributePage = () => {
       invalidateAttributeQuery();
     } catch (error) {
       notifications.show({
+        // @ts-expect-error stupid error
         message: error.data.message,
         color: "red",
       });
@@ -143,6 +145,7 @@ const AttributePage = () => {
           });
         } catch (error) {
           notifications.show({
+            // @ts-expect-error stupid error
             message: JSON.stringify(error.data.message),
             color: "red",
           });
@@ -178,11 +181,10 @@ const AttributePage = () => {
       console.error(error);
     }
   };
-  console.log(attrs, "attrs from fetch");
   return (
-    <>
-      <Grid>
-        <Grid.Col span={7}>
+    <BasicSection>
+      <Grid h={"100%"}>
+        <Grid.Col span={12} lg={7}>
           <BasicSection title="All Attributes">
             <Table withBorder withColumnBorders>
               <thead>
@@ -235,7 +237,7 @@ const AttributePage = () => {
             </Table>
           </BasicSection>
         </Grid.Col>
-        <Grid.Col span={5}>
+        <Grid.Col span={12} lg={5}>
           <BasicSection title={"Create Attribute"}>
             <CreateAttributeForm
               onAttributeValueDelete={(id: number | string, index: number) => {
@@ -263,7 +265,7 @@ const AttributePage = () => {
           </BasicSection>
         </Grid.Col>
       </Grid>
-    </>
+    </BasicSection>
   );
 };
 const CreateAttributeForm = ({

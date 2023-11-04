@@ -41,10 +41,19 @@ import { useBrandQuery } from "@/queries/brandQuery";
 import { TbCactus } from "react-icons/tb";
 import { useCustomInputStyles } from "./customInput.styles";
 import ScrollWrapper2 from "@/components/scrollWrapper/ScrollWrapper2";
+import { useCategorySelectData } from "@/utils/selectFieldsData";
+import { invalidateProductAllQuery } from "@/queries/productQuery";
 
 const getPercentage = (prcnt: number, outOf: number) => outOf * (prcnt / 100);
 
 type FlatOrPercent = "flat" | "percent";
+type CartProduct = Product & {
+  product_id: IdField | null;
+  product_variation_id: IdField | null;
+  service_id: IdField | null;
+  cartProductCount: number;
+  stock_count: number;
+};
 
 type PosProductsComp = {
   searchLoading: boolean;
@@ -57,16 +66,8 @@ type PosProductsComp = {
     handlePageChange: (newPage: number) => void;
     handlePageSizeChange: (newPageSize: number) => void;
   };
-  cartProducts: Product[];
-  setCartProducts: React.Dispatch<
-    React.SetStateAction<
-      (Product & {
-        id: IdField;
-        cartProductCount: number;
-        stock_count: number;
-      })[]
-    >
-  >;
+  cartProducts: CartProduct[];
+  setCartProducts: React.Dispatch<React.SetStateAction<CartProduct[]>>;
   removeFromCart: (sku: string) => void;
 };
 const PosProductsComp = ({
@@ -78,12 +79,14 @@ const PosProductsComp = ({
 }: PosProductsComp) => {
   const theme = useMantineTheme();
   const posProducts = products ? products.paginatedProducts : [];
+
   if (
     products &&
     posProducts &&
     Array.isArray(posProducts) &&
     posProducts.length > 0
   ) {
+    console.log(posProducts, "posProducts");
     return (
       <Stack h={"100%"}>
         <Box
@@ -99,7 +102,7 @@ const PosProductsComp = ({
               (cp) => cp.sku === product.sku
             );
 
-            const maxNameLen = 12;
+            const maxNameLen = Infinity;
             const formattedProductName =
               typeof product.name === "string"
                 ? product.name.length > maxNameLen
@@ -157,7 +160,7 @@ const PosProductsComp = ({
                   h={40}
                   src={"#"}
                 ></Image>
-                <Text weight={500} fz={"sm"} align="center">
+                <Text weight={500} fz={"xs"} align="center">
                   {formattedProductName}
                 </Text>
 
@@ -169,7 +172,7 @@ const PosProductsComp = ({
                   position="apart"
                 >
                   {/* <Text>Unit : {product.stock_count}</Text> */}
-                  <Text>Price : {product.price} ৳</Text>
+                  <Text>Price : {product.price?.selling_price ?? 0} ৳</Text>
                 </Group>
                 {productInCart ? (
                   <Button
@@ -229,20 +232,8 @@ const PosProductsComp = ({
 };
 
 type Cart = {
-  cartProducts: (Product & {
-    id: IdField;
-    cartProductCount: number;
-    stock_count: number;
-  })[];
-  setCartProducts: React.Dispatch<
-    React.SetStateAction<
-      (Product & {
-        id: IdField;
-        cartProductCount: number;
-        stock_count: number;
-      })[]
-    >
-  >;
+  cartProducts: CartProduct[];
+  setCartProducts: React.Dispatch<React.SetStateAction<CartProduct[]>>;
   removeFromCart: (sku: string) => void;
 };
 const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
@@ -257,7 +248,7 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
   const [cartTaxInput, setCartTaxInput] = useState(0);
 
   const cartSubTotal = cartProducts.reduce((sum, item) => {
-    sum += Number(item.price) * Number(item.cartProductCount);
+    sum += Number(item.price.selling_price) * Number(item.cartProductCount);
     return sum;
   }, 0);
   const cartDiscount =
@@ -276,6 +267,7 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
       if (!selectedCustomer) {
         throw new Error("Please select a customer first");
       }
+
       const submitData = {
         customer_id: selectedCustomer.id,
         total: cartTotal,
@@ -284,16 +276,33 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
         note: "Note",
         status: "unpaid",
         type: "product",
-        items: cartProducts.map((cartProduct) => ({
-          id: cartProduct.id,
-          sku: cartProduct.sku,
-          quantity: cartProduct.cartProductCount,
-          total_price:
-            Number(cartProduct.price) * Number(cartProduct.cartProductCount),
-          unit_price: Number(cartProduct.price),
-        })),
+        items: cartProducts.map((cartProduct) => {
+          let product_id: string | null = null;
+          let product_variation_id: string | null = null;
+          const service_id: string | null = null;
+          if (cartProduct.type === "product") {
+            product_id = cartProduct.id;
+          } else {
+            product_id = cartProduct.product_id;
+            product_variation_id = cartProduct.id;
+          }
+          return {
+            product_id,
+            product_variation_id,
+            service_id,
+            sku: cartProduct.sku,
+            quantity: cartProduct.cartProductCount,
+            total_price:
+              Number(cartProduct.price.selling_price) *
+              Number(cartProduct.cartProductCount),
+            unit_price: Number(cartProduct.price.selling_price),
+          };
+        }),
       };
-      console.log(submitData, " submit Data ");
+      console.log(submitData, cartProducts, " cart submit Data ");
+
+      const state = false;
+      if (state) return;
 
       const serverData = await axiosClient.v1.api
         .post("orders", submitData)
@@ -313,6 +322,8 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
         autoClose: 1500,
       });
       console.error(error);
+    } finally {
+      invalidateProductAllQuery();
     }
   };
 
@@ -324,7 +335,8 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
         {cartProducts.map((cartProduct) => {
           const max = cartProduct.stock_count;
           const cartPrice =
-            Number(cartProduct.price) * cartProduct.cartProductCount;
+            Number(cartProduct.price.selling_price) *
+            cartProduct.cartProductCount;
           const cartProductName =
             typeof cartProduct.name === "string"
               ? cartProduct.name.substring(0, 12)
@@ -365,7 +377,7 @@ const Cart = ({ cartProducts, setCartProducts, removeFromCart }: Cart) => {
                 <Stack spacing={2} fw={"500"}>
                   <Text mr={"auto"}>{cartProductName}</Text>
                   <Text fz={10} mr={"auto"}>
-                    Unit Price : {cartProduct.price}
+                    Unit Price : {cartProduct.price?.selling_price ?? 0}
                   </Text>
                 </Stack>
                 {/*
@@ -668,33 +680,14 @@ const CartNumberInput = ({
 };
 
 const PosPage = () => {
-  const categories = useCategoryQuery();
+  const categoryForSelectInput = useCategorySelectData();
   const brands = useBrandQuery();
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [selectedBrandId, setSelectedBrandId] = useState("");
 
   const { products, handleSearchInputChange, searchQuery, searchLoading } =
     useProductSearch(selectedCategoryId, selectedBrandId);
-  const categoriesIsArr = Array.isArray(categories) && categories.length > 0;
 
-  const categoryForSelectInput = useMemo(() => {
-    return categoriesIsArr
-      ? categories
-          .map((cat) => {
-            return [
-              {
-                label: cat.name,
-                value: String(cat.id),
-              },
-              ...cat.sub_categories.map((subC) => ({
-                label: subC.name,
-                value: String(subC.id),
-              })),
-            ];
-          })
-          .flat(1)
-      : [];
-  }, [categories, categoriesIsArr]);
   const brandsForSelectInput = useMemo(() => {
     return brands && Array.isArray(brands.data) && brands.data.length > 0
       ? brands.data.map((brand) => ({
@@ -705,11 +698,7 @@ const PosPage = () => {
       : [];
   }, [brands]);
 
-  const [cartProducts, setCartProducts] = useState<
-    Array<
-      Product & { id: IdField; cartProductCount: number; stock_count: number }
-    >
-  >([]);
+  const [cartProducts, setCartProducts] = useState<Array<CartProduct>>([]);
   useEffect(() => {
     console.log(products, "products");
   }, [products]);
@@ -723,11 +712,12 @@ const PosPage = () => {
   };
   return (
     <WithCustomerLayout>
-      <Grid h={"100%"} m={0} gutter={"xs"}>
-        <Grid.Col span={12} sm={"auto"} h={"100%"}>
-          <Stack h={"100%"} spacing={"xs"}>
-            {/* Product choose option */}
-            <BasicSection p={"5px"} h={"auto"}>
+      <BasicSection sx={{ padding: 0 }}>
+        <Grid h={"100%"} m={0} gutter={"xs"}>
+          <Grid.Col span={12} lg={8} h={"100%"}>
+            <Stack h={"100%"} spacing={"xs"}>
+              {/* Product choose option */}
+
               <Grid gutter={"5px"} m={0}>
                 <Grid.Col span={12} xs={4} md={6}>
                   <TextInput
@@ -790,33 +780,32 @@ const PosPage = () => {
                   <SelectCustomerButton />
                 </Grid.Col>
               </Grid>
-            </BasicSection>
-
-            <BasicSection>
-              <ScrollWrapper2>
-                <PosProductsComp
-                  searchLoading={searchLoading}
-                  products={products}
-                  removeFromCart={removeFromCart}
-                  setCartProducts={setCartProducts}
-                  cartProducts={cartProducts}
-                />
-              </ScrollWrapper2>
-            </BasicSection>
-          </Stack>
-        </Grid.Col>
-        {/* <MediaQuery smallerThan={"md"} styles={{ display: "none" }}> */}
-        <Grid.Col span={12} sm={"content"} h={"100%"}>
-          <Box miw={"max(30vw,300px)"} h={"100%"}>
-            <Cart
-              cartProducts={cartProducts}
-              setCartProducts={setCartProducts}
-              removeFromCart={removeFromCart}
-            />
-          </Box>
-        </Grid.Col>
-        {/* </MediaQuery> */}
-      </Grid>
+              <Box sx={{ flex: 1 }}>
+                <ScrollWrapper2>
+                  <PosProductsComp
+                    searchLoading={searchLoading}
+                    products={products}
+                    removeFromCart={removeFromCart}
+                    setCartProducts={setCartProducts}
+                    cartProducts={cartProducts}
+                  />
+                </ScrollWrapper2>
+              </Box>
+            </Stack>
+          </Grid.Col>
+          {/* <MediaQuery smallerThan={"md"} styles={{ display: "none" }}> */}
+          <Grid.Col span={12} lg={4} h={"100%"}>
+            <Box h={"100%"}>
+              <Cart
+                cartProducts={cartProducts}
+                setCartProducts={setCartProducts}
+                removeFromCart={removeFromCart}
+              />
+            </Box>
+          </Grid.Col>
+          {/* </MediaQuery> */}
+        </Grid>
+      </BasicSection>
     </WithCustomerLayout>
   );
 };

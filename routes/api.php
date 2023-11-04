@@ -21,6 +21,7 @@ use App\Http\Controllers\ProductModelController;
 use App\Http\Controllers\ProductVariationController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ServiceTypeController;
+use App\Http\Controllers\VendorController;
 use App\Http\Resources\UserResource;
 use App\Models\ProductModel;
 use PhpParser\Node\Scalar\MagicConst\Dir;
@@ -69,7 +70,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
     Route::apiResource('mechanics', MechanicController::class);
-    Route::apiResource('sellers', SellerController::class);
+    Route::apiResource('vendors', VendorController::class);
 
     Route::apiResource('services', ServiceController::class);
     Route::apiResource('serviceTypes', ServiceTypeController::class);

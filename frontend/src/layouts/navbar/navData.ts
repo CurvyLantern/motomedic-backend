@@ -25,9 +25,20 @@ export const navData = [
     href: "/pos",
   },
   {
+    label: "Service Center",
+    icon: MdPayment,
+    href: "/service",
+  },
+  {
     label: "Service Management",
     icon: TbSettingsAutomation,
-    href: "/service",
+    childLinks: [
+      {
+        href: getNavUrl("service", "packages"),
+        label: "Add Services",
+        icon: TbShoppingBag,
+      },
+    ],
   },
   {
     label: "Product Management",
@@ -76,6 +87,11 @@ export const navData = [
     icon: TbCash,
     childLinks: [
       {
+        href: getNavUrl("order", "new"),
+        label: "New orders",
+        icon: TbShoppingBag,
+      },
+      {
         href: getNavUrl("order", "all"),
         label: "All orders",
         icon: TbShoppingBag,
@@ -100,11 +116,6 @@ export const navData = [
       {
         href: getNavUrl("inventory", "add"),
         label: "Add to Inventory",
-        icon: TbCardboards,
-      },
-      {
-        href: getNavUrl("inventory", "sellers"),
-        label: "Product Sellers",
         icon: TbCardboards,
       },
     ],
@@ -138,6 +149,17 @@ export const navData = [
   //     },
   //   ],
   // },
+  {
+    label: "Vendor Management",
+    icon: TbUser,
+    childLinks: [
+      {
+        label: "Vendors",
+        href: "/vendors",
+        icon: TbUser,
+      },
+    ],
+  },
   {
     label: "Customers Management",
     icon: TbUser,

@@ -11,7 +11,7 @@ class ServiceType extends Model
   use HasFactory;
   protected $fillable = [
     'name',
-
+    'description',
     'price',
   ];
 }

@@ -13,6 +13,7 @@ class OrderItem extends Model
     'order_id',
     'type',
     'product_id',
+    'variation_id',
     'service_id',
     'quantity',
     'total_price',
@@ -29,6 +30,10 @@ class OrderItem extends Model
   public function product()
   {
     return $this->belongsTo(Product::class, 'product_id', 'id');
+  }
+  public function productVariation()
+  {
+    return $this->belongsTo(ProductVariation::class, 'variation_id', 'id');
   }
 
   public function service()

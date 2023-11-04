@@ -47,21 +47,23 @@ export type FormValue = {
 };
 const CategoryPage = () => {
   return (
-    <Container>
-      <Tabs defaultValue="view">
-        <Tabs.List>
-          <Tabs.Tab value="view">View Categories</Tabs.Tab>
-          <Tabs.Tab value="create">Create Category</Tabs.Tab>
-        </Tabs.List>
+    <BasicSection>
+      <Container>
+        <Tabs defaultValue="view">
+          <Tabs.List grow position="center">
+            <Tabs.Tab value="view">View Categories</Tabs.Tab>
+            <Tabs.Tab value="create">Create Category</Tabs.Tab>
+          </Tabs.List>
 
-        <Tabs.Panel value="view">
-          <ViewCategories />
-        </Tabs.Panel>
-        <Tabs.Panel value="create">
-          <CreateCategoryForm />
-        </Tabs.Panel>
-      </Tabs>
-    </Container>
+          <Tabs.Panel value="view">
+            <ViewCategories />
+          </Tabs.Panel>
+          <Tabs.Panel value="create">
+            <CreateCategoryForm />
+          </Tabs.Panel>
+        </Tabs>
+      </Container>
+    </BasicSection>
   );
 };
 

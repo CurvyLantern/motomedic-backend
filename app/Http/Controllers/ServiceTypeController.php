@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ServiceType;
 use App\Http\Requests\StoreServiceTypeRequest;
 use App\Http\Requests\UpdateServiceTypeRequest;
+use App\Http\Resources\ServiceTypeResource;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -15,49 +16,40 @@ class ServiceTypeController extends Controller
    */
   public function index()
   {
-    try {
-      $serviceTypes = ServiceType::all();
-      return response()->json($serviceTypes, 200);
-    } catch (Exception $e) {
-      return response()->json('Failed to fetch service types', 500);
-    }
+    $serviceTypes = ServiceType::all();
+    return ServiceTypeResource::collection($serviceTypes);
   }
 
   /**
    * Store a newly created resource in storage.
    */
-  public function store(Request $request)
+  public function store(StoreServiceTypeRequest $request)
   {
-    $validated = $request->validate([
-      'name' => 'required|string',
-      'price' => 'required|numeric',
-    ]);
+    $validated = $request->validated();
 
-    try {
-      $serviceType = ServiceType::create([
-        'name' => $validated['name'],
-        'price' => $validated['price'],
-      ]);
+    $serviceType = ServiceType::create($validated);
 
-      return response()->json($serviceType, 200);
-    } catch (Exception $e) {
-      return response()->json('Failed to create service type', 500);
-    }
+    return new ServiceTypeResource($serviceType);
   }
   /**
    * Display the specified resource.
    */
   public function show(ServiceType $serviceType)
   {
-    //
+    return new ServiceTypeResource($serviceType);
   }
 
   /**
    * Update the specified resource in storage.
    */
-  public function update(UpdateServiceTypeRequest $request, ServiceType $serviceType)
+  public function update(UpdateServiceTypeRequest $request, String $id)
   {
-    //
+    $validated = $request->validated();
+    $serviceType = ServiceType::findOrFail($id);
+    $serviceType->fill($validated);
+    $serviceType->save();
+    return response()->json(compact('validated'));
+    return new ServiceTypeResource($serviceType);
   }
 
   /**
@@ -65,6 +57,7 @@ class ServiceTypeController extends Controller
    */
   public function destroy(ServiceType $serviceType)
   {
-    //
+    $serviceType->delete();
+    return response()->noContent();
   }
 }

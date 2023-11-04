@@ -137,7 +137,6 @@ class OrderController extends Controller
     $validatedData = $request->validated();
     // Begin a database transaction
 
-    // return response()->json($validatedData);
     DB::beginTransaction();
 
     try {
@@ -151,25 +150,16 @@ class OrderController extends Controller
         'status' => $validatedData["status"],
       ]);
 
+
       // temp test 1
 
       // Calculate the total for the order
       // $totalOrderPrice = 0;
 
+
+
       foreach ($validatedData['items'] as $itemData) {
         // $totalOrderPrice += $itemData['total_price'];
-
-        // Create the order item
-        OrderItem::create([
-          'order_id' => $order->id,
-          'product_id' => ($validatedData['type'] === 'product') ? $itemData['id'] : null,
-          'service_id' => ($validatedData['type'] === 'service') ? $itemData['id'] : null,
-          'quantity' => $itemData['quantity'],
-          'total_price' => $itemData['total_price'],
-          'unit_price' => $itemData['unit_price'],
-          'type' => $validatedData['type']
-        ]);
-
 
         // update inventory
         if ($validatedData['type'] === 'product') {
@@ -192,7 +182,27 @@ class OrderController extends Controller
             return response()->json(['message' => 'Insufficient stock for the product'], 400);
           }
         }
+
+        // Create the order item
+        $orderItem = OrderItem::create([
+          'order_id' => $order->id,
+          'product_id' => ($validatedData['type'] === 'product') ? $itemData['product_id'] : null,
+          'variation_id' => ($validatedData['type'] === 'product') ? $itemData['product_variation_id'] : null,
+          'service_id' => ($validatedData['type'] === 'service') ? $itemData['service_id'] : null,
+          'quantity' => $itemData['quantity'],
+          'total_price' => $itemData['total_price'],
+          'unit_price' => $itemData['unit_price'],
+          'type' => $validatedData['type']
+        ]);
       }
+
+      // DB::rollBack();
+      // return response()->json(compact('order', 'validatedData'));
+
+
+
+
+
 
 
 

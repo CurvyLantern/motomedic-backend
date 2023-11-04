@@ -77,7 +77,7 @@ export const CreateInvoiceForm: React.FC<CreateInvoiceFormType> = () => {
           .min(1, { message: "invoice id can not be empty" }),
         invoice_seller_id: z
           .string()
-          .min(1, { message: "seller id can not be empty" }),
+          .min(1, { message: "vendor id can not be empty" }),
       })
     ),
   });
@@ -127,7 +127,7 @@ export const CreateInvoiceForm: React.FC<CreateInvoiceFormType> = () => {
           <BaseInputs
             field={{
               type: "text",
-              label: "Seller Id",
+              label: "Vendor Id",
               name: "invoice_seller_id",
             }}
             form={form}

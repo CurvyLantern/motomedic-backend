@@ -23,10 +23,10 @@ class StoreInventoryRequest extends FormRequest
   {
     return [
       'type' => 'required|in:buying,selling',
-      'inventory_seller_id' => 'required',
+      'inventory_vendor_id' => 'required',
       'inventory_total_cost' => 'required',
       'inventory_total_due' => 'required',
-      'inventory_products' => 'required',
+      'inventory_products' => 'required|array',
     ];
   }
 }

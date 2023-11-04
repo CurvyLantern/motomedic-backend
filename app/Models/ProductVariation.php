@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ProductVariation extends Model
 {
@@ -13,11 +14,22 @@ class ProductVariation extends Model
   protected $fillable = [
     'product_id',
     'color_id',
+    'model_id',
     'image',
-    'price',
     'sku',
-    'name'
+    'barcode'
   ];
+
+
+  public function productModel(): BelongsTo
+  {
+    return $this->belongsTo(ProductModel::class, 'model_id');
+  }
+
+  public function price()
+  {
+    return $this->hasOne(Price::class, 'sku', 'sku')->latest();
+  }
 
   public function inventory()
   {

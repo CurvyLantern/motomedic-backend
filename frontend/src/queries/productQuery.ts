@@ -4,11 +4,12 @@ import { Product } from "@/types/defaultTypes";
 import { notifications } from "@mantine/notifications";
 
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 const getPaginatedUrl = (page: number, perPage: number) =>
   `products/all?page=${page}&perPage=${perPage}`;
 
 export const useProductAllQuery = () => {
-  const { data: products } = useQuery<Array<Product>>({
+  const { data: products } = useQuery<{ data?: Array<Product> }>({
     queryKey: ["products/all"],
     queryFn: () => {
       return axiosClient.v1.api.get("products/all").then((res) => {
@@ -19,8 +20,41 @@ export const useProductAllQuery = () => {
     refetchOnMount: true,
     staleTime: 2000,
   });
-
   return products;
+};
+
+export const useFlatProducts = () => {
+  const products = useProductAllQuery();
+
+  const flatProducts = useMemo(() => {
+    if (!products || !products.data) return [];
+    const _temp: Partial<Product>[] = [];
+    for (const product of products.data) {
+      if (product.variation_product) {
+        for (const variation of product.variations) {
+          const vp = {
+            ...variation,
+            name: [
+              product.name,
+              variation.product_model.name,
+              variation.color.name,
+              ...variation.attribute_values.map((v) => v.name),
+            ].join("-"),
+            brand: product.brand,
+            category: product.category,
+            type: "variation" as const,
+          };
+          _temp.push(vp);
+        }
+      } else {
+        product.type = "product";
+        _temp.push(product);
+      }
+    }
+    return _temp;
+  }, [products]);
+
+  return flatProducts;
 };
 
 export const invalidateProductAllQuery = () => {
@@ -42,6 +76,7 @@ export const deleteProduct = async (
     onSuccess();
   } catch (error) {
     notifications.show({
+      // @ts-expect-error stupidity
       message: JSON.stringify(error.data.message),
       color: "red",
     });

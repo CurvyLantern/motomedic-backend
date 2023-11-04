@@ -151,7 +151,7 @@ const Invoice1 = forwardRef(({ order, amountInWords, ...props }, ref) => {
               rowArray={[
                 { content: format(new Date(), "MM/dd/yyyy"), title: "Date" },
                 { content: order.id, title: "Invoice ID" },
-                { content: "havetogetid", title: "Seller ID" },
+                { content: "havetogetid", title: "Vendor ID" },
                 { content: "Cash", title: "Payment Method" },
               ]}
             />

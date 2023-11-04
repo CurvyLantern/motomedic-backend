@@ -1,4 +1,12 @@
-import { Paper, Text, PaperProps, Box, Group } from "@mantine/core";
+import {
+  Paper,
+  Text,
+  PaperProps,
+  Box,
+  Group,
+  MantineTheme,
+  packSx,
+} from "@mantine/core";
 
 type BasicSectionType = PaperProps & {
   title?: string;
@@ -11,21 +19,28 @@ const BasicSection = ({
   children,
   headerLeftElement,
   headerRightElement,
+  sx,
   ...props
 }: BasicSectionType) => {
   return (
     <Paper
       withBorder
-      shadow="sm"
+      shadow="xs"
       radius="md"
-      sx={(theme) => ({
-        backgroundColor: theme.other.colors.card.background,
-        color: theme.other.colors.card.foreground,
-        height: "100%",
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-      })}
+      mx={"auto"}
+      sx={[
+        (theme) => ({
+          backgroundColor: theme.other.colors.card.background,
+          color: theme.other.colors.card.foreground,
+          height: "100%",
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          maxWidth: 1920,
+          width: "100%",
+        }),
+        ...packSx(sx),
+      ]}
       {...props}
     >
       {headerLeftElement || headerRightElement || title ? (
@@ -37,15 +52,14 @@ const BasicSection = ({
             borderBottom: "1px solid",
             borderColor: theme.other.colors.primary.background,
           })}
-          px="md"
+          p="sm"
         >
           {headerLeftElement ? (
-            <Box ml={"auto"}>{headerLeftElement}</Box>
+            <Box mr={"auto"}>{headerLeftElement}</Box>
           ) : null}
           {title ? (
             <Text
               component="p"
-              py={"xs"}
               sx={(theme) => ({
                 fontWeight: 600,
                 fontSize: theme.fontSizes.lg,

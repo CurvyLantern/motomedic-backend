@@ -45,6 +45,7 @@ export const useAuth = () => {
 
 export const isAuthenticated = async () => {
   console.log("isAuthenticated is being called");
+
   const user =
     qc.getQueryData(userQuery.queryKey) ?? (await qc.fetchQuery(userQuery));
   return user;
@@ -106,10 +107,12 @@ export const login = async (
 export const logout = async () => {
   try {
     const res = await axiosClient.v1.web.post("auth/logout");
-    window.location.pathname = "/";
     return res;
   } catch (error) {
     console.error(error);
-    window.location.pathname = "/";
+  } finally {
+    if (window.location.pathname !== "/") {
+      window.location.pathname = "/";
+    }
   }
 };

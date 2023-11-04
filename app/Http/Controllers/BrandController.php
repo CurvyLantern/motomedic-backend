@@ -122,7 +122,6 @@ class BrandController extends Controller
       $brand->fill($validated);
       $brand->save();
 
-      $brand->save();
 
       return send_response('Brand update successfully', $brand);
     } catch (Exception $e) {

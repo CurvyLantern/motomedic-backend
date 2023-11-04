@@ -10,23 +10,11 @@ export default defineConfig({
       google: {
         preconnect: true,
         families: [
-          // or objects
           {
-            /**
-             * Family name (required)
-             */
             name: "Rubik",
 
-            /**
-             * Family styles
-             */
             styles: "ital,wght@0,400;0,500;0,600;0,900;1,400",
 
-            /**
-             * enable non-blocking renderer
-             *   <link rel="preload" href="xxx" as="style" onload="this.rel='stylesheet'">
-             * default: true
-             */
             defer: true,
           },
         ],

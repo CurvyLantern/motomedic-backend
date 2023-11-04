@@ -37,7 +37,7 @@ const DashboardPage = () => {
   return (
     <>
       <Stack spacing="xl">
-        <Tabs variant="outline" defaultValue="reports">
+        <Tabs defaultValue="reports">
           <Tabs.List>
             <Tabs.Tab value="reports" icon={<TbPhoto size="0.8rem" />}>
               Reports

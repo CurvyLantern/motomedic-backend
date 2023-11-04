@@ -33,7 +33,7 @@ import { TbArrowRight, TbSearch, TbTrash, TbArrowLeft } from "react-icons/tb";
 class Order {
   orderId: string;
   customer: string;
-  seller: string;
+  vendor: string;
   amount: number;
   deliveryStatus: string;
   paymentMethod: string;
@@ -42,7 +42,7 @@ class Order {
   constructor({
     orderId,
     customer,
-    seller,
+    vendor,
     amount,
     deliveryStatus,
     paymentMethod,
@@ -50,7 +50,7 @@ class Order {
   }: {
     orderId: string;
     customer: string;
-    seller: string;
+    vendor: string;
     amount: number;
     deliveryStatus: string;
     paymentMethod: string;
@@ -58,7 +58,7 @@ class Order {
   }) {
     this.orderId = orderId;
     this.customer = customer;
-    this.seller = seller;
+    this.vendor = vendor;
     this.amount = amount;
     this.deliveryStatus = deliveryStatus;
     this.paymentMethod = paymentMethod;
@@ -74,7 +74,7 @@ const _mock = Array.from({ length: 100 }, () => {
     deliveryStatus: faker.helpers.arrayElement(["pending", "delivered"]),
     paymentMethod: "Cash",
     paymentStatus: faker.helpers.arrayElement(["paid", "unpaid"]),
-    seller: faker.person.fullName(),
+    vendor: faker.person.fullName(),
   });
 });
 const CreateOrderPage = () => {

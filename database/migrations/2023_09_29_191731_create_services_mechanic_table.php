@@ -21,33 +21,19 @@ return new class extends Migration
       $table->enum('status', ['idle', 'busy', 'absent'])->default('idle');
       $table->timestamps();
     });
-
-
-    Schema::create('services', function (Blueprint $table) {
+    Schema::create('service_types', function (Blueprint $table) {
       $table->id();
       $table->string('name');
-      $table->string('slug')->nullable();
-      $table->string('type')->default('service');
-      $table->string('service_type')->nullable();
-      $table->string('job_number')->nullable();
+      $table->double('price', 10, 2)->default(0);
+      $table->string('description');
+      $table->timestamps();
+    });
 
-      $table->unsignedBigInteger('customer_id');
-      $table->foreign('customer_id')->references('id')->on('customers')->onUpdate('cascade');
-
-      $table->text('problem_details')->nullable();
-
-      $table->unsignedBigInteger('mechanic_id');
-      $table->foreign('mechanic_id')->references('id')->on('mechanics')->onUpdate('cascade');
-
-
-      $table->decimal('price');
-      $table->json('items')->nullable();
-      $table->string('elapsed_time');
-      $table->text('note')->nullable();
-      $table->enum('status', ['created', 'running', 'onhold', 'completed'])->default('created');
-
-
-
+    Schema::create('service_type_products', function (Blueprint $table) {
+      $table->id();
+      $table->string('product_sku');
+      $table->integer('quantity')->default(0);
+      $table->longText('description');
       $table->timestamps();
     });
   }
@@ -57,7 +43,8 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('services');
+    Schema::dropIfExists('service_type_products');
+    Schema::dropIfExists('service_types');
     Schema::dropIfExists('mechanics');
   }
 };

@@ -15,7 +15,7 @@ use App\Models\User;
 use App\Models\Color;
 use App\Models\Customer;
 use App\Models\Invoice;
-use App\Models\Seller;
+use App\Models\Vendor;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
     // Product::factory(200)->create();
     // Order::factory(10)->create();
 
-    Seller::factory(10)->create();
+    Vendor::factory(10)->create();
     // Service::factory(15)->create();
 
     // Invoice::factory(15)->create();

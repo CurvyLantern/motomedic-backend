@@ -12,17 +12,16 @@ export const useProductSelectData = () => {
     const selectsProductModelMap: Record<string, SelectItem[]> = {};
     if (allInfos?.categories) {
       allInfos.categories.forEach((cat) => {
+        selectCategoriesData.push({
+          label: cat.name,
+          value: cat.id.toString(),
+        });
         cat.sub_categories.forEach((subCat) => {
           selectCategoriesData.push({
             label: subCat.name,
             value: subCat.id.toString(),
             group: cat.name,
           });
-        });
-
-        selectCategoriesData.push({
-          label: cat.name,
-          value: cat.id.toString(),
         });
       });
     }

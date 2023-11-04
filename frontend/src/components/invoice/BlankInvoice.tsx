@@ -138,7 +138,7 @@ const BlankInvoice = forwardRef((props, ref) => {
               rowArray={[
                 { content: "", title: "Date" },
                 { content: "", title: "Invoice ID" },
-                { content: "", title: "Seller ID" },
+                { content: "", title: "Vendor ID" },
                 { content: "", title: "Payment Method" },
               ]}
             />

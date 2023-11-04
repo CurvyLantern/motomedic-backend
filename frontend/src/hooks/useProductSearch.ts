@@ -1,7 +1,7 @@
-import { useProductAllQuery } from "@/queries/productQuery";
+import { useFlatProducts, useProductAllQuery } from "@/queries/productQuery";
 import { Product } from "@/types/defaultTypes";
 import { useDebouncedState } from "@mantine/hooks";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 const paginateProducts = (
   initialProducts: Product[] | undefined,
@@ -60,7 +60,7 @@ export const useProductPagination = (
 };
 
 export const useProductSearchByNameSkuId = () => {
-  const productsAll = useProductAllQuery();
+  const productsAll = useFlatProducts();
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useDebouncedState(
     searchQuery,
@@ -73,7 +73,7 @@ export const useProductSearchByNameSkuId = () => {
 
   const searchedProducts = useMemo(() => {
     const isQueryInValid = debouncedSearchQuery.trim() === "";
-    if (!productsAll) return [];
+    if (!Array.isArray(productsAll)) return [];
 
     if (isQueryInValid) {
       // If the query is empty, return all products
@@ -82,10 +82,10 @@ export const useProductSearchByNameSkuId = () => {
       const filteredProductsBySearch = productsAll.filter((product) => {
         const matchesSearch =
           product.name
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(debouncedSearchQuery.toLowerCase()) ||
           product.sku
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(debouncedSearchQuery.toLowerCase()) ||
           product.barcode
             ?.toLowerCase()
@@ -98,60 +98,29 @@ export const useProductSearchByNameSkuId = () => {
     }
   }, [debouncedSearchQuery, productsAll]);
 
-  const handleSearchInputChange = (query: string = "") => {
+  const handleSearchInputChange = useCallback((query: string = "") => {
     setSearchQuery(query);
-  };
+  }, []);
   return {
     products: searchedProducts,
+    debouncedSearchQuery,
     searchQuery,
     handleSearchInputChange,
   };
 };
 
 export const useProductSearch = (categoryId = "", brandId = "") => {
-  const productsAll = useProductAllQuery();
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useDebouncedState(
+  const {
+    products: searchedProducts,
     searchQuery,
-    500
-  );
+    debouncedSearchQuery,
+    handleSearchInputChange,
+  } = useProductSearchByNameSkuId();
   const [searchLoading, setSearchLoading] = useState(false);
-
-  useEffect(() => {
-    setDebouncedSearchQuery(searchQuery);
-  }, [searchQuery, setDebouncedSearchQuery]);
 
   useEffect(() => {
     setSearchLoading(true);
   }, [debouncedSearchQuery]);
-
-  const searchedProducts = useMemo(() => {
-    const isQueryInValid = debouncedSearchQuery.trim() === "";
-    if (!productsAll) return [];
-
-    if (isQueryInValid) {
-      // If the query is empty, return all products
-      return productsAll;
-    } else {
-      const filteredProductsBySearch = productsAll.filter((product) => {
-        const matchesSearch =
-          product.name
-            .toLowerCase()
-            .includes(debouncedSearchQuery.toLowerCase()) ||
-          product.sku
-            .toLowerCase()
-            .includes(debouncedSearchQuery.toLowerCase()) ||
-          product.barcode
-            ?.toLowerCase()
-            .includes(debouncedSearchQuery.toLowerCase());
-
-        return matchesSearch;
-      });
-
-      return filteredProductsBySearch;
-    }
-  }, [debouncedSearchQuery, productsAll]);
 
   const productsByCategoryId = useMemo(() => {
     if (!categoryId) {
@@ -180,10 +149,6 @@ export const useProductSearch = (categoryId = "", brandId = "") => {
   }, [productsByBrandId]);
 
   const paginatedProducts = useProductPagination(productsByBrandId);
-
-  const handleSearchInputChange = (query: string = "") => {
-    setSearchQuery(query);
-  };
 
   useEffect(() => {
     console.log(paginatedProducts, "changing every time");
