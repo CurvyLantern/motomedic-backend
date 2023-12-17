@@ -85,21 +85,22 @@ const BasicNavbarComp: CompWithChildren = ({ children }) => {
 
 const NavWrapper2: CompWithChildren = ({ children }) => {
   const { navHidden } = useAppSelector((s) => s.appConfig);
-
+  const width = 250;
+  const minWidth = 230;
   return (
     <Box
       component={motion.nav}
       initial={{
-        width: 300,
+        width: width,
       }}
       animate={{
-        width: navHidden ? 0 : 300,
+        width: navHidden ? 0 : width,
       }}
       sx={() => ({
-        width: 300,
+        width: width,
         display: "flex",
         flexDirection: "column",
-        fontSize: 14,
+        fontSize: 12,
         overflowX: "hidden",
       })}
     >
@@ -107,7 +108,7 @@ const NavWrapper2: CompWithChildren = ({ children }) => {
         sx={(theme) => ({
           margin: theme.spacing.xs,
           marginRight: 0,
-          minWidth: 280,
+          minWidth: minWidth,
           position: "relative",
           height: "100%",
           borderRadius: theme.radius.md,
@@ -152,7 +153,7 @@ const BasicNavbarOrDrawer: CompWithChildren = ({ children }) => {
           p={0}
           opened={!navHidden}
           withCloseButton={false}
-          zIndex={9999}
+          zIndex={99999}
           onClose={() => {
             dispatch(closeNavState());
           }}

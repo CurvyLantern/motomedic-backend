@@ -1,0 +1,12 @@
+RewriteEngine On
+RewriteBase /
+
+# Allow access to the assets directory
+
+RewriteRule ^assets/ - [L]
+
+# Rewrite to index.html if the resource is not found
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]

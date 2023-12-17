@@ -10,12 +10,14 @@ type Mechanic = {
   status: string;
   address: string;
 };
-export const useMechanicQuery = () => {
+export const useMechanicQuery = (status?: "idle" | "busy") => {
   const { data: mechanics } = useQuery<{
     data?: Mechanic[];
   }>({
     queryFn: () => {
-      return axiosClient.v1.api.get("mechanics").then((res) => res.data);
+      return axiosClient.v1.api
+        .get(`mechanics?status=${status ? status : ""}`)
+        .then((res) => res.data);
     },
     queryKey: ["get/mechanics"],
   });

@@ -31,6 +31,9 @@ return new class extends Migration
 
     Schema::create('service_type_products', function (Blueprint $table) {
       $table->id();
+      $table->unsignedBigInteger('service_type_id');
+      $table->foreign('service_type_id')->references('id')->on('service_types')->cascadeOnUpdate()->cascadeOnDelete();
+
       $table->string('product_sku');
       $table->integer('quantity')->default(0);
       $table->longText('description');

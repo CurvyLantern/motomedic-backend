@@ -225,8 +225,18 @@ const routes: RouteObject[] = [
         path: "order",
         children: [
           {
+            path: ":id",
+            lazy: async () => {
+              const Page = (
+                await import("@/pages/service/ServiceOrderItemPage")
+              ).default;
+              return {
+                element: <Page />,
+              };
+            },
+          },
+          {
             path: "new",
-            // element: <OrderPage />,
             lazy: async () => {
               const Page = (await import("@/pages/sales/NewOrderPage")).default;
               return {
@@ -244,17 +254,16 @@ const routes: RouteObject[] = [
               };
             },
           },
-          {
-            path: "process",
-            // element: <CreateBillingPage />,
-            lazy: async () => {
-              const Page = (await import("@/pages/billing/CreateBillingPage"))
-                .default;
-              return {
-                element: <Page />,
-              };
-            },
-          },
+          // {
+          //   path: "process",
+          //   lazy: async () => {
+          //     const Page = (await import("@/pages/billing/CreateBillingPage"))
+          //       .default;
+          //     return {
+          //       element: <Page />,
+          //     };
+          //   },
+          // },
         ],
       },
       {
@@ -275,6 +284,17 @@ const routes: RouteObject[] = [
             lazy: async () => {
               const Page = (await import("@/pages/service/PackagePage"))
                 .default;
+              return {
+                element: <Page />,
+              };
+            },
+          },
+          {
+            path: "serviceOrder/:id",
+            lazy: async () => {
+              const Page = (
+                await import("@/pages/service/ServiceOrderItemPage")
+              ).default;
               return {
                 element: <Page />,
               };

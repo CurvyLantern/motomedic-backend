@@ -18,7 +18,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { Axios, AxiosError, AxiosResponse } from "axios";
+import axios, { Axios, AxiosError, AxiosResponse, isAxiosError } from "axios";
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -63,21 +63,24 @@ const LoginPage = () => {
       //     },
       // });
     } catch (error) {
-      const axiosErr = error as AxiosResponse;
-      if (axiosErr.status === 422) {
-        notifications.show({
-          message: "Invalid email or password",
-          color: "red",
-          autoClose: 4000,
-        });
-        form.setErrors({
-          email: "Invalid email or password",
-          password: "Invalid email or password",
-        });
-      } else {
-        const axiosError = error as AxiosError;
-        console.error(axiosError);
-        form.setErrors(axiosError.data.errors);
+      if (isAxiosError(error)) {
+        // const axiosErr = error as AxiosResponse;
+        if (error?.response?.status === 422) {
+          notifications.show({
+            message: "Invalid email or password",
+            color: "red",
+            autoClose: 4000,
+          });
+          form.setErrors({
+            email: "Invalid email or password",
+            password: "Invalid email or password",
+          });
+        } else {
+          notifications.show({
+            color: "red",
+            message: error.message,
+          });
+        }
       }
     } finally {
       setSubmitting(false);

@@ -12,9 +12,14 @@ export const useProductAllQuery = () => {
   const { data: products } = useQuery<{ data?: Array<Product> }>({
     queryKey: ["products/all"],
     queryFn: () => {
-      return axiosClient.v1.api.get("products/all").then((res) => {
-        return res.data;
+      const qs = new URLSearchParams({
+        stock: "in_stock",
       });
+      return axiosClient.v1.api
+        .get(`products/all?${qs.toString()}`)
+        .then((res) => {
+          return res.data;
+        });
     },
     refetchOnWindowFocus: false,
     refetchOnMount: true,
@@ -23,7 +28,8 @@ export const useProductAllQuery = () => {
   return products;
 };
 
-export const useFlatProducts = () => {
+export type TStockFilterArgs = "all" | "in_stock";
+export const useFlatProducts = (stock: TStockFilterArgs = "all") => {
   const products = useProductAllQuery();
 
   const flatProducts = useMemo(() => {
@@ -32,23 +38,36 @@ export const useFlatProducts = () => {
     for (const product of products.data) {
       if (product.variation_product) {
         for (const variation of product.variations) {
-          const vp = {
-            ...variation,
-            name: [
-              product.name,
-              variation.product_model.name,
-              variation.color.name,
-              ...variation.attribute_values.map((v) => v.name),
-            ].join("-"),
-            brand: product.brand,
-            category: product.category,
-            type: "variation" as const,
-          };
-          _temp.push(vp);
+          // const vp = {
+          //   ...variation,
+          //   // name: [
+          //   //   product.name,
+          //   //   variation.product_model.name,
+          //   //   variation.color.name,
+          //   //   ...variation.attribute_values.map((v) => v.name),
+          //   // ].join("-"),
+          //   // brand: product.brand,
+          //   // category: product.category,
+          //   // name: "nasim",
+          //   // type: "variation" as const,
+          // };
+          if (stock === "in_stock") {
+            if (variation.stock_count > 0) {
+              _temp.push(variation);
+            }
+          } else {
+            _temp.push(variation);
+          }
         }
       } else {
         product.type = "product";
-        _temp.push(product);
+        if (stock === "in_stock") {
+          if (product.stock_count > 0) {
+            _temp.push(product);
+          }
+        } else {
+          _temp.push(product);
+        }
       }
     }
     return _temp;

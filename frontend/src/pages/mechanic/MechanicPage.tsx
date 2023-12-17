@@ -33,7 +33,7 @@ const mechanicFormValidationSchema = z.object({
   name: z.string(),
   phone: z.string(),
   email: z.string(),
-  address: z.string(),
+  address: z.string().nullable(),
   status: z.string(),
 });
 
@@ -148,13 +148,16 @@ const MechanicPage = () => {
               {...form.getInputProps("email")}
             />
             <Textarea label="Address" {...form.getInputProps("address")} />
-            {/* <Select
-                {...form.getInputProps("status")}
-                data={[
-                  { label: "Idle", value: "idle" },
-                  { label: "Busy", value: "busy" },
-                ]}
-              /> */}
+            <Select
+              clearable={false}
+              searchable={false}
+              allowDeselect={false}
+              {...form.getInputProps("status")}
+              data={[
+                { label: "Idle", value: "idle" },
+                { label: "Busy", value: "busy" },
+              ]}
+            />
 
             <SimpleGrid cols={2}>
               <Button type="submit">Save</Button>

@@ -75,23 +75,33 @@ const validationSchema = z
   })
   .refine(
     (data) => {
-      if (!data.variation_enabled) {
-        return data.barcode.trim() !== "" && data.model_id.trim() !== "";
+      // if (!data.variation_enabled) {
+      //   return data.barcode.trim() !== "" && data.model_id.trim() !== "";
+      // }
+      // return data.barcode.trim() === "" && data.model_id.trim() === "";
+      if (data.variation_enabled) {
+        return data.barcode.trim() === "" && data.model_id.trim() === "";
       }
-      return data.barcode.trim() === "" && data.barcode.trim() === "";
+      return true;
     },
     (data) => {
-      if (data.variation_enabled) {
-        return {
-          message: "Variation products cannot have own barcode or model",
-          path: ["barcode", "model_id"],
-        };
-      } else {
-        return {
-          message: "Barcode or model is required for non variant products",
-          path: ["barcode", "model_id"],
-        };
-      }
+      return {
+        message: "Variation products cannot have own barcode or model",
+        path: ["barcode", "model_id"],
+      };
+      // if (data.variation_enabled) {
+
+      // } else {
+      //   return {};
+      // }
+      // else {
+      //   return {
+      //     // message: "Barcode or model is required for non variant products",
+      //     message: "Model is required for non variant products",
+      //     // path: ["barcode", "model_id"],
+      //     path: ["model_id"],
+      //   };
+      // }
     }
   );
 export type ProductFormValues = z.infer<typeof validationSchema>;
@@ -104,7 +114,7 @@ const CreateProductForm = () => {
       color_id: "",
       model_id: "",
       weight: 0,
-      status: "",
+      status: "1",
       barcode: "",
       warranty: 0,
       description: "Write a brief description about the product",
@@ -150,6 +160,10 @@ const CreateProductForm = () => {
   const [previousVariationsArr, setPreviousVariationsArr] = useState<
     typeof form.values.variations
   >([]);
+
+  useEffect(() => {
+    form.setFieldValue("model_id", "");
+  }, [form.values.brand_id]);
 
   useEffect(() => {
     if (!form.values.variation_enabled) {
@@ -258,12 +272,14 @@ const CreateProductForm = () => {
                 {...form.getInputProps("color_id")}
               />
               <Select
+                allowDeselect
+                clearable
                 disabled={form.values.variation_enabled}
                 dropdownPosition="bottom"
                 searchable
                 nothingFound="No product model found"
                 tabIndex={0}
-                withAsterisk
+                // withAsterisk
                 label="Product Model"
                 placeholder="Select a model for product"
                 {...form.getInputProps("model_id")}
@@ -275,7 +291,7 @@ const CreateProductForm = () => {
                 label="Weight in kg"
                 {...form.getInputProps("weight")}
               />
-              <Select
+              {/* <Select
                 tabIndex={0}
                 label="Status"
                 {...form.getInputProps("status")}
@@ -283,13 +299,13 @@ const CreateProductForm = () => {
                   { label: "active", value: "1" },
                   { label: "inactive", value: "0" },
                 ]}
-              />
+              /> */}
               <TextInput
                 disabled={form.values.variation_enabled}
                 tabIndex={0}
                 label="Barcode"
                 placeholder="Enter barcode"
-                withAsterisk={!form.values.variation_enabled}
+                // withAsterisk={!form.values.variation_enabled}
                 {...form.getInputProps("barcode")}
               />
               <NumberInput

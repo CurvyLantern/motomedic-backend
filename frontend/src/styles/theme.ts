@@ -103,16 +103,26 @@ const themeComponents: MantineThemeOverride = {
         }),
       },
     },
+    DatePickerInput: {
+      defaultProps: {
+        size: "xs",
+      },
+    },
     Input: {
+      defaultProps: { size: "xs" },
       styles: () => ({
         input: {
           fontWeight: 500,
         },
       }),
     },
+    TextInput: {
+      defaultProps: { size: "xs" },
+    },
     NumberInput: {
       defaultProps: {
         type: "number",
+        size: "xs",
       },
     },
     Select: {
@@ -121,6 +131,7 @@ const themeComponents: MantineThemeOverride = {
         clearable: true,
         allowDeselect: true,
         searchable: true,
+        size: "xs",
       },
       styles: (t) => ({
         item: {
@@ -140,6 +151,7 @@ const themeComponents: MantineThemeOverride = {
     MultiSelect: {
       defaultProps: {
         dropdownComponent: "div",
+        size: "xs",
       },
       styles: (t) => ({
         item: {

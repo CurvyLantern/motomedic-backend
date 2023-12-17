@@ -1,5 +1,6 @@
 import { SelectCustomerOrCreate } from "@/components/customer/SelectCustomerOrCreate";
 import { useAppDispatch, useAppSelector } from "@/hooks/storeConnectors";
+import { useCustomerUnpaidOrderQuery } from "@/queries/orderQuery";
 import {
   closeCustomerDrawer,
   toggleCustomerDrawer,
@@ -17,13 +18,7 @@ const WithCustomerLayout: CompWithChildren = ({ children }) => {
 
   const [ref, setRef] = useState<HTMLDivElement | null>(null);
   return (
-    <Box
-      ref={setRef}
-      sx={(theme) => ({
-        position: "relative",
-        height: "100%",
-      })}
-    >
+    <>
       <Drawer
         withCloseButton={false}
         styles={(theme) => ({
@@ -35,10 +30,12 @@ const WithCustomerLayout: CompWithChildren = ({ children }) => {
           content: {
             borderRadius: `${theme.other.radius.primary} !important`,
           },
-          body: { height: "100%" },
-          inner: { maxWidth: "800px", position: "absolute" },
+          inner: {
+            maxWidth: "800px",
+            paddingLeft: theme.spacing.xs,
+            paddingRight: theme.spacing.xs,
+          },
         })}
-        target={ref ?? undefined}
         keepMounted
         position="top"
         opened={customerDrawerOpened}
@@ -49,7 +46,7 @@ const WithCustomerLayout: CompWithChildren = ({ children }) => {
         <SelectCustomerOrCreate />
       </Drawer>
       {children}
-    </Box>
+    </>
   );
 };
 
@@ -67,6 +64,40 @@ export const SelectCustomerButton = () => {
     >
       Customer
     </Button>
+  );
+};
+
+export const SelectCustomerDetails = () => {
+  const selectedCustomer = useAppSelector((s) => s.customer.selectedCustomer);
+  return (
+    <Box p={5} sx={{ border: "1px solid black" }}>
+      {selectedCustomer && selectedCustomer?.id
+        ? `${selectedCustomer.name} ${selectedCustomer.phone} ${
+            selectedCustomer.bike_info ? selectedCustomer.bike_info : ""
+          }`
+        : "No customer is selected"}
+    </Box>
+  );
+};
+
+export const SelectCustomerPendingOrders = () => {
+  const selectedCustomer = useAppSelector((s) => s.customer.selectedCustomer);
+  const customerUnpaidOrders = useCustomerUnpaidOrderQuery();
+  return (
+    <>
+      {selectedCustomer?.id ? (
+        <Box
+          sx={(t) => ({
+            backgroundColor: t.colors.orange[4],
+            textAlign: "center",
+          })}
+        >
+          {selectedCustomer?.name} has{" "}
+          {customerUnpaidOrders ? customerUnpaidOrders.data.length : 0} pending
+          orders
+        </Box>
+      ) : null}
+    </>
   );
 };
 

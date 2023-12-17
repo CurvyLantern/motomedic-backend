@@ -22,11 +22,16 @@ class StoreInventoryRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'type' => 'required|in:buying,selling',
-      'inventory_vendor_id' => 'required',
-      'inventory_total_cost' => 'required',
-      'inventory_total_due' => 'required',
+      'inventory_vendor_id' => 'required|string',
+      'inventory_date' => 'required|date',
       'inventory_products' => 'required|array',
+      'inventory_products.*.inventory_updater_id' => 'required|string',
+      // 'inventory_products.*.inventory_vendor_id' => 'required|string',
+      'inventory_products.*.new_buying_price' => 'required|numeric',
+      'inventory_products.*.new_selling_price' => 'required|numeric',
+      'inventory_products.*.product_sku' => 'required|string',
+      'inventory_products.*.stock_count' => 'required|numeric',
+      'inventory_products.*.type' => 'required|in:store_in,store_out',
     ];
   }
 }

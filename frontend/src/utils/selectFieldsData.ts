@@ -7,13 +7,15 @@ import { useMemo } from "react";
 export const useColorSelectData = () => {
   const colors = useColorQuery();
   const selectColors = useMemo(() => {
-    return colors?.map((color) => {
-      return {
-        value: String(color.id),
-        label: color.name,
-        hexcode: color.hexcode,
-      };
-    });
+    return colors && Array.isArray(colors.data)
+      ? colors.data.map((color) => {
+          return {
+            value: String(color.id),
+            label: color.name,
+            hexcode: color.hexcode,
+          };
+        })
+      : [];
   }, [colors]);
 
   return selectColors;
@@ -40,9 +42,11 @@ export const useCategorySelectData = () => {
 export const useBrandSelectData = () => {
   const brands = useBrandQuery();
   const selectBrands = useMemo(() => {
-    return brands?.data.map((brand) => {
-      return { value: String(brand.id), label: brand.name };
-    });
+    return brands && Array.isArray(brands.data)
+      ? brands.data.map((brand) => {
+          return { value: String(brand.id), label: brand.name };
+        })
+      : [];
   }, [brands]);
 
   return selectBrands;

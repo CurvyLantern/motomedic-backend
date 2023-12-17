@@ -1,6 +1,8 @@
+import currencyToWords from "@/utils/CurrencyToWords";
 import {
   Box,
   Container,
+  Flex,
   Group,
   Stack,
   Table,
@@ -9,7 +11,8 @@ import {
   rem,
 } from "@mantine/core";
 import { format } from "date-fns";
-import { forwardRef } from "react";
+import { forwardRef, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 
 const useInvoiceStyles = createStyles((t) => ({
   storeInfo: {
@@ -50,262 +53,425 @@ const useInvoiceStyles = createStyles((t) => ({
   },
 }));
 
-const Invoice1 = forwardRef(({ order, amountInWords, ...props }, ref) => {
-  const currencySymbol = "৳";
+type TDiscountType = "flat" | "percent";
+type TProductOrderItem = {
+  discount: number;
+  discount_type: TDiscountType;
+  id: number | string;
+  product_sku: string;
+  quantity: number;
+  total_price: number;
+  type: "variation" | "product";
+  unit_price: number;
+  product: {
+    name: string;
+  };
+};
+type TServiceOrderItem = {
+  discount: number;
+  discount_type: TDiscountType;
+  id: number | string;
+  quantity: number;
+  total_price: number;
+  unit_price: number;
+  name: string;
+  service_type: {
+    name: string;
+  };
+};
+type TCustomer = {
+  address: string;
+  bike_info: string;
+  email: string;
+  id: number | string;
+  name: string;
+  phone: string;
+};
+type TSeller = {
+  id: string | number;
+  name: string;
+  email: string;
+};
+export type TInvoice1Props = {
+  customer: TCustomer;
+  id: string | number;
+  note: string;
+  overall_discount: number;
+  overall_discount_type: TDiscountType;
 
-  const { classes, cx } = useInvoiceStyles();
-  const subTotal =
-    order && Array.isArray(order.order_items)
-      ? order.order_items.reduce((sum, item) => {
-          sum += parseFloat(item.total_price);
-          return sum;
-        }, 0)
-      : 0;
+  overall_tax: number;
+  overall_tax_type: TDiscountType;
+  status: "paid" | "unpaid" | "due" | "cancelled";
+  productOrderItems: TProductOrderItem[];
+  serviceOrderItems?: TServiceOrderItem[];
+  seller: TSeller;
+  total_price: number;
+  payment_status?: string;
+  time_status?: string;
+};
 
-  const tax = order ? Math.abs(parseFloat(order.tax)) : 0;
+const Invoice1 = forwardRef<HTMLDivElement, { order: TInvoice1Props | null }>(
+  ({ order }, ref) => {
+    const currencySymbol = "৳";
 
-  const discount = order ? Math.abs(parseFloat(order.discount)) : 0;
+    const { classes } = useInvoiceStyles();
 
-  const total = order ? order.total : 0;
-  const orderItems = order ? order.order_items : [];
-
-  return (
-    <Box
-      p={"xs"}
-      {...props}
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-      }}
-      ref={ref}
-    >
+    let subTotal =
+      order && order.productOrderItems
+        ? order.productOrderItems.reduce((acc, item) => {
+            acc += item.total_price;
+            return acc;
+          }, 0)
+        : 0;
+    subTotal +=
+      order && order.serviceOrderItems
+        ? order.serviceOrderItems.reduce((acc, item) => {
+            acc += item.total_price;
+            return acc;
+          }, 0)
+        : 0;
+    return (
       <Box
-        sx={(t) => ({
-          maxWidth: "800px",
-          height: "100%",
-          border: "0px solid #000",
-          boxShadow: t.shadows.sm,
-          display: "flex",
+        p={"xs"}
+        ref={ref}
+        sx={{
+          display: "none",
           flexDirection: "column",
-        })}
-      >
-        {/* invoice header */}
-        <Box
-          sx={(t) => ({
-            width: "100%",
-            backgroundColor: t.colors.blue,
-            color: t.white,
-            padding: t.spacing.sm,
+          "@media print": {
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          })}
-        >
-          {/* logo */}
-          <Text
-            sx={{
-              fontSize: 30,
-              fontWeight: "bold",
-            }}
+          },
+        }}
+      >
+        {order ? (
+          <Box
+            sx={(t) => ({
+              maxWidth: "800px",
+              height: "100%",
+              border: "0px solid #000",
+              // boxShadow: t.shadows.sm,
+              display: "flex",
+              flexDirection: "column",
+            })}
           >
-            MotoMedic
-          </Text>
-
-          {/* store info */}
-          <Box className={classes.storeInfo}>
-            <p>MotoMedic</p>
-            <p>016029009</p>
-            <p>motomedic@gmail.com</p>
-            <p>Dhaka</p>
-          </Box>
-        </Box>
-        {/* invoice user section */}
-
-        <Group
-          noWrap
-          py={"xs"}
-          px={"md"}
-          align="flex-start"
-          position="apart"
-          sx={{
-            width: "100%",
-          }}
-        >
-          {/* user info*/}
-
-          <Box sx={{ minWidth: 0 }}>
-            <InfoTable
-              rowArray={[
-                { content: order.customer.name, title: "Customer" },
-                { content: order.customer.phone, title: "Phone" },
-                { content: order.customer.email, title: "Email" },
-              ]}
-            />
-          </Box>
-
-          <Box sx={{ flexShrink: 0 }}>
-            <InfoTable
-              rowArray={[
-                { content: format(new Date(), "MM/dd/yyyy"), title: "Date" },
-                { content: order.id, title: "Invoice ID" },
-                { content: "havetogetid", title: "Vendor ID" },
-                { content: "Cash", title: "Payment Method" },
-              ]}
-            />
-          </Box>
-        </Group>
-
-        {/* invoice contents */}
-        <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-          <Box sx={{ flex: 1, border: "1px solid #aaa" }}>
-            <Table
-              withBorder
-              withColumnBorders
-              verticalSpacing="2px"
-              horizontalSpacing="xs"
-              fontSize="xs"
+            {/* invoice header */}
+            <Box
+              sx={(t) => ({
+                width: "100%",
+                backgroundColor: t.colors.blue,
+                color: t.white,
+                padding: t.spacing.sm,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              })}
             >
-              <thead>
-                <tr>
-                  <th style={{ width: "10%" }}>#</th>
-                  <th>Item & Description</th>
-                  <th style={{ width: "20%" }}>Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orderItems.map((orderItem) => {
-                  const isProduct = orderItem.type === "product";
-                  const isService = orderItem.type === "service";
+              {/* logo */}
+              <Text
+                sx={{
+                  fontSize: 30,
+                  fontWeight: "bold",
+                }}
+              >
+                MotoMedic
+              </Text>
 
-                  return (
-                    <tr
-                      style={{ height: 20, border: "none" }}
-                      key={orderItem.id}
-                    >
-                      <td style={{ borderBottom: "none", borderTop: "none" }}>
-                        {orderItem.id}
-                      </td>
-                      {/* name */}
-                      <td style={{ borderBottom: "none", borderTop: "none" }}>
-                        {isProduct && orderItem.product.name}
-                        {isService && orderItem.service.name}
-                      </td>
-                      <td style={{ borderBottom: "none", borderTop: "none" }}>
-                        <div>
-                          <p className={classes.amount}>
-                            {orderItem.total_price} {currencySymbol}
-                          </p>
-                          <p className={classes.amountInfo}>
-                            {orderItem.quantity} pcs * {orderItem.unit_price}{" "}
-                            {currencySymbol}
-                          </p>
-                        </div>
-                      </td>
+              {/* store info */}
+              <Box className={classes.storeInfo}>
+                <p>MotoMedic</p>
+                <p>016029009</p>
+                <p>motomedic@gmail.com</p>
+                <p>Dhaka</p>
+              </Box>
+            </Box>
+            {/* invoice user section */}
+
+            <Group
+              noWrap
+              py={"xs"}
+              px={"md"}
+              align="flex-start"
+              position="apart"
+              sx={{
+                width: "100%",
+              }}
+            >
+              {/* user info*/}
+
+              <Box sx={{ minWidth: 0 }}>
+                <InfoTable
+                  rowArray={[
+                    { content: order.customer.name, title: "Customer" },
+                    { content: order.customer.phone, title: "Phone" },
+                    { content: order.customer.email, title: "Email" },
+                  ]}
+                />
+              </Box>
+
+              <Box sx={{ flexShrink: 0 }}>
+                <InfoTable
+                  rowArray={[
+                    {
+                      content: format(new Date(), "MM/dd/yyyy"),
+                      title: "Date",
+                    },
+                    { content: order.id.toString(), title: "Order ID" },
+                    { content: order.seller.name.toString(), title: "Seller" },
+                    { content: "Cash", title: "Payment Method" },
+                  ]}
+                />
+              </Box>
+            </Group>
+
+            {/* invoice contents */}
+            <Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+              }}
+            >
+              <Box sx={{ flex: 1 }}>
+                <Table
+                  withBorder
+                  withColumnBorders
+                  verticalSpacing="2px"
+                  horizontalSpacing="xs"
+                  fontSize="xs"
+                >
+                  <thead>
+                    <tr>
+                      <th style={{ width: "10%" }}>#</th>
+                      <th>Products</th>
+                      <th style={{ width: "20%" }}>Amount</th>
                     </tr>
-                  );
-                })}
+                  </thead>
+                  <tbody>
+                    {order?.productOrderItems?.map(
+                      (productOrderItem, productOrderItemIdx) => {
+                        const isProduct = productOrderItem.type === "product";
 
-                {/* total row */}
-              </tbody>
-            </Table>
+                        return (
+                          <tr
+                            style={{ height: 20, border: "none" }}
+                            key={productOrderItem.id}
+                          >
+                            <td
+                              style={{
+                                borderBottom: "none",
+                                borderTop: "none",
+                              }}
+                            >
+                              {productOrderItemIdx + 1}
+                            </td>
+                            {/* name */}
+                            <td
+                              style={{
+                                borderBottom: "none",
+                                borderTop: "none",
+                              }}
+                            >
+                              <p>
+                                {productOrderItem?.product?.name ??
+                                  "Basic Product"}
+                              </p>
+                              <Group>
+                                <p className={classes.amountInfo}>
+                                  {productOrderItem.quantity} pcs *{" "}
+                                  {productOrderItem.unit_price} {currencySymbol}
+                                </p>
+                                <p className={classes.amountInfo}>
+                                  Discount : {productOrderItem.discount}{" "}
+                                  {productOrderItem.discount_type === "flat"
+                                    ? "৳"
+                                    : "%"}
+                                </p>
+                              </Group>
+                            </td>
+                            <td
+                              style={{
+                                borderBottom: "none",
+                                borderTop: "none",
+                              }}
+                            >
+                              <div>
+                                <p className={classes.amount}>
+                                  {productOrderItem.total_price}{" "}
+                                  {currencySymbol}
+                                </p>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      }
+                    )}
+
+                    {order?.serviceOrderItems?.map(
+                      (serviceOrderItem, serviceOrderItemIdx) => {
+                        const SL =
+                          order.productOrderItems.length +
+                          serviceOrderItemIdx +
+                          1;
+                        return (
+                          <tr
+                            style={{ height: 20, border: "none" }}
+                            key={serviceOrderItem.id}
+                          >
+                            <td
+                              style={{
+                                borderBottom: "none",
+                                borderTop: "none",
+                              }}
+                            >
+                              {SL}
+                            </td>
+                            {/* name */}
+                            <td
+                              style={{
+                                borderBottom: "none",
+                                borderTop: "none",
+                              }}
+                            >
+                              <p>
+                                {serviceOrderItem?.service_type?.name ??
+                                  "Basic Service"}
+                              </p>
+                              <Group>
+                                <p className={classes.amountInfo}>
+                                  {1} pcs * {serviceOrderItem.unit_price}{" "}
+                                  {currencySymbol}
+                                </p>
+                                <p className={classes.amountInfo}>
+                                  Discount : {serviceOrderItem.discount}{" "}
+                                  {serviceOrderItem.discount_type === "flat"
+                                    ? "৳"
+                                    : "%"}
+                                </p>
+                              </Group>
+                            </td>
+                            <td
+                              style={{
+                                borderBottom: "none",
+                                borderTop: "none",
+                              }}
+                            >
+                              <div>
+                                <p className={classes.amount}>
+                                  {serviceOrderItem.total_price}{" "}
+                                  {currencySymbol}
+                                </p>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      }
+                    )}
+
+                    {/* total row */}
+                  </tbody>
+                </Table>
+              </Box>
+              <Table
+                withBorder
+                verticalSpacing="2px"
+                horizontalSpacing="xs"
+                fontSize="xs"
+              >
+                <thead>
+                  <tr>
+                    <th
+                      style={{
+                        width: "50%",
+                        textTransform: "uppercase",
+                        fontSize: 30,
+                        fontWeight: 400,
+                      }}
+                    >
+                      {order.payment_status}
+                    </th>
+                    <Box
+                      component="th"
+                      sx={{
+                        width: "30%",
+                        "& p": {
+                          textAlign: "right",
+                        },
+                      }}
+                    >
+                      <p>Subtotal</p>
+                      <p>Discount</p>
+                      <p>Tax</p>
+                    </Box>
+                    <th style={{ minWidth: "20%" }}>
+                      <p>
+                        {subTotal} {currencySymbol}
+                      </p>
+                      <p>
+                        {order.overall_discount} {currencySymbol}
+                      </p>
+                      <p>
+                        {order.overall_tax} {currencySymbol}
+                      </p>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th
+                      colSpan={2}
+                      style={{
+                        fontSize: rem(13),
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Text fw={600} fz={10}>
+                          <Text fz={12} span transform="uppercase">
+                            In words :
+                          </Text>{" "}
+                          {currencyToWords(order.total_price)}
+                        </Text>
+                        <Text>Total</Text>
+                      </Box>
+                    </th>
+                    <th>
+                      {order.total_price} {currencySymbol}
+                    </th>
+                  </tr>
+                </thead>
+                <tfoot></tfoot>
+              </Table>
+            </Box>
+            {/* invoice footer */}
+            <Container fluid sx={{ width: "100%", marginTop: "auto" }}>
+              <Group noWrap pt={40} pb={15} position="apart" align="flex-start">
+                <Stack spacing={0} sx={{ width: "35%", alignSelf: "flex-end" }}>
+                  {/* <Text className={classes.info}>Paid By Cash</Text> */}
+                  <Box h={2} bg={"black"}></Box>
+                  <Text fw={500} fz={"xs"} pt={"sm"} align="center">
+                    Customer's Signature
+                  </Text>
+                </Stack>
+
+                <Stack spacing={0} sx={{ width: "35%", alignSelf: "flex-end" }}>
+                  {/* <Text className={classes.info}>Paid By Cash</Text> */}
+                  <Box h={2} bg={"black"}></Box>
+                  <Text fw={500} fz={"xs"} pt={"sm"} align="center">
+                    Authorised's Signature
+                  </Text>
+                </Stack>
+              </Group>
+            </Container>
           </Box>
-          <Table
-            withBorder
-            withColumnBorders
-            verticalSpacing="2px"
-            horizontalSpacing="xs"
-            fontSize="xs"
-          >
-            <thead hidden>
-              <tr>
-                <th style={{ width: "10%" }}></th>
-                <th style={{ width: "10%" }}></th>
-                <th style={{ width: "10%" }}></th>
-                <th style={{ width: "70%" }}></th>
-                <th style={{ width: "20%" }}></th>
-              </tr>
-            </thead>
-            <tfoot>
-              <tr>
-                <th
-                  style={{
-                    textAlign: "right",
-                  }}
-                  colSpan={2}
-                >
-                  <p>Subtotal</p>
-                  <p>Discount</p>
-                  <p>Tax</p>
-                </th>
-                <th
-                  style={{
-                    textAlign: "left",
-                  }}
-                >
-                  <p>
-                    {subTotal} {currencySymbol}
-                  </p>
-                  <p>
-                    {discount} {currencySymbol}
-                  </p>
-                  <p>
-                    {tax} {currencySymbol}
-                  </p>
-                </th>
-              </tr>
-              <tr>
-                <th
-                  colSpan={2}
-                  style={{
-                    fontSize: rem(13),
-                  }}
-                >
-                  <Box
-                    sx={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Text fw={600}>
-                      <Text span transform="uppercase">
-                        In words :
-                      </Text>{" "}
-                      {amountInWords ? `${amountInWords} Taka Only` : ""}
-                    </Text>
-                    <Text>Total</Text>
-                  </Box>
-                </th>
-                <th>
-                  {total} {currencySymbol}
-                </th>
-              </tr>
-            </tfoot>
-          </Table>
-        </Box>
-        {/* invoice footer */}
-        <Container fluid sx={{ width: "100%", marginTop: "auto" }}>
-          <Group noWrap pt={40} pb={15} position="apart" align="flex-start">
-            <Stack spacing={0} sx={{ width: "35%", alignSelf: "flex-end" }}>
-              {/* <Text className={classes.info}>Paid By Cash</Text> */}
-              <Box h={2} bg={"black"}></Box>
-              <Text fw={"bold"} fz={"xs"} pt={"sm"} align="center">
-                Customer's Signature
-              </Text>
-            </Stack>
-
-            <Stack spacing={0} sx={{ width: "35%", alignSelf: "flex-end" }}>
-              {/* <Text className={classes.info}>Paid By Cash</Text> */}
-              <Box h={2} bg={"black"}></Box>
-              <Text fw={"bold"} fz={"xs"} pt={"sm"} align="center">
-                Authorised's Signature
-              </Text>
-            </Stack>
-          </Group>
-        </Container>
+        ) : (
+          <Box>No order was found</Box>
+        )}
       </Box>
-    </Box>
-  );
-});
+    );
+  }
+);
 
 const InfoTable = ({
   rowArray,
@@ -322,7 +488,8 @@ const InfoTable = ({
               style={{
                 verticalAlign: "top",
                 fontSize: 12,
-                fontWeight: "bold",
+                fontWeight: 500,
+                // fontWeight: "bold",
                 width: "max-content",
                 whiteSpace: "nowrap",
               }}

@@ -81,7 +81,7 @@ return new class extends Migration
 
       $table->string('product_sku')->default('');
 
-      $table->enum('type', ['single', 'variation'])->default('single');
+      $table->enum('type', ['product', 'variation'])->default('product');
 
       $table->unsignedBigInteger('seller_id')->nullable();
       $table->foreign('seller_id')->references('id')->on('users')->onUpdate('cascade')->nullOnDelete();

@@ -7,14 +7,14 @@ export const fetchUser = async () => {
   const user = await axiosClient.v1.api.get("user").then<User>((res) => {
     return res.data;
   });
-  if (user) {
-    return user;
-  } else {
-    logout();
-    notifications.show({
-      message: JSON.stringify("Session expired"),
-      color: "red",
-    });
-    return null;
-  }
+  // .catch((error) => {
+  //   // logout();
+
+  //   notifications.show({
+  //     message: JSON.stringify("Session expired"),
+  //     color: "red",
+  //   });
+  //   return null;
+  // });
+  return user;
 };

@@ -8,10 +8,11 @@ use Illuminate\Support\Str;
 
 class ServiceType extends Model
 {
-  use HasFactory;
-  protected $fillable = [
-    'name',
-    'description',
-    'price',
-  ];
+  protected $fillable = ['name', 'price', 'description'];
+
+  // Define the relationships
+  public function serviceTypeProducts()
+  {
+    return $this->hasMany(ServiceTypeProduct::class);
+  }
 }

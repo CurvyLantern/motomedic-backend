@@ -1,0 +1,143 @@
+"filename", "language", "TypeScript", "JSON", "JSON with Comments", "CSS", "TypeScript JSX", "XML", "Markdown", "HTML", "comment", "blank", "total"
+"f:\hobby-project\lara\Motomedic-Backend\frontend\README.md", "Markdown", 0, 0, 0, 0, 0, 0, 19, 0, 0, 9, 28
+"f:\hobby-project\lara\Motomedic-Backend\frontend\index.html", "HTML", 0, 0, 0, 0, 0, 0, 0, 23, 1, 1, 25
+"f:\hobby-project\lara\Motomedic-Backend\frontend\packa.old.json", "JSON", 0, 15, 0, 0, 0, 0, 0, 0, 0, 1, 16
+"f:\hobby-project\lara\Motomedic-Backend\frontend\package.json", "JSON", 0, 61, 0, 0, 0, 0, 0, 0, 0, 1, 62
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\assets\react.svg", "XML", 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\assets\svgs\finance.svg", "XML", 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\charts\OrderSummaryChat.tsx", "TypeScript JSX", 0, 0, 0, 0, 219, 0, 0, 0, 6, 8, 233
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\charts\OverviewChart.tsx", "TypeScript JSX", 0, 0, 0, 0, 125, 0, 0, 0, 56, 9, 190
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\charts\ProductSellChart.tsx", "TypeScript JSX", 0, 0, 0, 0, 104, 0, 0, 0, 0, 3, 107
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\common\CrudOptions.tsx", "TypeScript JSX", 0, 0, 0, 0, 59, 0, 0, 0, 0, 4, 63
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\customer\CreateCustomer.tsx", "TypeScript JSX", 0, 0, 0, 0, 113, 0, 0, 0, 19, 4, 136
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\customer\SelectCustomer.tsx", "TypeScript JSX", 0, 0, 0, 0, 69, 0, 0, 0, 2, 8, 79
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\customer\SelectCustomerOrCreate\config.ts", "TypeScript", 33, 0, 0, 0, 0, 0, 0, 0, 0, 2, 35
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\customer\SelectCustomerOrCreate\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 102, 0, 0, 0, 0, 9, 111
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\customer\SelectedCustomerInfo.tsx", "TypeScript JSX", 0, 0, 0, 0, 58, 0, 0, 0, 0, 3, 61
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\drawer\BaseDrawer.tsx", "TypeScript JSX", 0, 0, 0, 0, 52, 0, 0, 0, 0, 3, 55
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\dropzones\ImgDropZone.tsx", "TypeScript JSX", 0, 0, 0, 0, 89, 0, 0, 0, 1, 7, 97
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\erorrBoundary\RootErrorBoundary.tsx", "TypeScript JSX", 0, 0, 0, 0, 9, 0, 0, 0, 0, 4, 13
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\fields\color\MultiSelectColorField.tsx", "TypeScript JSX", 0, 0, 0, 0, 123, 0, 0, 0, 1, 9, 133
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\forms\brand\BrandForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 102, 0, 0, 0, 6, 4, 112
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\inputs\BaseInputs.tsx", "TypeScript JSX", 0, 0, 0, 0, 255, 0, 0, 0, 8, 9, 272
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\invoice\BlankInvoice.tsx", "TypeScript JSX", 0, 0, 0, 0, 274, 0, 0, 0, 10, 15, 299
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\invoice\Invoice1.tsx", "TypeScript JSX", 0, 0, 0, 0, 377, 0, 0, 0, 11, 16, 404
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\invoice\MainInvoice.tsx", "TypeScript JSX", 0, 0, 0, 0, 21, 0, 0, 0, 0, 4, 25
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosCart.tsx", "TypeScript JSX", 0, 0, 0, 0, 427, 0, 0, 0, 9, 35, 471
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosCartNumberInput.tsx", "TypeScript JSX", 0, 0, 0, 0, 66, 0, 0, 0, 9, 4, 79
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosCartProduct.tsx", "TypeScript JSX", 0, 0, 0, 0, 215, 0, 0, 0, 20, 10, 245
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosContext.tsx", "TypeScript JSX", 0, 0, 0, 0, 67, 0, 0, 0, 0, 8, 75
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosProductCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 150, 0, 0, 0, 5, 10, 165
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosProductView.tsx", "TypeScript JSX", 0, 0, 0, 0, 138, 0, 0, 0, 19, 12, 169
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\customInput.styles.ts", "TypeScript", 30, 0, 0, 0, 0, 0, 0, 0, 15, 5, 50
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\CreateProductForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 342, 0, 0, 0, 5, 13, 360
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\card\ProductCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 132, 0, 0, 0, 1, 15, 148
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\DescriptionEditor.tsx", "TypeScript JSX", 0, 0, 0, 0, 62, 0, 0, 0, 13, 8, 83
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\ProductFields.tsx", "TypeScript JSX", 0, 0, 0, 0, 155, 0, 0, 0, 6, 5, 166
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\ProductVariationField.tsx", "TypeScript JSX", 0, 0, 0, 0, 133, 0, 0, 0, 4, 16, 153
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\ProductVariationFieldsSimple.tsx", "TypeScript JSX", 0, 0, 0, 0, 133, 0, 0, 0, 4, 16, 153
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\VariantProducts.tsx", "TypeScript JSX", 0, 0, 0, 0, 388, 0, 0, 0, 42, 15, 445
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\fields.ts", "TypeScript", 187, 0, 0, 0, 0, 0, 0, 0, 134, 11, 332
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\hooks\useProductForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 75, 0, 0, 0, 1, 6, 82
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\scrollWrapper\ScrollWrapper2.tsx", "TypeScript JSX", 0, 0, 0, 0, 54, 0, 0, 0, 1, 7, 62
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\scroller\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 25, 0, 0, 0, 2, 2, 29
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\sections\BasicSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 87, 0, 0, 0, 0, 3, 90
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\service\fields\ServiceField\UserService.1.tsx", "TypeScript JSX", 0, 0, 0, 0, 198, 0, 0, 0, 29, 13, 240
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\service\fields\ServiceField\UserService.tsx", "TypeScript JSX", 0, 0, 0, 0, 31, 0, 0, 0, 3, 2, 36
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\service\fields\ServiceField\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 566, 0, 0, 0, 69, 42, 677
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\service\fields\fields.ts", "TypeScript", 87, 0, 0, 0, 0, 0, 0, 0, 0, 2, 89
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\stats\StatsCell.tsx", "TypeScript JSX", 0, 0, 0, 0, 56, 0, 0, 0, 0, 5, 61
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\env\clientEnv.ts", "TypeScript", 10, 0, 0, 0, 0, 0, 0, 0, 0, 1, 11
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\fetchers\fetchCSRF.ts", "TypeScript", 6, 0, 0, 0, 0, 0, 0, 0, 1, 2, 9
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\fetchers\fetchUser.ts", "TypeScript", 10, 0, 0, 0, 0, 0, 0, 0, 8, 3, 21
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\hooks\auth.ts", "TypeScript", 74, 0, 0, 0, 0, 0, 0, 0, 32, 13, 119
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\hooks\storeConnectors.ts", "TypeScript", 5, 0, 0, 0, 0, 0, 0, 0, 1, 2, 8
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\hooks\useCustomForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 23, 0, 0, 0, 1, 3, 27
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\hooks\usePrintInvoice.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 45, 8, 53
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\hooks\useProductSearch.ts", "TypeScript", 139, 0, 0, 0, 0, 0, 0, 0, 2, 22, 163
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\AuthenticatedLayout.tsx", "TypeScript JSX", 0, 0, 0, 0, 49, 0, 0, 0, 2, 3, 54
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\GuestLayout.tsx", "TypeScript JSX", 0, 0, 0, 0, 109, 0, 0, 0, 22, 6, 137
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\WithCustomerLayout.tsx", "TypeScript JSX", 0, 0, 0, 0, 65, 0, 0, 0, 0, 5, 70
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\body\BodyWrapper.tsx", "TypeScript JSX", 0, 0, 0, 0, 18, 0, 0, 0, 1, 2, 21
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\body\ContentWrapper.tsx", "TypeScript JSX", 0, 0, 0, 0, 79, 0, 0, 0, 2, 6, 87
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\headers\BasicHeader.tsx", "TypeScript JSX", 0, 0, 0, 0, 272, 0, 0, 0, 15, 24, 311
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\headers\basicHeader.styles.ts", "TypeScript", 9, 0, 0, 0, 0, 0, 0, 0, 0, 2, 11
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\navbar\BasicNavbar.tsx", "TypeScript JSX", 0, 0, 0, 0, 201, 0, 0, 0, 3, 7, 211
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\navbar\navData.ts", "TypeScript", 147, 0, 0, 0, 0, 0, 0, 0, 16, 6, 169
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\navbar\navbar.styles.ts", "TypeScript", 70, 0, 0, 0, 0, 0, 0, 0, 4, 4, 78
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\navbar\navlinkGroup\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 95, 0, 0, 0, 2, 7, 104
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\navbar\navlinkGroup\styles.ts", "TypeScript", 77, 0, 0, 0, 0, 0, 0, 0, 14, 6, 97
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\lib\axios.ts", "TypeScript", 29, 0, 0, 0, 0, 0, 0, 0, 6, 5, 40
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\main.tsx", "TypeScript JSX", 0, 0, 0, 0, 13, 0, 0, 0, 0, 1, 14
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\DashboardPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 127, 0, 0, 0, 2, 7, 136
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\NotFoundPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 19, 0, 0, 0, 0, 3, 22
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\billing\CreateBillingPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 215, 0, 0, 0, 4, 14, 233
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\customers\CustomerPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 77, 0, 0, 0, 1, 3, 81
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\guest\ForgotPasswordPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 103, 0, 0, 0, 0, 8, 111
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\guest\LoginPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 145, 0, 0, 0, 21, 15, 181
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\guest\RegisterPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 159, 0, 0, 0, 1, 11, 171
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\inventory\AllInventory.tsx", "TypeScript JSX", 0, 0, 0, 0, 37, 0, 0, 0, 5, 4, 46
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\inventory\CreateInventoryPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 370, 0, 0, 0, 50, 16, 436
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\invoice\AllInvoicePage.tsx", "TypeScript JSX", 0, 0, 0, 0, 64, 0, 0, 0, 3, 7, 74
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\invoice\CreateInvoicePage.tsx", "TypeScript JSX", 0, 0, 0, 0, 274, 0, 0, 0, 1, 18, 293
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\mechanic\MechanicPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 175, 0, 0, 0, 8, 12, 195
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\pos\PosPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 34, 0, 0, 0, 2, 4, 40
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\AddProductPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 5, 0, 0, 0, 0, 3, 8
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\AllProductPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 151, 0, 0, 0, 78, 14, 243
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\AttributePage.tsx", "TypeScript JSX", 0, 0, 0, 0, 367, 0, 0, 0, 3, 13, 383
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\BrandPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 149, 0, 0, 0, 4, 7, 160
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\CategoryPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 502, 0, 0, 0, 13, 20, 535
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\ColorPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 308, 0, 0, 0, 10, 10, 328
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\CreateCategoryForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 73, 0, 0, 0, 16, 4, 93
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\EditProductForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 332, 0, 0, 0, 7, 17, 356
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\ModelPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 479, 0, 0, 0, 2, 20, 501
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\SingleProductView.tsx", "TypeScript JSX", 0, 0, 0, 0, 133, 0, 0, 0, 0, 5, 138
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\sales\CreateOrderPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 341, 0, 0, 0, 5, 11, 357
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\sales\NewOrderPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 72, 0, 0, 0, 1, 9, 82
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\sales\OrderPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 90, 0, 0, 0, 0, 8, 98
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\service\CreateServicePage.tsx", "TypeScript JSX", 0, 0, 0, 0, 1072, 0, 0, 0, 14, 43, 1129
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\service\PackagePage.tsx", "TypeScript JSX", 0, 0, 0, 0, 313, 0, 0, 0, 5, 8, 326
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\service\ServiceOrderItemPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 484, 0, 0, 0, 2, 16, 502
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\vendor\VendorPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 162, 0, 0, 0, 1, 12, 175
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\providers\AllProvider.tsx", "TypeScript JSX", 0, 0, 0, 0, 14, 0, 0, 0, 0, 3, 17
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\providers\QueryProvider.tsx", "TypeScript JSX", 0, 0, 0, 0, 7, 0, 0, 0, 0, 2, 9
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\providers\StoreProvider.tsx", "TypeScript JSX", 0, 0, 0, 0, 6, 0, 0, 0, 0, 2, 8
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\providers\ThemeProvider.tsx", "TypeScript JSX", 0, 0, 0, 0, 16, 0, 0, 0, 1, 2, 19
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\attributeQuery.ts", "TypeScript", 19, 0, 0, 0, 0, 0, 0, 0, 0, 4, 23
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\brandQuery.ts", "TypeScript", 17, 0, 0, 0, 0, 0, 0, 0, 0, 4, 21
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\categoryQuery.ts", "TypeScript", 34, 0, 0, 0, 0, 0, 0, 0, 0, 3, 37
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\colorQuery.ts", "TypeScript", 21, 0, 0, 0, 0, 0, 0, 0, 0, 4, 25
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\customerQuery.ts", "TypeScript", 15, 0, 0, 0, 0, 0, 0, 0, 0, 4, 19
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\inventoryQuery.ts", "TypeScript", 17, 0, 0, 0, 0, 0, 0, 0, 0, 2, 19
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\mechanicQuery.ts", "TypeScript", 27, 0, 0, 0, 0, 0, 0, 0, 0, 3, 30
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\orderQuery.ts", "TypeScript", 51, 0, 0, 0, 0, 0, 0, 0, 0, 4, 55
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\productFormQuery.ts", "TypeScript", 31, 0, 0, 0, 0, 0, 0, 0, 0, 5, 36
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\productModelQuery.ts", "TypeScript", 48, 0, 0, 0, 0, 0, 0, 0, 1, 6, 55
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\productQuery.ts", "TypeScript", 76, 0, 0, 0, 0, 0, 0, 0, 1, 8, 85
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\serviceTypeQuery.ts", "TypeScript", 50, 0, 0, 0, 0, 0, 0, 0, 1, 5, 56
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\userQuery.ts", "TypeScript", 11, 0, 0, 0, 0, 0, 0, 0, 0, 4, 15
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\vendorsQuery.ts", "TypeScript", 22, 0, 0, 0, 0, 0, 0, 0, 0, 3, 25
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\router\Router.ts", "TypeScript", 4, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\router\routes.tsx", "TypeScript JSX", 0, 0, 0, 0, 317, 0, 0, 0, 27, 7, 351
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\selectInputData\SelectInputDatas.ts", "TypeScript", 57, 0, 0, 0, 0, 0, 0, 0, 0, 5, 62
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\mainStore.ts", "TypeScript", 19, 0, 0, 0, 0, 0, 0, 0, 2, 3, 24
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\AppConfigSlice.ts", "TypeScript", 48, 0, 0, 0, 0, 0, 0, 0, 0, 5, 53
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\ColorSlice.ts", "TypeScript", 25, 0, 0, 0, 0, 0, 0, 0, 0, 3, 28
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\CustomerSlice.ts", "TypeScript", 80, 0, 0, 0, 0, 0, 0, 0, 67, 15, 162
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\OrderSlice.ts", "TypeScript", 15, 0, 0, 0, 0, 0, 0, 0, 0, 4, 19
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\ProductSlice.ts", "TypeScript", 66, 0, 0, 0, 0, 0, 0, 0, 0, 4, 70
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\ServiceSlice.ts", "TypeScript", 23, 0, 0, 0, 0, 0, 0, 0, 0, 4, 27
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\colors.ts", "TypeScript", 154, 0, 0, 0, 0, 0, 0, 0, 0, 1, 155
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\styles\global.css", "CSS", 0, 0, 0, 10, 0, 0, 0, 0, 0, 2, 12
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\styles\theme.ts", "TypeScript", 198, 0, 0, 0, 0, 0, 0, 0, 11, 11, 220
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\types\defaultTypes.d.ts", "TypeScript", 145, 0, 0, 0, 0, 0, 0, 0, 0, 11, 156
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\types\env.d.ts", "TypeScript", 7, 0, 0, 0, 0, 0, 0, 0, 1, 3, 11
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\types\themeType.d.ts", "TypeScript", 20, 0, 0, 0, 0, 0, 0, 0, 1, 1, 22
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\utils\dataToFormdata.ts", "TypeScript", 43, 0, 0, 0, 0, 0, 0, 0, 3, 1, 47
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\utils\generateProductVariationCombinations.ts", "TypeScript", 38, 0, 0, 0, 0, 0, 0, 0, 0, 4, 42
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\utils\selectFieldsData.ts", "TypeScript", 49, 0, 0, 0, 0, 0, 0, 0, 0, 5, 54
+"f:\hobby-project\lara\Motomedic-Backend\frontend\src\vite-env.d.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2
+"f:\hobby-project\lara\Motomedic-Backend\frontend\tsconfig.json", "JSON with Comments", 0, 0, 20, 0, 0, 0, 0, 0, 9, 2, 31
+"f:\hobby-project\lara\Motomedic-Backend\frontend\tsconfig.node.json", "JSON", 0, 10, 0, 0, 0, 0, 0, 0, 0, 1, 11
+"f:\hobby-project\lara\Motomedic-Backend\frontend\vite.config.ts", "TypeScript", 26, 0, 0, 0, 0, 0, 0, 0, 1, 3, 30
+"Total", "-", 2369, 86, 20, 10, 13767, 2, 19, 23, 1075, 1044, 18415

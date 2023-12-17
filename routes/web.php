@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\CsrfController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
+// use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 
 use App\Http\Controllers\BrandController;
@@ -20,24 +20,24 @@ use App\Http\Controllers\BrandController;
 
 
 Route::get('/', function () {
-    return ['Laravel' => app()->version()];
+  return ['Laravel' => app()->version()];
 });
 
 Route::get('/logs', function () {
-    $logContent = file_get_contents(storage_path('logs/laravel.log'));
+  $logContent = file_get_contents(storage_path('logs/laravel.log'));
 
-    // You can also parse and format the log content as needed
+  // You can also parse and format the log content as needed
 
-    return '<pre>' . e($logContent) . '</pre>';
+  return '<pre>' . e($logContent) . '</pre>';
 });
 
 
 Route::prefix('v1')->group(function () {
-    Route::get('csrf', [CsrfController::class, 'show'])->name('csrf');
-    Route::prefix('auth')->group(function () {
-        require __DIR__ . '/auth.php';
-    });
+  Route::get('csrf', [CsrfController::class, 'show'])->name('csrf');
+  Route::prefix('auth')->group(function () {
+    require __DIR__ . '/auth.php';
+  });
 });
 
 
-Route::get('api-test-page',[BrandController::class,'apiTestPage'])->name('api.test.page');
+Route::get('api-test-page', [BrandController::class, 'apiTestPage'])->name('api.test.page');

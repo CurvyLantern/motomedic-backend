@@ -1,4 +1,8 @@
-import { useFlatProducts, useProductAllQuery } from "@/queries/productQuery";
+import {
+  TStockFilterArgs,
+  useFlatProducts,
+  useProductAllQuery,
+} from "@/queries/productQuery";
 import { Product } from "@/types/defaultTypes";
 import { useDebouncedState } from "@mantine/hooks";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -59,8 +63,10 @@ export const useProductPagination = (
   return returnObj;
 };
 
-export const useProductSearchByNameSkuId = () => {
-  const productsAll = useFlatProducts();
+export const useProductSearchByNameSkuId = (
+  stock: TStockFilterArgs = "all"
+) => {
+  const productsAll = useFlatProducts(stock);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useDebouncedState(
     searchQuery,
@@ -116,6 +122,58 @@ export const useProductSearch = (categoryId = "", brandId = "") => {
     debouncedSearchQuery,
     handleSearchInputChange,
   } = useProductSearchByNameSkuId();
+  const [searchLoading, setSearchLoading] = useState(false);
+
+  useEffect(() => {
+    setSearchLoading(true);
+  }, [debouncedSearchQuery]);
+
+  const productsByCategoryId = useMemo(() => {
+    if (!categoryId) {
+      return searchedProducts;
+    }
+    return searchedProducts?.filter(
+      (product) =>
+        String(product.category_id) === categoryId ||
+        String(product.parent_category_id) === categoryId
+    );
+  }, [searchedProducts, categoryId]);
+
+  const productsByBrandId = useMemo(() => {
+    if (!brandId) {
+      return productsByCategoryId;
+    }
+    return productsByCategoryId?.filter(
+      (product) => String(product.brand_id) === brandId
+    );
+  }, [productsByCategoryId, brandId]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSearchLoading(false);
+    }, 500);
+  }, [productsByBrandId]);
+
+  const paginatedProducts = useProductPagination(productsByBrandId);
+
+  useEffect(() => {
+    console.log(paginatedProducts, "changing every time");
+  }, [paginatedProducts]);
+  return {
+    products: paginatedProducts,
+    searchQuery,
+    handleSearchInputChange,
+    searchLoading,
+  };
+};
+
+export const usePosProductSearch = (categoryId = "", brandId = "") => {
+  const {
+    products: searchedProducts,
+    searchQuery,
+    debouncedSearchQuery,
+    handleSearchInputChange,
+  } = useProductSearchByNameSkuId("in_stock");
   const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {

@@ -96,11 +96,11 @@ export const navData = [
         label: "All orders",
         icon: TbShoppingBag,
       },
-      {
-        href: getNavUrl("order", "process"),
-        label: "Process Order",
-        icon: TbShoppingBag,
-      },
+      // {
+      //   href: getNavUrl("order", "process"),
+      //   label: "Process Order",
+      //   icon: TbShoppingBag,
+      // },
     ],
   },
 

@@ -1,7 +1,9 @@
+import CrudOptions, { CrudViewButton } from "@/components/common/CrudOptions";
 import BasicSection from "@/components/sections/BasicSection";
 import { useOrderQuery } from "@/queries/orderQuery";
 
 import {
+  ActionIcon,
   Badge,
   Button,
   CopyButton,
@@ -11,9 +13,11 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useEffect } from "react";
+import { TbEye } from "react-icons/tb";
+import { Link } from "react-router-dom";
 
 const OrderPage = () => {
-  const ordersPaginated = useOrderQuery("unpaid");
+  const ordersPaginated = useOrderQuery();
 
   useEffect(() => {
     console.log(ordersPaginated, " ordersPaginated ");
@@ -28,11 +32,6 @@ const OrderPage = () => {
       const DeliveryStatusBadge = (
         <Badge variant="light" color={"green"}>
           Delivered
-        </Badge>
-      );
-      const PaymentStatusBadge = (
-        <Badge variant="light" color={status === "paid" ? "green" : "red"}>
-          {status}
         </Badge>
       );
       return (
@@ -57,15 +56,44 @@ const OrderPage = () => {
             </Group>
           </td>
           <td>{customer.name}</td>
-          <td>{total} ৳</td>
-          <td>{DeliveryStatusBadge}</td>
+          <td>{order.total_price} ৳</td>
           <td>
-            <Badge variant="filled">Cash</Badge> {PaymentStatusBadge}
+            <Badge
+              variant="filled"
+              color={
+                order.time_status === "finished"
+                  ? "green"
+                  : order.time_status === "running"
+                  ? "blue"
+                  : "red"
+              }
+            >
+              {order.time_status}
+            </Badge>
           </td>
           <td>
-            <Button compact size="xs">
-              view
-            </Button>
+            {" "}
+            <Badge
+              variant="filled"
+              color={order.payment_status === "paid" ? "green" : "red"}
+            >
+              {order.payment_status}
+            </Badge>
+          </td>
+          <td>
+            <Group>
+              <ActionIcon
+                component={Link}
+                to={`/order/${order.id}`}
+                fz={"md"}
+                size={"md"}
+                variant="filled"
+                radius={"lg"}
+                color={"orange"}
+              >
+                <TbEye />
+              </ActionIcon>
+            </Group>
           </td>
         </tr>
       );
@@ -83,8 +111,8 @@ const OrderPage = () => {
             <th>OrderId</th>
             <th>Customer</th>
             <th>Amount</th>
-            <th>Delivery Status</th>
-            <th>Payment Method & Status</th>
+            <th>Status</th>
+            <th>Payment Status</th>
             <th>Actions</th>
           </tr>
         </thead>

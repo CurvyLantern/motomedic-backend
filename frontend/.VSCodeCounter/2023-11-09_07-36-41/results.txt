@@ -1,0 +1,242 @@
+Date : 2023-11-09 07:36:41
+Directory : f:\hobby-project\lara\Motomedic-Backend\frontend
+Total : 141 files,  16296 codes, 1075 comments, 1044 blanks, all 18415 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| TypeScript JSX     |         84 |     13,767 |        742 |        796 |     15,305 |
+| TypeScript         |         48 |      2,369 |        323 |        231 |      2,923 |
+| JSON               |          3 |         86 |          0 |          3 |         89 |
+| HTML               |          1 |         23 |          1 |          1 |         25 |
+| JSON with Comments |          1 |         20 |          9 |          2 |         31 |
+| Markdown           |          1 |         19 |          0 |          9 |         28 |
+| CSS                |          1 |         10 |          0 |          2 |         12 |
+| XML                |          2 |          2 |          0 |          0 |          2 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                             | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                |        141 |     16,296 |      1,075 |      1,044 |     18,415 |
+| . (Files)                                                                                                        |          7 |        174 |         11 |         18 |        203 |
+| src                                                                                                              |        134 |     16,122 |      1,064 |      1,026 |     18,212 |
+| src (Files)                                                                                                      |          2 |         13 |          1 |          2 |         16 |
+| src\assets                                                                                                       |          2 |          2 |          0 |          0 |          2 |
+| src\assets (Files)                                                                                               |          1 |          1 |          0 |          0 |          1 |
+| src\assets\svgs                                                                                                  |          1 |          1 |          0 |          0 |          1 |
+| src\components                                                                                                   |         42 |      5,988 |        511 |        386 |      6,885 |
+| src\components\charts                                                                                            |          3 |        448 |         62 |         20 |        530 |
+| src\components\common                                                                                            |          1 |         59 |          0 |          4 |         63 |
+| src\components\customer                                                                                          |          5 |        375 |         21 |         26 |        422 |
+| src\components\customer (Files)                                                                                  |          3 |        240 |         21 |         15 |        276 |
+| src\components\customer\SelectCustomerOrCreate                                                                   |          2 |        135 |          0 |         11 |        146 |
+| src\components\drawer                                                                                            |          1 |         52 |          0 |          3 |         55 |
+| src\components\dropzones                                                                                         |          1 |         89 |          1 |          7 |         97 |
+| src\components\erorrBoundary                                                                                     |          1 |          9 |          0 |          4 |         13 |
+| src\components\fields                                                                                            |          1 |        123 |          1 |          9 |        133 |
+| src\components\fields\color                                                                                      |          1 |        123 |          1 |          9 |        133 |
+| src\components\forms                                                                                             |          1 |        102 |          6 |          4 |        112 |
+| src\components\forms\brand                                                                                       |          1 |        102 |          6 |          4 |        112 |
+| src\components\inputs                                                                                            |          1 |        255 |          8 |          9 |        272 |
+| src\components\invoice                                                                                           |          3 |        672 |         21 |         35 |        728 |
+| src\components\pos                                                                                               |          7 |      1,093 |         77 |         84 |      1,254 |
+| src\components\products                                                                                          |          9 |      1,607 |        210 |        105 |      1,922 |
+| src\components\products (Files)                                                                                  |          1 |        342 |          5 |         13 |        360 |
+| src\components\products\card                                                                                     |          1 |        132 |          1 |         15 |        148 |
+| src\components\products\fields                                                                                   |          7 |      1,133 |        204 |         77 |      1,414 |
+| src\components\products\fields (Files)                                                                           |          6 |      1,058 |        203 |         71 |      1,332 |
+| src\components\products\fields\hooks                                                                             |          1 |         75 |          1 |          6 |         82 |
+| src\components\scrollWrapper                                                                                     |          1 |         54 |          1 |          7 |         62 |
+| src\components\scroller                                                                                          |          1 |         25 |          2 |          2 |         29 |
+| src\components\sections                                                                                          |          1 |         87 |          0 |          3 |         90 |
+| src\components\service                                                                                           |          4 |        882 |        101 |         59 |      1,042 |
+| src\components\service\fields                                                                                    |          4 |        882 |        101 |         59 |      1,042 |
+| src\components\service\fields (Files)                                                                            |          1 |         87 |          0 |          2 |         89 |
+| src\components\service\fields\ServiceField                                                                       |          3 |        795 |        101 |         57 |        953 |
+| src\components\stats                                                                                             |          1 |         56 |          0 |          5 |         61 |
+| src\env                                                                                                          |          1 |         10 |          0 |          1 |         11 |
+| src\fetchers                                                                                                     |          2 |         16 |          9 |          5 |         30 |
+| src\hooks                                                                                                        |          5 |        241 |         81 |         48 |        370 |
+| src\layouts                                                                                                      |         12 |      1,191 |         81 |         78 |      1,350 |
+| src\layouts (Files)                                                                                              |          3 |        223 |         24 |         14 |        261 |
+| src\layouts\body                                                                                                 |          2 |         97 |          3 |          8 |        108 |
+| src\layouts\headers                                                                                              |          2 |        281 |         15 |         26 |        322 |
+| src\layouts\navbar                                                                                               |          5 |        590 |         39 |         30 |        659 |
+| src\layouts\navbar (Files)                                                                                       |          3 |        418 |         23 |         17 |        458 |
+| src\layouts\navbar\navlinkGroup                                                                                  |          2 |        172 |         16 |         13 |        201 |
+| src\lib                                                                                                          |          1 |         29 |          6 |          5 |         40 |
+| src\pages                                                                                                        |         30 |      6,832 |        259 |        342 |      7,433 |
+| src\pages (Files)                                                                                                |          2 |        146 |          2 |         10 |        158 |
+| src\pages\billing                                                                                                |          1 |        215 |          4 |         14 |        233 |
+| src\pages\customers                                                                                              |          1 |         77 |          1 |          3 |         81 |
+| src\pages\guest                                                                                                  |          3 |        407 |         22 |         34 |        463 |
+| src\pages\inventory                                                                                              |          2 |        407 |         55 |         20 |        482 |
+| src\pages\invoice                                                                                                |          2 |        338 |          4 |         25 |        367 |
+| src\pages\mechanic                                                                                               |          1 |        175 |          8 |         12 |        195 |
+| src\pages\pos                                                                                                    |          1 |         34 |          2 |          4 |         40 |
+| src\pages\product                                                                                                |         10 |      2,499 |        133 |        113 |      2,745 |
+| src\pages\sales                                                                                                  |          3 |        503 |          6 |         28 |        537 |
+| src\pages\service                                                                                                |          3 |      1,869 |         21 |         67 |      1,957 |
+| src\pages\vendor                                                                                                 |          1 |        162 |          1 |         12 |        175 |
+| src\providers                                                                                                    |          4 |         43 |          1 |          9 |         53 |
+| src\queries                                                                                                      |         14 |        439 |          3 |         59 |        501 |
+| src\router                                                                                                       |          2 |        321 |         27 |          9 |        357 |
+| src\selectInputData                                                                                              |          1 |         57 |          0 |          5 |         62 |
+| src\store                                                                                                        |          8 |        430 |         69 |         39 |        538 |
+| src\store (Files)                                                                                                |          1 |         19 |          2 |          3 |         24 |
+| src\store\slices                                                                                                 |          7 |        411 |         67 |         36 |        514 |
+| src\styles                                                                                                       |          2 |        208 |         11 |         13 |        232 |
+| src\types                                                                                                        |          3 |        172 |          2 |         15 |        189 |
+| src\utils                                                                                                        |          3 |        130 |          3 |         10 |        143 |
++------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                         | language           | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| f:\hobby-project\lara\Motomedic-Backend\frontend\README.md                                                       | Markdown           |         19 |          0 |          9 |         28 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\index.html                                                      | HTML               |         23 |          1 |          1 |         25 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\packa.old.json                                                  | JSON               |         15 |          0 |          1 |         16 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\package.json                                                    | JSON               |         61 |          0 |          1 |         62 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\assets\react.svg                                            | XML                |          1 |          0 |          0 |          1 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\assets\svgs\finance.svg                                     | XML                |          1 |          0 |          0 |          1 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\charts\OrderSummaryChat.tsx                      | TypeScript JSX     |        219 |          6 |          8 |        233 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\charts\OverviewChart.tsx                         | TypeScript JSX     |        125 |         56 |          9 |        190 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\charts\ProductSellChart.tsx                      | TypeScript JSX     |        104 |          0 |          3 |        107 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\common\CrudOptions.tsx                           | TypeScript JSX     |         59 |          0 |          4 |         63 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\customer\CreateCustomer.tsx                      | TypeScript JSX     |        113 |         19 |          4 |        136 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\customer\SelectCustomer.tsx                      | TypeScript JSX     |         69 |          2 |          8 |         79 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\customer\SelectCustomerOrCreate\config.ts        | TypeScript         |         33 |          0 |          2 |         35 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\customer\SelectCustomerOrCreate\index.tsx        | TypeScript JSX     |        102 |          0 |          9 |        111 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\customer\SelectedCustomerInfo.tsx                | TypeScript JSX     |         58 |          0 |          3 |         61 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\drawer\BaseDrawer.tsx                            | TypeScript JSX     |         52 |          0 |          3 |         55 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\dropzones\ImgDropZone.tsx                        | TypeScript JSX     |         89 |          1 |          7 |         97 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\erorrBoundary\RootErrorBoundary.tsx              | TypeScript JSX     |          9 |          0 |          4 |         13 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\fields\color\MultiSelectColorField.tsx           | TypeScript JSX     |        123 |          1 |          9 |        133 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\forms\brand\BrandForm.tsx                        | TypeScript JSX     |        102 |          6 |          4 |        112 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\inputs\BaseInputs.tsx                            | TypeScript JSX     |        255 |          8 |          9 |        272 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\invoice\BlankInvoice.tsx                         | TypeScript JSX     |        274 |         10 |         15 |        299 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\invoice\Invoice1.tsx                             | TypeScript JSX     |        377 |         11 |         16 |        404 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\invoice\MainInvoice.tsx                          | TypeScript JSX     |         21 |          0 |          4 |         25 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosCart.tsx                                  | TypeScript JSX     |        427 |          9 |         35 |        471 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosCartNumberInput.tsx                       | TypeScript JSX     |         66 |          9 |          4 |         79 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosCartProduct.tsx                           | TypeScript JSX     |        215 |         20 |         10 |        245 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosContext.tsx                               | TypeScript JSX     |         67 |          0 |          8 |         75 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosProductCard.tsx                           | TypeScript JSX     |        150 |          5 |         10 |        165 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\PosProductView.tsx                           | TypeScript JSX     |        138 |         19 |         12 |        169 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\pos\customInput.styles.ts                        | TypeScript         |         30 |         15 |          5 |         50 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\CreateProductForm.tsx                   | TypeScript JSX     |        342 |          5 |         13 |        360 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\card\ProductCard.tsx                    | TypeScript JSX     |        132 |          1 |         15 |        148 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\DescriptionEditor.tsx            | TypeScript JSX     |         62 |         13 |          8 |         83 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\ProductFields.tsx                | TypeScript JSX     |        155 |          6 |          5 |        166 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\ProductVariationField.tsx        | TypeScript JSX     |        133 |          4 |         16 |        153 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\ProductVariationFieldsSimple.tsx | TypeScript JSX     |        133 |          4 |         16 |        153 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\VariantProducts.tsx              | TypeScript JSX     |        388 |         42 |         15 |        445 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\fields.ts                        | TypeScript         |        187 |        134 |         11 |        332 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\products\fields\hooks\useProductForm.tsx         | TypeScript JSX     |         75 |          1 |          6 |         82 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\scrollWrapper\ScrollWrapper2.tsx                 | TypeScript JSX     |         54 |          1 |          7 |         62 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\scroller\index.tsx                               | TypeScript JSX     |         25 |          2 |          2 |         29 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\sections\BasicSection.tsx                        | TypeScript JSX     |         87 |          0 |          3 |         90 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\service\fields\ServiceField\UserService.1.tsx    | TypeScript JSX     |        198 |         29 |         13 |        240 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\service\fields\ServiceField\UserService.tsx      | TypeScript JSX     |         31 |          3 |          2 |         36 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\service\fields\ServiceField\index.tsx            | TypeScript JSX     |        566 |         69 |         42 |        677 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\service\fields\fields.ts                         | TypeScript         |         87 |          0 |          2 |         89 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\components\stats\StatsCell.tsx                              | TypeScript JSX     |         56 |          0 |          5 |         61 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\env\clientEnv.ts                                            | TypeScript         |         10 |          0 |          1 |         11 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\fetchers\fetchCSRF.ts                                       | TypeScript         |          6 |          1 |          2 |          9 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\fetchers\fetchUser.ts                                       | TypeScript         |         10 |          8 |          3 |         21 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\hooks\auth.ts                                               | TypeScript         |         74 |         32 |         13 |        119 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\hooks\storeConnectors.ts                                    | TypeScript         |          5 |          1 |          2 |          8 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\hooks\useCustomForm.tsx                                     | TypeScript JSX     |         23 |          1 |          3 |         27 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\hooks\usePrintInvoice.tsx                                   | TypeScript JSX     |          0 |         45 |          8 |         53 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\hooks\useProductSearch.ts                                   | TypeScript         |        139 |          2 |         22 |        163 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\AuthenticatedLayout.tsx                             | TypeScript JSX     |         49 |          2 |          3 |         54 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\GuestLayout.tsx                                     | TypeScript JSX     |        109 |         22 |          6 |        137 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\WithCustomerLayout.tsx                              | TypeScript JSX     |         65 |          0 |          5 |         70 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\body\BodyWrapper.tsx                                | TypeScript JSX     |         18 |          1 |          2 |         21 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\body\ContentWrapper.tsx                             | TypeScript JSX     |         79 |          2 |          6 |         87 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\headers\BasicHeader.tsx                             | TypeScript JSX     |        272 |         15 |         24 |        311 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\headers\basicHeader.styles.ts                       | TypeScript         |          9 |          0 |          2 |         11 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\navbar\BasicNavbar.tsx                              | TypeScript JSX     |        201 |          3 |          7 |        211 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\navbar\navData.ts                                   | TypeScript         |        147 |         16 |          6 |        169 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\navbar\navbar.styles.ts                             | TypeScript         |         70 |          4 |          4 |         78 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\navbar\navlinkGroup\index.tsx                       | TypeScript JSX     |         95 |          2 |          7 |        104 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\layouts\navbar\navlinkGroup\styles.ts                       | TypeScript         |         77 |         14 |          6 |         97 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\lib\axios.ts                                                | TypeScript         |         29 |          6 |          5 |         40 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\main.tsx                                                    | TypeScript JSX     |         13 |          0 |          1 |         14 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\DashboardPage.tsx                                     | TypeScript JSX     |        127 |          2 |          7 |        136 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\NotFoundPage.tsx                                      | TypeScript JSX     |         19 |          0 |          3 |         22 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\billing\CreateBillingPage.tsx                         | TypeScript JSX     |        215 |          4 |         14 |        233 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\customers\CustomerPage.tsx                            | TypeScript JSX     |         77 |          1 |          3 |         81 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\guest\ForgotPasswordPage.tsx                          | TypeScript JSX     |        103 |          0 |          8 |        111 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\guest\LoginPage.tsx                                   | TypeScript JSX     |        145 |         21 |         15 |        181 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\guest\RegisterPage.tsx                                | TypeScript JSX     |        159 |          1 |         11 |        171 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\inventory\AllInventory.tsx                            | TypeScript JSX     |         37 |          5 |          4 |         46 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\inventory\CreateInventoryPage.tsx                     | TypeScript JSX     |        370 |         50 |         16 |        436 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\invoice\AllInvoicePage.tsx                            | TypeScript JSX     |         64 |          3 |          7 |         74 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\invoice\CreateInvoicePage.tsx                         | TypeScript JSX     |        274 |          1 |         18 |        293 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\mechanic\MechanicPage.tsx                             | TypeScript JSX     |        175 |          8 |         12 |        195 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\pos\PosPage.tsx                                       | TypeScript JSX     |         34 |          2 |          4 |         40 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\AddProductPage.tsx                            | TypeScript JSX     |          5 |          0 |          3 |          8 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\AllProductPage.tsx                            | TypeScript JSX     |        151 |         78 |         14 |        243 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\AttributePage.tsx                             | TypeScript JSX     |        367 |          3 |         13 |        383 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\BrandPage.tsx                                 | TypeScript JSX     |        149 |          4 |          7 |        160 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\CategoryPage.tsx                              | TypeScript JSX     |        502 |         13 |         20 |        535 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\ColorPage.tsx                                 | TypeScript JSX     |        308 |         10 |         10 |        328 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\CreateCategoryForm.tsx                        | TypeScript JSX     |         73 |         16 |          4 |         93 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\EditProductForm.tsx                           | TypeScript JSX     |        332 |          7 |         17 |        356 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\ModelPage.tsx                                 | TypeScript JSX     |        479 |          2 |         20 |        501 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\product\SingleProductView.tsx                         | TypeScript JSX     |        133 |          0 |          5 |        138 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\sales\CreateOrderPage.tsx                             | TypeScript JSX     |        341 |          5 |         11 |        357 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\sales\NewOrderPage.tsx                                | TypeScript JSX     |         72 |          1 |          9 |         82 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\sales\OrderPage.tsx                                   | TypeScript JSX     |         90 |          0 |          8 |         98 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\service\CreateServicePage.tsx                         | TypeScript JSX     |      1,072 |         14 |         43 |      1,129 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\service\PackagePage.tsx                               | TypeScript JSX     |        313 |          5 |          8 |        326 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\service\ServiceOrderItemPage.tsx                      | TypeScript JSX     |        484 |          2 |         16 |        502 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\pages\vendor\VendorPage.tsx                                 | TypeScript JSX     |        162 |          1 |         12 |        175 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\providers\AllProvider.tsx                                   | TypeScript JSX     |         14 |          0 |          3 |         17 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\providers\QueryProvider.tsx                                 | TypeScript JSX     |          7 |          0 |          2 |          9 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\providers\StoreProvider.tsx                                 | TypeScript JSX     |          6 |          0 |          2 |          8 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\providers\ThemeProvider.tsx                                 | TypeScript JSX     |         16 |          1 |          2 |         19 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\attributeQuery.ts                                   | TypeScript         |         19 |          0 |          4 |         23 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\brandQuery.ts                                       | TypeScript         |         17 |          0 |          4 |         21 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\categoryQuery.ts                                    | TypeScript         |         34 |          0 |          3 |         37 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\colorQuery.ts                                       | TypeScript         |         21 |          0 |          4 |         25 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\customerQuery.ts                                    | TypeScript         |         15 |          0 |          4 |         19 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\inventoryQuery.ts                                   | TypeScript         |         17 |          0 |          2 |         19 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\mechanicQuery.ts                                    | TypeScript         |         27 |          0 |          3 |         30 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\orderQuery.ts                                       | TypeScript         |         51 |          0 |          4 |         55 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\productFormQuery.ts                                 | TypeScript         |         31 |          0 |          5 |         36 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\productModelQuery.ts                                | TypeScript         |         48 |          1 |          6 |         55 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\productQuery.ts                                     | TypeScript         |         76 |          1 |          8 |         85 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\serviceTypeQuery.ts                                 | TypeScript         |         50 |          1 |          5 |         56 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\userQuery.ts                                        | TypeScript         |         11 |          0 |          4 |         15 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\queries\vendorsQuery.ts                                     | TypeScript         |         22 |          0 |          3 |         25 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\router\Router.ts                                            | TypeScript         |          4 |          0 |          2 |          6 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\router\routes.tsx                                           | TypeScript JSX     |        317 |         27 |          7 |        351 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\selectInputData\SelectInputDatas.ts                         | TypeScript         |         57 |          0 |          5 |         62 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\mainStore.ts                                          | TypeScript         |         19 |          2 |          3 |         24 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\AppConfigSlice.ts                              | TypeScript         |         48 |          0 |          5 |         53 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\ColorSlice.ts                                  | TypeScript         |         25 |          0 |          3 |         28 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\CustomerSlice.ts                               | TypeScript         |         80 |         67 |         15 |        162 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\OrderSlice.ts                                  | TypeScript         |         15 |          0 |          4 |         19 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\ProductSlice.ts                                | TypeScript         |         66 |          0 |          4 |         70 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\ServiceSlice.ts                                | TypeScript         |         23 |          0 |          4 |         27 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\store\slices\colors.ts                                      | TypeScript         |        154 |          0 |          1 |        155 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\styles\global.css                                           | CSS                |         10 |          0 |          2 |         12 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\styles\theme.ts                                             | TypeScript         |        198 |         11 |         11 |        220 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\types\defaultTypes.d.ts                                     | TypeScript         |        145 |          0 |         11 |        156 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\types\env.d.ts                                              | TypeScript         |          7 |          1 |          3 |         11 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\types\themeType.d.ts                                        | TypeScript         |         20 |          1 |          1 |         22 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\utils\dataToFormdata.ts                                     | TypeScript         |         43 |          3 |          1 |         47 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\utils\generateProductVariationCombinations.ts               | TypeScript         |         38 |          0 |          4 |         42 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\utils\selectFieldsData.ts                                   | TypeScript         |         49 |          0 |          5 |         54 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\src\vite-env.d.ts                                               | TypeScript         |          0 |          1 |          1 |          2 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\tsconfig.json                                                   | JSON with Comments |         20 |          9 |          2 |         31 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\tsconfig.node.json                                              | JSON               |         10 |          0 |          1 |         11 |
+| f:\hobby-project\lara\Motomedic-Backend\frontend\vite.config.ts                                                  | TypeScript         |         26 |          1 |          3 |         30 |
+| Total                                                                                                            |                    |     16,296 |      1,075 |      1,044 |     18,415 |
++------------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

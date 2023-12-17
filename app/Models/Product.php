@@ -30,6 +30,18 @@ class Product extends Model
     'thumbnail_image',
     'variation_product'
   ];
+  protected $appends = ['stock_count', 'parent_category_id'];
+
+
+  public function getParentCategoryIdAttribute()
+  {
+    return $this->category->parent_category_id; // Use first() instead of get()
+  }
+  public function getStockCountAttribute()
+  {
+    return $this->inventory->stock_count ?? 0; // Use first() instead of get()
+    // return $inventory ? $inventory->stock_count : 0;
+  }
 
   public function inventory()
   {

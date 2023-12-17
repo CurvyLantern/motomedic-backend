@@ -25,6 +25,7 @@ class StoreServiceTypeRequest extends FormRequest
       'name' => 'required|string',
       'description' => 'nullable|string',
       'price' => 'required|numeric',
+      'service_products' => 'array',
     ];
   }
 }

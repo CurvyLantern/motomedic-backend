@@ -35,11 +35,9 @@ return new class extends Migration
 
       $table->enum('type', ['store_in', 'store_out'])->default('store_in');
 
-      $table->string('sku')->nullable();
+      $table->string('product_sku')->nullable();
       $table->integer('quantity')->default(0);
-
-      $table->unsignedDecimal('inventory_total_cost')->default(0);
-      $table->unsignedDecimal('inventory_total_due')->default(0);
+      $table->double('per_unit_cost', 10, 0)->default(0);
 
       $table->timestamps();
     });

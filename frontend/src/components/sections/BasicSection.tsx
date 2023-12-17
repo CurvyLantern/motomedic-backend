@@ -13,6 +13,7 @@ type BasicSectionType = PaperProps & {
   children: React.ReactNode;
   headerLeftElement?: JSX.Element;
   headerRightElement?: JSX.Element;
+  withoutPadding?: boolean;
 };
 const BasicSection = ({
   title,
@@ -20,6 +21,7 @@ const BasicSection = ({
   headerLeftElement,
   headerRightElement,
   sx,
+  withoutPadding,
   ...props
 }: BasicSectionType) => {
   return (
@@ -75,7 +77,10 @@ const BasicSection = ({
         </Group>
       ) : null}
 
-      <Box p={"xs"} sx={{ flex: 1 }}>
+      <Box
+        p={withoutPadding ? 0 : "xs"}
+        sx={{ flex: 1, display: "flex", flexDirection: "column" }}
+      >
         {children}
       </Box>
     </Paper>

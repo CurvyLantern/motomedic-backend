@@ -7,17 +7,23 @@ use App\Http\Resources\MechanicResource;
 use App\Models\Mechanic;
 use App\Http\Requests\StoreMechanicRequest;
 use App\Http\Requests\UpdateMechanicRequest;
+use Illuminate\Http\Request;
 
 class MechanicController extends Controller
 {
   /**
    * Display a listing of the resource.
    */
-  public function index()
+  public function index(Request $request)
   {
-    $mechanics = Mechanic::orderBy('id', 'asc')->get();
-
-    return MechanicResource::collection($mechanics);
+    $statusQuery = $request->input('status', '');
+    if ($statusQuery && $statusQuery !== '') {
+      $mechanics = Mechanic::where('status', $statusQuery)->orderBy('id', 'asc')->get();
+      return MechanicResource::collection($mechanics);
+    } else {
+      $mechanics = Mechanic::orderBy('id', 'asc')->get();
+      return MechanicResource::collection($mechanics);
+    }
   }
 
   /**

@@ -7,6 +7,7 @@ import {
   type MRT_PaginationState,
   type MRT_SortingState,
 } from "mantine-react-table";
+import { useOrderQuery } from "@/queries/orderQuery";
 
 type UserApiResponse = {
   data: Array<User>;
@@ -31,28 +32,36 @@ const Example = () => {
   const [isRefetching, setIsRefetching] = useState(false);
   const [rowCount, setRowCount] = useState(0);
 
-  const columns = useMemo<MRT_ColumnDef<User>[]>(
+  const orders = useOrderQuery("unpaid");
+
+  const AllOrders = useMemo(() => {
+    return orders && orders.data ? orders.data : [];
+  }, [orders]);
+
+  console.log({ AllOrders });
+
+  const columns = useMemo<MRT_ColumnDef<any>[]>(
     () => [
       {
-        accessorKey: "",
+        accessorKey: "id",
         header: "Order code",
       },
 
       {
-        accessorKey: "",
+        accessorKey: "customer.name",
         header: "Customer",
       },
       {
-        accessorKey: "",
+        accessorKey: "seller.name",
         header: "Seller",
       },
       {
-        accessorKey: "state",
-        header: "Amount",
+        accessorKey: "payment_status",
+        header: "Payment Status",
       },
       {
-        accessorKey: "phoneNumber",
-        header: "Status",
+        accessorKey: "total_price",
+        header: "Total Price",
       },
     ],
     []
@@ -60,8 +69,8 @@ const Example = () => {
 
   const table = useMantineReactTable({
     columns,
-    data,
-    enableRowSelection: true,
+    data: AllOrders,
+    // enableRowSelection: true,
     getRowId: (row) => row.id,
     initialState: { showColumnFilters: true },
     rowCount,

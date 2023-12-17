@@ -11,6 +11,7 @@ use App\Http\Requests\UpdateInventoryRequest;
 use App\Http\Resources\InventoryResource;
 use App\Models\InventoryRecord;
 use App\Models\Price;
+use Carbon\Carbon;
 
 class InventoryController extends Controller
 {
@@ -31,13 +32,31 @@ class InventoryController extends Controller
   {
     $validated = $request->validated();
 
+    $inventoryDateRaw = $validated['inventory_date'];
+    $inventoryCarbonDate = Carbon::parse($inventoryDateRaw);
+    $inventoryDateFormatted = $inventoryCarbonDate->format('Y-m-d H:i:s');
+
+    // return response()->json($inventoryDate);
+
+    $vendorId = $validated['inventory_vendor_id'];
     $products = $validated['inventory_products'];
 
+    $updatedRecords = [];
     foreach ($products as $product) {
       $productSku       = $product['product_sku'];
+      $updaterId = $product['inventory_updater_id'];
+      // $vendorId = $product['inventory_vendor_id'];
+      $stockCount = $product['stock_count'];
+      $type = $product['type'];
       $inventory = Inventory::where('sku', $productSku)->first();
-      $inventory->stock_count = $inventory->stock_count + $product['stock_count'];
+      if ($type === 'store_in') {
+        $inventory->stock_count = $inventory->stock_count + $stockCount;
+      }
+      if ($type === 'store_out') {
+        $inventory->stock_count = $inventory->stock_count - $stockCount;
+      }
       $inventory->save();
+
 
       $sellPrice = $product["new_selling_price"];
       $buyPrice = $product["new_buying_price"];
@@ -61,18 +80,22 @@ class InventoryController extends Controller
       $price->buying_price = $buyPrice;
       $price->selling_price = $sellPrice;
       $price->save();
+
+
+      $inventoryRecord = InventoryRecord::create([
+        'inventory_date' => $inventoryDateFormatted,
+        'inventory_vendor_id' => $vendorId,
+        'inventory_updater_id' => $updaterId,
+        'type' => $type,
+        'product_sku' => $productSku,
+        'quantity' => $stockCount,
+        'per_unit_cost' => $buyPrice
+      ]);
+      $updatedRecords[] = $inventoryRecord;
     }
 
-    $inventoryRecord = InventoryRecord::create([
-      'inventory_vendor_id' => $validated['inventory_vendor_id'],
-      'inventory_total_cost' => $validated['inventory_total_cost'],
-      'inventory_total_due' => $validated['inventory_total_due'],
-      'type' => $validated['type'],
-      'purchased_products' => (int)$validated['inventory_products'],
-    ]);
-
     // return response()->json(compact('invoice'));
-    return response()->json(compact('inventoryRecord'));
+    return response()->json(compact('updatedRecords'));
   }
 
   /**

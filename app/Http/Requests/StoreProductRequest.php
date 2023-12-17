@@ -30,6 +30,10 @@ class StoreProductRequest extends FormRequest
       'description' => "nullable",
       'warranty' => "nullable",
       'status' => "required",
+
+      'barcode' => 'nullable',
+      'model_id' => 'nullable',
+
       // 'image' => "image|nullable",
       'variation_enabled' => 'boolean|required',
       // 'variations' => 'array',
@@ -40,13 +44,13 @@ class StoreProductRequest extends FormRequest
       // 'variations.*.model_id' => 'nullable|string'
     ];
 
-    if ($this->input('variation_enabled')) {
-      $rules['barcode'] = 'nullable';
-      $rules['model_id'] = 'nullable';
-    } else {
-      $rules['model_id'] = 'required';
-      $rules['barcode'] = 'required';
-    }
+    // if ($this->input('variation_enabled')) {
+    //   $rules['barcode'] = 'nullable';
+    //   $rules['model_id'] = 'nullable';
+    // } else {
+    //   $rules['model_id'] = 'required';
+    //   $rules['barcode'] = 'required';
+    // }
 
     return $rules;
   }

@@ -21,10 +21,12 @@ use App\Http\Resources\ProductResource;
 use App\Models\AttributeValue;
 use App\Models\Color;
 use App\Models\Inventory;
+use App\Models\Price;
 use App\Models\ProductModel;
 use App\Models\ProductVariation;
 use Database\Factories\AttributeValueFactory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\TryCatch;
 
 class ProductController extends Controller
@@ -92,41 +94,40 @@ class ProductController extends Controller
   {
 
     try {
+      $stockQuery = $request->query('stock', 'all');
+
       $products = Product::with('variations.price', 'variations.productModel', 'variations.attributeValues', 'variations.color', 'productModel', 'brand', 'category', 'color', 'price')
         ->orderBy('created_at', 'desc')
         ->get();
+      return ProductResource::collection($products);
 
       // return new ProductResource($products);
 
-      foreach ($products as $product) {
-        if ($product->variation_product) {
-          $variations = $product->variations;
-          $parentCategoryId = $product->category->parent_category_id;
-          foreach ($variations as &$variation) {
-            $variation->parent_category_id = $parentCategoryId;
-            $variation->category_id = $product->category_id;
-            $variation->brand_id = $product->brand_id;
-            $inventory = Inventory::where('sku', $variation->sku)->first();
-            $variation->stock_count = $inventory->stock_count ?? 0; // Default to 0 if no inventory record found
-          }
-          unset($variation);
+      // foreach ($products as $product) {
+      //   if ($product->variation_product) {
+      //     $variations = $product->variations;
+      //     $parentCategoryId = $product->category->parent_category_id;
+      //     foreach ($variations as &$variation) {
+      //       $variation->parent_category_id = $parentCategoryId;
+      //       $variation->category_id = $product->category_id;
+      //       $variation->brand_id = $product->brand_id;
+      //     }
+      //     unset($variation);
 
-          $product->setRelation('variations', $variations);
-        } else {
-          $inventory = Inventory::where('sku', $product->sku)->first();
-          $parentCategoryId = $product->category->parent_category_id;
-          $product->parent_category_id = $parentCategoryId;
-          $product->stock_count = $inventory->stock_count ?? 0; // Default to 0 if no inventory record found
-        }
-        // Attach the category_id to each variation of the product
+      //     $product->setRelation('variations', $variations);
+      //   } else {
+
+      // $parentCategoryId = $product->category->parent_category_id;
+      // $product->parent_category_id = $parentCategoryId;
+      // }
+      // Attach the category_id to each variation of the product
 
 
-      }
+
 
       // $variations = $products->pluck('variations')->flatten()->toArray();
 
       // $productsAndVariations = array_merge($products->toArray(), $variations);
-      return ProductResource::collection($products);
     } catch (Exception $e) {
       return send_error($e->getMessage(), $e->getCode());
     }
@@ -194,57 +195,82 @@ class ProductController extends Controller
     $variationEnabled = $validated['variation_enabled'];
     $variations = $request->variations;
 
-    $product = Product::create($validated);
-    if (!$variationEnabled) {
-      // Generate the 'sku' based on the product's ID
-      $product->sku = 'SKU-' . $product->id;
-      $product->save();
+    DB::beginTransaction();
 
-      $productInventory = Inventory::create([
-        'sku' => $product->sku,
-      ]);
-    } else {
-      $product->variation_product = true;
-      $product->barcode = null;
-      $product->save();
-      foreach ($variations as $variationData) {
-        // Create a new ProductVariation instance
-        $variation = ProductVariation::create([
-          'color_id' => $variationData['color_id'],
-          'model_id' => $variationData['model_id'],
-          'barcode' => $variationData['barcode'],
-          // 'name' => $variationData['name'],
-          // 'image' => $variationData['image'],
+    try {
+      $product = Product::create($validated);
+      if (!$variationEnabled) {
+        // Generate the 'sku' based on the product's ID
+
+        $productInventory = Inventory::create();
+        $sku = 'SKU-' . $productInventory->id;
+
+        $productInventory->sku = $sku;
+        $productInventory->save();
+
+        $price = Price::create([
+          'sku' => $sku
         ]);
 
-        // Generate the 'sku' based on the desired format
-        $sku = 'SKU-' . $product->id . $variation->id . $variationData['color_id'] . implode('', $variationData['attribute_value_ids']);
+        $product->sku = $sku;
+        $product->save();
 
-        // Set the 'sku' for the variation
-        $variation->sku = $sku;
+        // $productInventory = Inventory::create([
+        //   'sku' => $product->sku,
+        // ]);
 
-        // Save the variation to the database
-        $variation->save();
+      } else {
+        $product->variation_product = true;
+        $product->barcode = null;
+        $product->save();
+        foreach ($variations as $variationData) {
+          // Create a new ProductVariation instance
+          $variation = ProductVariation::create([
+            'color_id' => $variationData['color_id'],
+            'model_id' => $variationData['model_id'],
+            'barcode' => $variationData['barcode'],
+            // 'name' => $variationData['name'],
+            // 'image' => $variationData['image'],
+          ]);
 
-        $variationInventory = Inventory::create([
-          'sku' => $variation->sku,
-        ]);
+          $variationInventory = Inventory::create();
+          $sku = 'SKU-' . $variationInventory->id;
 
-        // Associate the variation with the product (assuming $product is the product model)
-        $product->variations()->save($variation);
+          $price = Price::create([
+            'sku' => $sku
+          ]);
 
-        // Loop through the attribute_value_ids and associate each one with the variation
-        foreach ($variationData['attribute_value_ids'] as $attributeValueId) {
-          // Find the corresponding attribute value
-          $attributeValue = AttributeValue::find($attributeValueId);
+          // Generate the 'sku' based on the desired format
+          // $sku = 'SKU-' . $product->id . $variation->id . $variationData['color_id'] . implode('', $variationData['attribute_value_ids']);
 
-          // Associate the attribute value with the variation
-          // $variation->attributeValue()->associate($attwributeValue);
-          $variation->attributeValues()->attach($attributeValue);
+          // Set the 'sku' for the variation
+          $variation->sku = $sku;
+          $variationInventory->sku = $sku;
+          $variationInventory->save();
+          // Save the variation to the database
+          $variation->save();
+
+
+
+          // Associate the variation with the product (assuming $product is the product model)
+          $product->variations()->save($variation);
+
+          // Loop through the attribute_value_ids and associate each one with the variation
+          foreach ($variationData['attribute_value_ids'] as $attributeValueId) {
+            // Find the corresponding attribute value
+            $attributeValue = AttributeValue::find($attributeValueId);
+
+            // Associate the attribute value with the variation
+            // $variation->attributeValue()->associate($attwributeValue);
+            $variation->attributeValues()->attach($attributeValue);
+          }
         }
       }
+      DB::commit();
+    } catch (Exception $e) {
+      DB::rollBack();
+      return response()->json(['message' => 'Product creation failed'], 500);
     }
-
 
 
 
@@ -350,8 +376,8 @@ class ProductController extends Controller
             }
             $variation->delete();
           } else {
-            $variation->price = $variationData['price'];
-            $variation->save();
+            // $variation->price = $variationData['price'];
+            // $variation->save();
           }
         }
       }
@@ -363,23 +389,29 @@ class ProductController extends Controller
         // Create a new ProductVariation instance
         $variation = ProductVariation::create([
           'color_id' => $variationData['color_id'],
-          'price' => $variationData['price'],
+          // 'price' => $variationData['price'],
           'name' => $variationData['name']
         ]);
 
         // Generate the 'sku' based on the desired format
-        $sku = 'SKU-' . $variation->id . $variationData['color_id'] . implode('', $variationData['attribute_value_ids']);
+        // $sku = 'SKU-' . $variation->id . $variationData['color_id'] . implode('', $variationData['attribute_value_ids']);
 
         // Set the 'sku' for the variation
-        $variation->sku = $sku;
 
         // Save the variation to the database
+
+        $variationInventory = Inventory::create();
+
+        $sku = 'SKU-' . $variationInventory->id;
+
+        $variationInventory->sku = $sku;
+        $variationInventory->save();
+        $variation->sku = $sku;
         $variation->save();
 
-        $variationInventory = Inventory::create([
-          'sku' => $variation->sku,
+        $price = Price::create([
+          'sku' => $sku
         ]);
-
         // Associate the variation with the product (assuming $product is the product model)
         $product->variations()->save($variation);
 

@@ -6,6 +6,7 @@ use App\Models\ServiceType;
 use App\Http\Requests\StoreServiceTypeRequest;
 use App\Http\Requests\UpdateServiceTypeRequest;
 use App\Http\Resources\ServiceTypeResource;
+use App\Models\ServiceTypeProduct;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,7 @@ class ServiceTypeController extends Controller
    */
   public function index()
   {
-    $serviceTypes = ServiceType::all();
+    $serviceTypes = ServiceType::with('serviceTypeProducts')->get();
     return ServiceTypeResource::collection($serviceTypes);
   }
 
@@ -26,9 +27,14 @@ class ServiceTypeController extends Controller
   public function store(StoreServiceTypeRequest $request)
   {
     $validated = $request->validated();
-
     $serviceType = ServiceType::create($validated);
 
+    $products = $validated['service_products'];
+    foreach ($products as $product) {
+      $serviceType->serviceTypeProducts()->create($product);
+    }
+
+    $serviceType->load(['serviceTypeProducts']);
     return new ServiceTypeResource($serviceType);
   }
   /**

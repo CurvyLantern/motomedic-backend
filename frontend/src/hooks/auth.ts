@@ -98,9 +98,15 @@ export const login = async (
       });
   } catch (error) {
     const axiosError = error as AxiosError;
+
     if (axiosError.status === 401) {
-      throw new Error("not authorized");
+      throw new AxiosError("not authorized");
     }
+
+    if (Number(axiosError.status) <= 401) {
+      throw new AxiosError("Server error");
+    }
+
     throw error;
   }
 };

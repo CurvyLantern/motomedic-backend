@@ -5,6 +5,7 @@ import { Outlet, redirect } from "react-router-dom";
 import { BodyWrapper } from "./body/BodyWrapper";
 import { ContentWrapper } from "./body/ContentWrapper";
 import BasicNavbar from "./navbar/BasicNavbar";
+import { PosContextProvider } from "@/components/pos/PosContext";
 
 export const authenticatedLoader = async () => {
   try {
@@ -41,7 +42,9 @@ const AuthenticatedLayout = () => {
       <BodyWrapper>
         <BasicNavbar />
         <ContentWrapper>
-          <Outlet />
+          <PosContextProvider>
+            <Outlet />
+          </PosContextProvider>
         </ContentWrapper>
       </BodyWrapper>
     </AppShell>

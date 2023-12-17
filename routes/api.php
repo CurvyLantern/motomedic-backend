@@ -18,12 +18,16 @@ use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductModelController;
+use App\Http\Controllers\ProductOrderItemController;
 use App\Http\Controllers\ProductVariationController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\ServiceOrderItemController;
 use App\Http\Controllers\ServiceTypeController;
 use App\Http\Controllers\VendorController;
 use App\Http\Resources\UserResource;
 use App\Models\ProductModel;
+use App\Models\ProductOrderItem;
+use App\Models\ServiceOrderItem;
 use PhpParser\Node\Scalar\MagicConst\Dir;
 
 /*
@@ -76,9 +80,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('serviceTypes', ServiceTypeController::class);
 
 
+    Route::get('orders/waitingServices', [OrderController::class, 'waitingServices']);
+    Route::put('orders/{id}/addProductOrders', [OrderController::class, 'addProductOrders']);
+    Route::put('orders/{id}/addMechanic', [OrderController::class, 'addMechanic']);
 
+    Route::post('orders/service', [OrderController::class, 'createServiceItem']);
+
+    Route::put('orders/service', [OrderController::class, 'attachServiceItem']);
+    Route::put('orders/pos', [OrderController::class, 'attachPosItem']);
+
+    Route::post('orders/posConfirmPrint', [OrderController::class, 'confirmAndPrint']);
+    Route::apiResource('orders.serviceOrderItems', ServiceOrderItemController::class);
+    Route::apiResource('orders.productOrderItems', ProductOrderItemController::class);
     Route::apiResource('orders', OrderController::class);
 
+    // Route::apiResource('productOrderItems', ProductOrderItemController::class);
     // Route::apiResources([
     //     'categories' => CategoryController::class,
     //     'brands' => BrandController::class
